@@ -1,0 +1,12 @@
+{
+  "title": "تنظیمات حساب",
+  "profile": "اطلاعات فردی",
+  "security": "امنیت",
+  "preferences": "ترجیحات",
+  "language": "زبان",
+  "languages": { "fa": "فارسی", "en": "انگلیسی" },
+  "theme": "حالت نمایش",
+  "themes": { "dark": "تیره", "light": "روشن" },
+  "notifications": "اعلان‌های معاملاتی",
+  "twoFactor": "ورود دو مرحله‌ای"
+}

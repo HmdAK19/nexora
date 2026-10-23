@@ -1,0 +1,48 @@
+{
+  "title": "Nexora administration",
+  "description": "Manage users, financial operations, and platform settings in one workspace.",
+  "tabs": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "verification": "Verification",
+    "tickets": "Tickets",
+    "financial": "Financial settings"
+  },
+  "metrics": {
+    "activeUsers": "Active users",
+    "volume24h": "24h volume",
+    "tradesToday": "Trades today",
+    "openReviews": "Open reviews"
+  },
+  "operationalStatus": "Operational status",
+  "needsAttention": "Needs attention",
+  "verificationRequests": "verification requests",
+  "unansweredTickets": "unanswered tickets",
+  "highRiskWithdrawals": "high-risk withdrawals",
+  "searchUsers": "Search name, email, or ID",
+  "table": { "user": "User", "level": "Level", "balance": "Balance", "status": "Status", "action": "Action" },
+  "view": "View",
+  "submittedToday": "Submitted today",
+  "approve": "Approve",
+  "reject": "Reject",
+  "reply": "Reply",
+  "tickets": {
+    "withdrawalPending": "Withdrawal pending",
+    "changePhone": "Change phone number",
+    "depositWithoutTag": "Deposit without tag",
+    "urgent": "Urgent",
+    "normal": "Normal",
+    "high": "High"
+  },
+  "financial": {
+    "networkAndWithdrawals": "Network and withdrawals",
+    "enableTrc20": "Enable TRC20 network",
+    "enableWithdrawals": "Enable user withdrawals",
+    "paymentProvider": "Payment provider",
+    "save": "Save settings",
+    "saved": "Settings saved.",
+    "commissions": "Commissions",
+    "tradingFee": "Trading fee (%)",
+    "minimumWithdrawal": "Minimum USDT withdrawal"
+  }
+}

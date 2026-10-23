@@ -1,0 +1,32 @@
+{
+  "title": "Identity verification",
+  "description": "Complete the steps below to unlock higher limits and all features.",
+  "steps": {
+    "personalDetails": "Personal details",
+    "identityDocument": "Identity document",
+    "review": "Review"
+  },
+  "detailsHeading": "Details as shown on your ID",
+  "fullName": "Full name",
+  "nationalId": "National ID / passport",
+  "country": "Country of residence",
+  "countries": {
+    "iran": "Iran",
+    "uae": "UAE",
+    "turkiye": "Türkiye"
+  },
+  "continue": "Continue",
+  "uploadHeading": "Upload identity document",
+  "documentPlaceholder": "National ID or passport image",
+  "chooseFile": "Choose file",
+  "documentHint": "The image must be clear, in color, and uncropped.",
+  "back": "Back",
+  "submit": "Submit for review",
+  "submittedTitle": "Documents submitted",
+  "submittedDescription": "We will notify you of the result within 24 hours.",
+  "reviewDetails": "Review details",
+  "accountLevel": "Account level",
+  "basic": "Basic",
+  "incomplete": "Incomplete",
+  "dailyWithdrawalLimit": "Daily withdrawal limit"
+}

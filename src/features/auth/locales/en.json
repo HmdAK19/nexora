@@ -1,0 +1,18 @@
+{
+  "welcome": "Welcome back",
+  "subtitle": "Your secure gateway to digital assets",
+  "email": "Email",
+  "password": "Password",
+  "remember": "Remember me",
+  "forgot": "Forgot password?",
+  "login": "Sign in to Nexora",
+  "demo": "Demo account",
+  "invalid": "Email or password is incorrect",
+  "validation": {
+    "emailInvalid": "Enter a valid email address",
+    "emailRequired": "Email is required",
+    "passwordMin": "Password must be at least 8 characters",
+    "passwordRequired": "Password is required"
+  },
+  "togglePassword": "Toggle password visibility"
+}

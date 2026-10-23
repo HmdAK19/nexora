@@ -1,0 +1,32 @@
+{
+  "title": "احراز هویت",
+  "description": "برای افزایش سقف برداشت و دسترسی کامل، مراحل زیر را تکمیل کنید.",
+  "steps": {
+    "personalDetails": "اطلاعات فردی",
+    "identityDocument": "مدارک هویتی",
+    "review": "بررسی نهایی"
+  },
+  "detailsHeading": "اطلاعات مطابق مدرک شناسایی",
+  "fullName": "نام و نام خانوادگی",
+  "nationalId": "کد ملی / شماره گذرنامه",
+  "country": "کشور محل اقامت",
+  "countries": {
+    "iran": "ایران",
+    "uae": "امارات",
+    "turkiye": "ترکیه"
+  },
+  "continue": "ادامه",
+  "uploadHeading": "بارگذاری مدرک هویتی",
+  "documentPlaceholder": "تصویر کارت ملی یا گذرنامه",
+  "chooseFile": "انتخاب فایل",
+  "documentHint": "تصویر باید خوانا، رنگی و بدون برش باشد.",
+  "back": "بازگشت",
+  "submit": "ارسال برای بررسی",
+  "submittedTitle": "مدارک با موفقیت ثبت شد",
+  "submittedDescription": "نتیجه بررسی حداکثر تا ۲۴ ساعت آینده اطلاع‌رسانی می‌شود.",
+  "reviewDetails": "مشاهده اطلاعات",
+  "accountLevel": "سطح حساب",
+  "basic": "پایه",
+  "incomplete": "در انتظار تکمیل",
+  "dailyWithdrawalLimit": "سقف برداشت روزانه"
+}

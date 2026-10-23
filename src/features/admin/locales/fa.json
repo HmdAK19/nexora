@@ -1,0 +1,48 @@
+{
+  "title": "مرکز مدیریت نکسورا",
+  "description": "کنترل کاربران، عملیات مالی و تنظیمات سامانه در یک نمای یکپارچه.",
+  "tabs": {
+    "dashboard": "داشبورد",
+    "users": "کاربران",
+    "verification": "احراز هویت",
+    "tickets": "تیکت‌ها",
+    "financial": "تنظیمات مالی"
+  },
+  "metrics": {
+    "activeUsers": "کاربران فعال",
+    "volume24h": "حجم ۲۴ ساعت",
+    "tradesToday": "معاملات امروز",
+    "openReviews": "بررسی‌های باز"
+  },
+  "operationalStatus": "وضعیت عملیاتی",
+  "needsAttention": "اقدامات ضروری",
+  "verificationRequests": "درخواست احراز هویت",
+  "unansweredTickets": "تیکت بدون پاسخ",
+  "highRiskWithdrawals": "برداشت پرریسک",
+  "searchUsers": "جستجو با نام، ایمیل یا شناسه",
+  "table": { "user": "کاربر", "level": "سطح", "balance": "دارایی", "status": "وضعیت", "action": "عملیات" },
+  "view": "مشاهده",
+  "submittedToday": "ارسال امروز",
+  "approve": "تأیید",
+  "reject": "رد درخواست",
+  "reply": "پاسخ",
+  "tickets": {
+    "withdrawalPending": "برداشت انجام نشده",
+    "changePhone": "تغییر شماره همراه",
+    "depositWithoutTag": "واریز بدون تگ",
+    "urgent": "فوری",
+    "normal": "عادی",
+    "high": "بالا"
+  },
+  "financial": {
+    "networkAndWithdrawals": "شبکه و برداشت",
+    "enableTrc20": "فعال بودن شبکه TRC20",
+    "enableWithdrawals": "فعال بودن برداشت کاربران",
+    "paymentProvider": "ارائه‌دهنده پرداخت",
+    "save": "ذخیره تنظیمات",
+    "saved": "تنظیمات ذخیره شد.",
+    "commissions": "کارمزدها",
+    "tradingFee": "کارمزد معامله (%)",
+    "minimumWithdrawal": "حداقل برداشت USDT"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "title": "Support center",
+  "description": "Create requests and track support responses.",
+  "newTicket": "New ticket",
+  "dialogTitle": "Create support ticket",
+  "subject": "Subject",
+  "category": "Category",
+  "wallet": "Wallet",
+  "account": "Account",
+  "descriptionField": "Description",
+  "cancel": "Cancel",
+  "submit": "Submit ticket",
+  "answered": "Answered",
+  "underReview": "Under review",
+  "sampleSubject": "Crypto deposit follow-up"
+}

@@ -1,0 +1,12 @@
+{
+  "title": "Account settings",
+  "profile": "Profile",
+  "security": "Security",
+  "preferences": "Preferences",
+  "language": "Language",
+  "languages": { "fa": "Persian", "en": "English" },
+  "theme": "Theme",
+  "themes": { "dark": "Dark", "light": "Light" },
+  "notifications": "Trading notifications",
+  "twoFactor": "Two-factor authentication"
+}
