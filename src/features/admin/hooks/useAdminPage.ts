@@ -113,3 +113,5 @@ export function useAdminPage() {
     withdrawEnabled,
   };
 }
+
+export type AdminController = ReturnType<typeof useAdminPage>;
