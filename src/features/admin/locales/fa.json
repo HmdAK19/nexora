@@ -22,7 +22,18 @@
   "searchUsers": "جستجو با نام، ایمیل یا شناسه",
   "table": { "user": "کاربر", "level": "سطح", "balance": "دارایی", "status": "وضعیت", "action": "عملیات" },
   "view": "مشاهده",
+  "close": "بستن",
+  "cancel": "لغو",
+  "email": "ایمیل",
+  "userDetails": "جزئیات کاربر",
+  "statuses": { "active": "فعال", "blocked": "مسدود" },
   "submittedToday": "ارسال امروز",
+  "documents": { "nationalId": "کارت ملی", "passport": "گذرنامه" },
+  "review": {
+    "approved": "درخواست احراز هویت تأیید شد.",
+    "rejected": "درخواست احراز هویت رد شد.",
+    "empty": "درخواست احراز هویت در انتظار بررسی وجود ندارد."
+  },
   "approve": "تأیید",
   "reject": "رد درخواست",
   "reply": "پاسخ",
@@ -32,7 +43,11 @@
     "depositWithoutTag": "واریز بدون تگ",
     "urgent": "فوری",
     "normal": "عادی",
-    "high": "بالا"
+    "high": "بالا",
+    "empty": "به همه تیکت‌های پشتیبانی پاسخ داده شده است.",
+    "replyTitle": "پاسخ به تیکت",
+    "replyMessage": "متن پاسخ",
+    "sendReply": "ارسال پاسخ"
   },
   "financial": {
     "networkAndWithdrawals": "شبکه و برداشت",

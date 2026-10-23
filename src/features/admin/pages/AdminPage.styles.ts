@@ -102,4 +102,10 @@ export const styles = {
   textField20: {
     mt: 2,
   },
+  dialogContent: {
+    pt: 1,
+  },
+  dialogStatus: {
+    alignSelf: 'flex-start',
+  },
 };

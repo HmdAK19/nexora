@@ -22,7 +22,18 @@
   "searchUsers": "Search name, email, or ID",
   "table": { "user": "User", "level": "Level", "balance": "Balance", "status": "Status", "action": "Action" },
   "view": "View",
+  "close": "Close",
+  "cancel": "Cancel",
+  "email": "Email",
+  "userDetails": "User details",
+  "statuses": { "active": "Active", "blocked": "Blocked" },
   "submittedToday": "Submitted today",
+  "documents": { "nationalId": "National ID", "passport": "Passport" },
+  "review": {
+    "approved": "Verification request approved.",
+    "rejected": "Verification request rejected.",
+    "empty": "There are no pending verification requests."
+  },
   "approve": "Approve",
   "reject": "Reject",
   "reply": "Reply",
@@ -32,7 +43,11 @@
     "depositWithoutTag": "Deposit without tag",
     "urgent": "Urgent",
     "normal": "Normal",
-    "high": "High"
+    "high": "High",
+    "empty": "All support tickets have been answered.",
+    "replyTitle": "Reply to ticket",
+    "replyMessage": "Message",
+    "sendReply": "Send reply"
   },
   "financial": {
     "networkAndWithdrawals": "Network and withdrawals",

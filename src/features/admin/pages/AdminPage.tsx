@@ -18,6 +18,10 @@ import {
   Card,
   CardContent,
   Chip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControlLabel,
   Grid,
   InputAdornment,
@@ -40,7 +44,6 @@ import { NAMESPACES } from '@app/i18n';
 import { PageHeading } from '@shared/ui';
 
 import { useAdminPage } from '../hooks';
-import { adminUsers } from '../model';
 import { styles } from './AdminPage.styles';
 
 function Metric({
@@ -79,15 +82,34 @@ export default function AdminPage() {
   const { t } = useTranslation(NAMESPACES.admin);
   const {
     changeTab,
+    closeTicket,
     filteredUsers,
+    minimumWithdrawal,
     networkEnabled,
+    openTicket,
+    provider,
     query,
+    reply,
+    resolveVerification,
+    reviewResult,
+    saveFinancialSettings,
     saved,
+    selectedTicket,
+    selectedUser,
+    setMinimumWithdrawal,
     setNetworkEnabled,
+    setProvider,
     setQuery,
+    setReply,
     setSaved,
+    setSelectedUser,
+    setTradingFee,
     setWithdrawEnabled,
+    submitReply,
     tab,
+    tickets,
+    tradingFee,
+    verificationRequests,
     withdrawEnabled,
   } = useAdminPage();
   const labels = ['dashboard', 'users', 'verification', 'tickets', 'financial'].map((key) =>
@@ -255,7 +277,9 @@ export default function AdminPage() {
                         />
                       </TableCell>
                       <TableCell>
-                        <Button size="small">{t('view')}</Button>
+                        <Button size="small" onClick={() => setSelectedUser(user)}>
+                          {t('view')}
+                        </Button>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -267,7 +291,12 @@ export default function AdminPage() {
       )}
       {tab === 2 && (
         <Grid container spacing={2}>
-          {adminUsers.slice(0, 2).map((user, index) => (
+          {reviewResult && (
+            <Grid size={12}>
+              <Alert severity="success">{t(`review.${reviewResult}`)}</Alert>
+            </Grid>
+          )}
+          {verificationRequests.map(({ user, documentType }) => (
             <Grid
               key={user.id}
               size={{
@@ -282,15 +311,24 @@ export default function AdminPage() {
                     <Box>
                       <Typography fontWeight={800}>{user.name}</Typography>
                       <Typography color="text.secondary" variant="body2">
-                        {index ? 'Passport' : 'National ID'} · {t('submittedToday')}
+                        {t(`documents.${documentType}`)} · {t('submittedToday')}
                       </Typography>
                     </Box>
                   </Stack>
                   <Stack direction="row" spacing={1} sx={styles.stack12}>
-                    <Button color="success" startIcon={<Check size={16} />} variant="contained">
+                    <Button
+                      color="success"
+                      startIcon={<Check size={16} />}
+                      variant="contained"
+                      onClick={() => resolveVerification(user.id, 'approved')}
+                    >
                       {t('approve')}
                     </Button>
-                    <Button color="error" variant="outlined">
+                    <Button
+                      color="error"
+                      variant="outlined"
+                      onClick={() => resolveVerification(user.id, 'rejected')}
+                    >
                       {t('reject')}
                     </Button>
                   </Stack>
@@ -298,49 +336,36 @@ export default function AdminPage() {
               </Card>
             </Grid>
           ))}
+          {verificationRequests.length === 0 && (
+            <Grid size={12}>
+              <Alert severity="info">{t('review.empty')}</Alert>
+            </Grid>
+          )}
         </Grid>
       )}
       {tab === 3 && (
         <Stack spacing={1.5}>
-          {[
-            {
-              id: '#1049',
-              normal: false,
-              priority: t('tickets.urgent'),
-              subject: t('tickets.withdrawalPending'),
-            },
-            {
-              id: '#1048',
-              normal: true,
-              priority: t('tickets.normal'),
-              subject: t('tickets.changePhone'),
-            },
-            {
-              id: '#1047',
-              normal: false,
-              priority: t('tickets.high'),
-              subject: t('tickets.depositWithoutTag'),
-            },
-          ].map(({ id, subject, priority, normal }) => (
-            <Card key={id}>
+          {tickets.map((ticket) => (
+            <Card key={ticket.id}>
               <CardContent sx={styles.cardContent13}>
                 <TicketCheck size={22} />
                 <Box>
-                  <Typography fontWeight={750}>{subject}</Typography>
+                  <Typography fontWeight={750}>{t(`tickets.${ticket.subjectKey}`)}</Typography>
                   <Typography color="text.secondary" variant="body2">
-                    {id} · hamed@example.com
+                    {ticket.id} · hamed@example.com
                   </Typography>
                 </Box>
                 <Chip
-                  label={priority}
-                  color={normal ? 'default' : 'warning'}
+                  label={t(`tickets.${ticket.priorityKey}`)}
+                  color={ticket.normal ? 'default' : 'warning'}
                   size="small"
                   sx={styles.chip14}
                 />
-                <Button>{t('reply')}</Button>
+                <Button onClick={() => openTicket(ticket)}>{t('reply')}</Button>
               </CardContent>
             </Card>
           ))}
+          {tickets.length === 0 && <Alert severity="success">{t('tickets.empty')}</Alert>}
         </Stack>
       )}
       {tab === 4 && (
@@ -383,7 +408,8 @@ export default function AdminPage() {
                   select
                   fullWidth
                   label={t('financial.paymentProvider')}
-                  defaultValue="manual"
+                  value={provider}
+                  onChange={(event) => setProvider(event.target.value)}
                   sx={styles.textField16}
                 >
                   <MenuItem value="manual">Manual settlement</MenuItem>
@@ -393,7 +419,7 @@ export default function AdminPage() {
                   variant="contained"
                   startIcon={<Settings2 size={17} />}
                   sx={styles.button17}
-                  onClick={() => setSaved(true)}
+                  onClick={saveFinancialSettings}
                 >
                   {t('financial.save')}
                 </Button>
@@ -419,13 +445,23 @@ export default function AdminPage() {
                 <TextField
                   fullWidth
                   label={t('financial.tradingFee')}
-                  defaultValue="0.08"
+                  value={tradingFee}
+                  onChange={(event) => {
+                    setTradingFee(event.target.value);
+                    setSaved(false);
+                  }}
+                  inputProps={{ inputMode: 'decimal' }}
                   sx={styles.textField19}
                 />
                 <TextField
                   fullWidth
                   label={t('financial.minimumWithdrawal')}
-                  defaultValue="10"
+                  value={minimumWithdrawal}
+                  onChange={(event) => {
+                    setMinimumWithdrawal(event.target.value);
+                    setSaved(false);
+                  }}
+                  inputProps={{ inputMode: 'decimal' }}
                   sx={styles.textField20}
                 />
               </CardContent>
@@ -433,6 +469,60 @@ export default function AdminPage() {
           </Grid>
         </Grid>
       )}
+      <Dialog open={Boolean(selectedUser)} onClose={() => setSelectedUser(null)} fullWidth maxWidth="sm">
+        <DialogTitle>{t('userDetails')}</DialogTitle>
+        <DialogContent>
+          {selectedUser && (
+            <Stack spacing={1.5} sx={styles.dialogContent}>
+              <Typography>
+                <strong>{t('table.user')}:</strong> {selectedUser.name}
+              </Typography>
+              <Typography>
+                <strong>{t('email')}:</strong> {selectedUser.email}
+              </Typography>
+              <Typography>
+                <strong>{t('table.level')}:</strong> {selectedUser.level}
+              </Typography>
+              <Typography>
+                <strong>{t('table.balance')}:</strong> {selectedUser.balance}
+              </Typography>
+              <Chip
+                color={selectedUser.status === 'active' ? 'success' : 'error'}
+                label={t(`statuses.${selectedUser.status}`)}
+                size="small"
+                sx={styles.dialogStatus}
+              />
+            </Stack>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setSelectedUser(null)}>{t('close')}</Button>
+        </DialogActions>
+      </Dialog>
+      <Dialog open={Boolean(selectedTicket)} onClose={closeTicket} fullWidth maxWidth="sm">
+        <DialogTitle>{t('tickets.replyTitle')}</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={styles.dialogContent}>
+            <Typography color="text.secondary">
+              {selectedTicket ? t(`tickets.${selectedTicket.subjectKey}`) : ''}
+            </Typography>
+            <TextField
+              autoFocus
+              label={t('tickets.replyMessage')}
+              multiline
+              minRows={4}
+              value={reply}
+              onChange={(event) => setReply(event.target.value)}
+            />
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeTicket}>{t('cancel')}</Button>
+          <Button variant="contained" disabled={reply.trim().length < 3} onClick={submitReply}>
+            {t('tickets.sendReply')}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
