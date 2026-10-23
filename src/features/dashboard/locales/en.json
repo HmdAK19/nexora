@@ -1,0 +1,19 @@
+{
+  "title": "Portfolio overview",
+  "greeting": "Hello, {{name}}",
+  "marketOpportunity": "Today’s market has fresh opportunities.",
+  "loadErrorTitle": "Could not load dashboard",
+  "loadErrorDescription": "Check that the API server is running, then try again.",
+  "portfolioHelper": "This month",
+  "availableHelper": "Ready to trade",
+  "ordersHelper": "Across 3 markets",
+  "tradesHelper": "Lifetime completed",
+  "portfolio": "Portfolio value",
+  "available": "Available balance",
+  "openOrders": "Open orders",
+  "trades": "Completed trades",
+  "performance": "Portfolio performance",
+  "allocation": "Allocation",
+  "activity": "Recent activity",
+  "markets": "Market movement"
+}

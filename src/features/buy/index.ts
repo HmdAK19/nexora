@@ -1,0 +1,1 @@
+export { BuyCryptoPage } from './pages';

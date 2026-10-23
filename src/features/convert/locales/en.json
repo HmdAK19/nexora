@@ -1,0 +1,10 @@
+{
+  "title": "Quick convert",
+  "description": "Convert assets instantly without using the order book.",
+  "youPay": "You pay",
+  "swap": "Swap assets",
+  "youReceive": "You receive",
+  "estimatedRate": "Estimated rate",
+  "success": "Demo conversion completed successfully.",
+  "submit": "Review and convert"
+}

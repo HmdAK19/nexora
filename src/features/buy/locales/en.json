@@ -1,0 +1,19 @@
+{
+  "title": "Buy crypto",
+  "description": "Choose the best way to fund your account or buy crypto.",
+  "tabs": { "express": "Express", "p2p": "P2P", "bank": "Bank deposit" },
+  "instant": "Instant purchase",
+  "spend": "You spend",
+  "receive": "You receive",
+  "estimated": "Estimated amount",
+  "success": "Demo order placed.",
+  "continue": "Continue purchase",
+  "fast": "Fast and transparent",
+  "rateNotice": "The final rate and fee are shown before confirmation.",
+  "merchantCompletion": "Verified merchant · {{completion}}% completion",
+  "buy": "Buy",
+  "depositTitle": "Deposit to Nexora account",
+  "depositWarning": "Only deposit from a bank account verified in your name.",
+  "bank": "Bank: Ayandeh Bank",
+  "iban": "IBAN: IR12 0620 0000 1020 1234 5600 01"
+}

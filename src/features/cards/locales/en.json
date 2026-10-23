@@ -1,0 +1,13 @@
+{
+  "title": "Bank cards",
+  "description": "Manage your verified bank cards and accounts.",
+  "add": "Add card",
+  "delete": "Delete card",
+  "empty": "You have not added a bank card yet.",
+  "dialogTitle": "Add bank card",
+  "ownershipNotice": "The card must belong to the Nexora account owner.",
+  "cardNumber": "Card number",
+  "iban": "IBAN",
+  "cancel": "Cancel",
+  "save": "Save card"
+}

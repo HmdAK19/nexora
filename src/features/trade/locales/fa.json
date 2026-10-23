@@ -1,0 +1,12 @@
+{
+  "title": "معامله حرفه‌ای",
+  "buy": "خرید",
+  "sell": "فروش",
+  "price": "قیمت",
+  "amount": "مقدار",
+  "total": "مجموع",
+  "submitBuy": "خرید {{symbol}}",
+  "submitSell": "فروش {{symbol}}",
+  "orderBook": "دفتر سفارش",
+  "recent": "معاملات اخیر"
+}

@@ -1,0 +1,26 @@
+export const styles = {
+  card: { overflow: 'hidden' },
+  tabs: { borderBottom: '1px solid', borderColor: 'divider', px: 2 },
+  loading: { p: 2 },
+  alert: { m: 2 },
+  empty: {
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 0.5,
+    py: 4,
+    textAlign: 'center',
+  },
+  scroller: { overflowX: 'auto' },
+  table: { minWidth: 850 },
+  row: {
+    alignItems: 'center',
+    display: 'grid',
+    gap: 2,
+    gridTemplateColumns: '.8fr .7fr .7fr 1fr .8fr .7fr .8fr 36px',
+    px: 2.5,
+    py: 1.25,
+  },
+  dataRow: { borderTop: '1px solid', borderColor: 'divider' },
+  status: { justifySelf: 'start' },
+};

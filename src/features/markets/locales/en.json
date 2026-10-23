@@ -1,0 +1,10 @@
+{
+  "title": "Markets",
+  "all": "All markets",
+  "asset": "Asset",
+  "price": "Last price",
+  "change": "24h change",
+  "volume": "Volume",
+  "action": "Action",
+  "trade": "Trade"
+}

@@ -1,0 +1,11 @@
+{
+  "title": "Orders",
+  "open": "Open",
+  "history": "History",
+  "pair": "Pair",
+  "side": "Side",
+  "amount": "Amount",
+  "filled": "Filled",
+  "status": "Status",
+  "empty": "No orders yet"
+}

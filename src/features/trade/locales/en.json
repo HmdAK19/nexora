@@ -1,0 +1,12 @@
+{
+  "title": "Pro trading",
+  "buy": "Buy",
+  "sell": "Sell",
+  "price": "Price",
+  "amount": "Amount",
+  "total": "Total",
+  "submitBuy": "Buy {{symbol}}",
+  "submitSell": "Sell {{symbol}}",
+  "orderBook": "Order book",
+  "recent": "Recent trades"
+}

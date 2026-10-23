@@ -1,0 +1,19 @@
+{
+  "title": "نمای کلی دارایی‌ها",
+  "greeting": "سلام، {{name}}",
+  "marketOpportunity": "بازار امروز فرصت‌های تازه‌ای دارد.",
+  "loadErrorTitle": "داشبورد بارگذاری نشد",
+  "loadErrorDescription": "از فعال بودن سرور API مطمئن شوید و دوباره تلاش کنید.",
+  "portfolioHelper": "در این ماه",
+  "availableHelper": "آماده معامله",
+  "ordersHelper": "در ۳ بازار",
+  "tradesHelper": "مجموع معاملات تکمیل‌شده",
+  "portfolio": "ارزش کل دارایی",
+  "available": "موجودی قابل معامله",
+  "openOrders": "سفارش‌های باز",
+  "trades": "معاملات انجام‌شده",
+  "performance": "روند دارایی",
+  "allocation": "ترکیب سبد",
+  "activity": "فعالیت‌های اخیر",
+  "markets": "حرکت بازار"
+}

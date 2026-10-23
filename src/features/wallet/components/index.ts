@@ -1,0 +1,1 @@
+export { WalletTransferDialog } from './WalletTransferDialog';
