@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { BadgeDollarSign, Building2, Zap } from 'lucide-react';
 import {
   Alert,
@@ -29,6 +30,7 @@ const rates: Record<string, number> = {
 };
 export default function BuyCryptoPage() {
   const { t } = useTranslation(NAMESPACES.buy);
+  const navigate = useNavigate();
   const [tab, setTab] = useState(0);
   const [amount, setAmount] = useState('1000');
   const [asset, setAsset] = useState('USDT');
@@ -131,7 +133,11 @@ export default function BuyCryptoPage() {
       )}
       {tab === 1 && (
         <Grid container spacing={2}>
-          {['USDT · 0.999 USD', 'BTC · 67,980 USD', 'ETH · 3,625 USD'].map((offer, index) => (
+          {[
+            { asset: 'USDT', offer: 'USDT · 0.999 USD' },
+            { asset: 'BTC', offer: 'BTC · 67,980 USD' },
+            { asset: 'ETH', offer: 'ETH · 3,625 USD' },
+          ].map(({ asset: offerAsset, offer }, index) => (
             <Grid
               key={offer}
               size={{
@@ -148,7 +154,12 @@ export default function BuyCryptoPage() {
                   <Typography color="text.secondary" variant="body2">
                     {t('merchantCompletion', { completion: 98 + index / 2 })}
                   </Typography>
-                  <Button fullWidth variant="outlined" sx={styles.button6}>
+                  <Button
+                    fullWidth
+                    variant="outlined"
+                    sx={styles.button6}
+                    onClick={() => navigate(`/trade/${offerAsset}-USDT`)}
+                  >
                     {t('buy')}
                   </Button>
                 </CardContent>
