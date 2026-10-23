@@ -1,4 +1,7 @@
 export const styles = {
+  dialogContent: {
+    pt: 1,
+  },
   typography1: {
     mt: 0.75,
   },
