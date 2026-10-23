@@ -1,0 +1,41 @@
+{
+  "menu": "Main menu",
+  "dashboard": "Dashboard",
+  "markets": "Markets",
+  "trade": "Trade",
+  "wallet": "Wallet",
+  "orders": "Orders",
+  "buy": "Buy crypto",
+  "convert": "Quick convert",
+  "verification": "Verification",
+  "cards": "Bank cards",
+  "referrals": "Referrals",
+  "support": "Support",
+  "admin": "Administration",
+  "settings": "Settings",
+  "tradingFee": "0.08% trading fee",
+  "languageSwitch": "فارسی",
+  "signOut": "Sign out",
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "kycTitle": "Complete identity verification",
+    "kycBody": "Submit your documents to increase withdrawal limits.",
+    "orderTitle": "BTC order placed",
+    "orderBody": "Your limit order is now on the order book.",
+    "securityTitle": "Security settings",
+    "securityBody": "Enable two-factor authentication for more security."
+  },
+  "search": {
+    "dashboard": "Account overview",
+    "markets": "All market prices",
+    "bitcoin": "Trade Bitcoin",
+    "ethereum": "Trade Ethereum",
+    "solana": "Trade Solana",
+    "wallet": "Balances and transfers",
+    "verification": "Complete identity details",
+    "support": "Support tickets",
+    "settings": "Security and preferences",
+    "empty": "No results found"
+  }
+}

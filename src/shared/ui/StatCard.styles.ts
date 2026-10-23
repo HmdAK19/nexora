@@ -1,0 +1,45 @@
+export const statCardStyles = (accent: string) => ({
+  card1: {
+    minHeight: 145,
+    overflow: 'hidden',
+    position: 'relative',
+  },
+  box2: {
+    background: accent,
+    borderRadius: '50%',
+    filter: 'blur(44px)',
+    height: 78,
+    opacity: 0.12,
+    position: 'absolute',
+    right: -22,
+    top: -24,
+    width: 78,
+  },
+  cardContent3: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 1.25,
+    height: '100%',
+    p: 2.25,
+  },
+  box4: {
+    alignItems: 'center',
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
+  box5: {
+    bgcolor: `${accent}1f`,
+    borderRadius: 2.5,
+    color: accent,
+    display: 'grid',
+    height: 38,
+    placeItems: 'center',
+    width: 38,
+  },
+  typography6: {
+    direction: 'ltr',
+    fontSize: 24,
+    fontWeight: 780,
+    textAlign: 'start',
+  },
+});
