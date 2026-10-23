@@ -12,6 +12,10 @@ import {
   Button,
   Checkbox,
   CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   FormControlLabel,
   IconButton,
   InputAdornment,
@@ -26,6 +30,7 @@ import { getApiErrorMessage } from '@shared/api';
 import { BrandLogo } from '@shared/ui';
 import { NAMESPACES } from '@app/i18n';
 
+import { authApi } from '../api';
 import { useAuth } from '../context';
 
 import { styles } from './LoginPage.styles';
@@ -117,6 +122,9 @@ export default function LoginPage() {
   const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [forgotOpen, setForgotOpen] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotStatus, setForgotStatus] = useState<'idle' | 'pending' | 'sent' | 'error'>('idle');
   const schema = useMemo(() => createSchema(t), [t]);
   const {
     control,
@@ -162,6 +170,25 @@ export default function LoginPage() {
     setValue('password', 'Nexora123!', {
       shouldValidate: true,
     });
+  };
+
+  const closeForgotPassword = () => {
+    setForgotOpen(false);
+    setForgotEmail('');
+    setForgotStatus('idle');
+  };
+
+  const requestPasswordReset = async () => {
+    if (!/^\S+@\S+\.\S+$/.test(forgotEmail)) return;
+
+    setForgotStatus('pending');
+
+    try {
+      await authApi.requestPasswordReset({ email: forgotEmail });
+      setForgotStatus('sent');
+    } catch {
+      setForgotStatus('error');
+    }
   };
   return (
     <Box sx={styles.box5}>
@@ -270,7 +297,13 @@ export default function LoginPage() {
                     />
                   )}
                 />
-                <Link component="button" type="button" underline="hover" variant="body2">
+                <Link
+                  component="button"
+                  type="button"
+                  underline="hover"
+                  variant="body2"
+                  onClick={() => setForgotOpen(true)}
+                >
                   {t('forgot')}
                 </Link>
               </Box>
@@ -296,6 +329,40 @@ export default function LoginPage() {
           <ExchangeGlobe />
         </Box>
       </Box>
+      <Dialog open={forgotOpen} onClose={closeForgotPassword} fullWidth maxWidth="xs">
+        <DialogTitle>{t('forgotTitle')}</DialogTitle>
+        <DialogContent>
+          <Stack spacing={2} sx={{ pt: 1 }}>
+            <Typography color="text.secondary" variant="body2">
+              {t('forgotDescription')}
+            </Typography>
+            <TextField
+              autoFocus
+              autoComplete="email"
+              error={forgotStatus === 'error'}
+              label={t('forgotEmail')}
+              type="email"
+              value={forgotEmail}
+              onChange={(event) => {
+                setForgotEmail(event.target.value);
+                setForgotStatus('idle');
+              }}
+            />
+            {forgotStatus === 'sent' && <Alert severity="success">{t('forgotSent')}</Alert>}
+            {forgotStatus === 'error' && <Alert severity="error">{t('forgotError')}</Alert>}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeForgotPassword}>{t('cancel')}</Button>
+          <Button
+            variant="contained"
+            disabled={forgotStatus === 'pending' || !/^\S+@\S+\.\S+$/.test(forgotEmail)}
+            onClick={() => void requestPasswordReset()}
+          >
+            {forgotStatus === 'pending' ? <CircularProgress color="inherit" size={20} /> : t('forgotSubmit')}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

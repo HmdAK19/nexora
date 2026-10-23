@@ -4,12 +4,13 @@ This document describes the contract expected from the separately maintained bac
 
 ## Authentication
 
-| Method | Path            | Auth   | Purpose                                                     |
-| ------ | --------------- | ------ | ----------------------------------------------------------- |
-| POST   | `/auth/login`   | No     | Verify credentials, return access token, set refresh cookie |
-| POST   | `/auth/refresh` | Cookie | Rotate refresh token and return a new access token          |
-| POST   | `/auth/logout`  | Cookie | Revoke refresh session and clear cookie                     |
-| GET    | `/auth/me`      | Bearer | Return current user                                         |
+| Method | Path                    | Auth   | Purpose                                                                 |
+| ------ | ----------------------- | ------ | ----------------------------------------------------------------------- |
+| POST   | `/auth/login`           | No     | Verify credentials, return access token, set refresh cookie             |
+| POST   | `/auth/refresh`         | Cookie | Rotate refresh token and return a new access token                      |
+| POST   | `/auth/logout`          | Cookie | Revoke refresh session and clear cookie                                 |
+| POST   | `/auth/forgot-password` | No     | Request password reset instructions without revealing account existence |
+| GET    | `/auth/me`              | Bearer | Return current user                                                     |
 
 Access tokens expire after 15 minutes. Refresh tokens expire after seven days and are single-use: a successful refresh invalidates the previous token.
 
