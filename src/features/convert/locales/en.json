@@ -1,10 +1,52 @@
 {
   "title": "Quick convert",
-  "description": "Convert assets instantly without using the order book.",
+  "description": "Convert available assets with a short-lived server quote.",
   "youPay": "You pay",
+  "amount": "Amount",
+  "fromAsset": "Source asset",
   "swap": "Swap assets",
   "youReceive": "You receive",
-  "estimatedRate": "Estimated rate",
-  "success": "Demo conversion completed successfully.",
-  "submit": "Review and convert"
+  "destinationAsset": "Destination asset",
+  "liveQuote": "Server-priced conversion",
+  "liveQuoteDescription": "The final rate, fee and received amount are locked before you confirm.",
+  "submit": "Get conversion quote",
+  "gettingQuote": "Getting quote…",
+  "cancel": "Cancel",
+  "confirm": "Confirm conversion",
+  "processing": "Converting…",
+  "validation": {
+    "hint": "Use up to {{decimals}} decimal places.",
+    "invalid": "Enter a valid amount.",
+    "minimum": "The amount must be at least {{minimum}}.",
+    "maximum": "The maximum amount is {{maximum}}.",
+    "precision": "Use no more than 8 decimal places."
+  },
+  "quote": {
+    "title": "Review conversion",
+    "description": "Review the server-issued quote. The browser cannot alter the authoritative rate.",
+    "pay": "Debit",
+    "rate": "Rate",
+    "fee": "Fee",
+    "receive": "Credit",
+    "expiresIn": "This quote expires in {{seconds}} seconds.",
+    "expired": "This quote has expired. Request a new quote to continue.",
+    "refresh": "Refresh quote"
+  },
+  "order": {
+    "pending": "Your conversion was accepted and is being processed.",
+    "completed": "The conversion completed and your wallet was refreshed.",
+    "failed": "The conversion could not be completed.",
+    "reference": "Conversion reference",
+    "newConversion": "Start a new conversion"
+  },
+  "errors": {
+    "network": "The conversion status could not be confirmed. Check your connection and retry safely.",
+    "unexpected": "The conversion could not be completed. Please try again.",
+    "QUOTE_EXPIRED": "The conversion quote expired. Request a fresh quote.",
+    "QUOTE_NOT_FOUND": "This quote is unavailable. Request a fresh quote.",
+    "INSUFFICIENT_BALANCE": "Your available source-asset balance is insufficient.",
+    "AMOUNT_TOO_SMALL": "This amount is too small for the selected conversion pair.",
+    "CONVERSION_BLOCKED": "This conversion is not available for your account.",
+    "RATE_LIMITED": "Too many conversion requests were sent. Wait a moment and try again."
+  }
 }
