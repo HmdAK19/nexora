@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
@@ -21,11 +21,14 @@ import {
 
 import { useMarketFavorites, useMarketStream } from '@features/markets';
 import { useCreateOrder } from '@features/orders';
+import { useWalletAssets } from '@features/wallet';
 import { useTransientState } from '@shared/hooks';
 import { formatCurrency, formatPercent } from '@shared/lib';
 import { AssetAvatar } from '@shared/ui';
 
 import { CandlestickChart, OrderBook, TradeOrdersPanel } from '../components';
+import { useTradingMarket } from '../hooks';
+import type { Timeframe } from '../lib';
 import { styles } from './TradePage.styles';
 
 interface OrderFormValues {
@@ -36,35 +39,26 @@ const schema = yup.object({
   price: yup.number().positive().required(),
   amount: yup.number().positive().max(50).required(),
 });
-const makeBook = (center: number, side: 'buy' | 'sell') =>
-  Array.from(
-    {
-      length: 10,
-    },
-    (_, index) => ({
-      price: center * (1 + (side === 'sell' ? 1 : -1) * (index + 1) * 0.0008),
-      amount: Number((0.02 + ((index * 0.017) % 0.18)).toFixed(4)),
-    })
-  );
 export default function TradePage() {
   const { symbol = 'BTC-USDT' } = useParams();
   const { t } = useTranslation();
   const [side, setSide] = useState<'buy' | 'sell'>('buy');
   const [orderType, setOrderType] = useState<'limit' | 'market'>('limit');
   const [chartTab, setChartTab] = useState(0);
+  const [timeframe, setTimeframe] = useState<Timeframe>('15m');
   const [notice, showNotice] = useTransientState<string | null>(null);
   const { isFavorite, toggleFavorite } = useMarketFavorites();
   const tick = useMarketStream(symbol);
+  const trading = useTradingMarket(symbol, timeframe);
+  const wallet = useWalletAssets();
   const createOrder = useCreateOrder();
-  const price = tick?.price ?? 67_842.29;
-  const base = symbol.split('-')[0] ?? 'BTC';
-  const book = useMemo(
-    () => ({
-      asks: makeBook(price, 'sell').reverse(),
-      bids: makeBook(price, 'buy'),
-    }),
-    [price]
-  );
+  const market = trading.market.data;
+  const price = tick?.price ?? market?.lastPrice ?? 0;
+  const base = market?.baseAsset ?? symbol.split('-')[0] ?? 'BTC';
+  const quote = market?.quoteAsset ?? symbol.split('-')[1] ?? 'USDT';
+  const book = market?.depth ?? { asks: [], bids: [], sequence: 0, symbol };
+  const available =
+    wallet.data?.find((asset) => asset.symbol === (side === 'buy' ? quote : base))?.available ?? 0;
   const {
     control,
     handleSubmit,
@@ -85,14 +79,18 @@ export default function TradePage() {
     if (tick) setValue('price', Number(tick.price.toFixed(2)));
   }, [setValue, tick]);
   const submit = async (values: OrderFormValues) => {
-    await createOrder.mutateAsync({
-      symbol,
-      side,
-      type: orderType,
-      ...values,
-      price: orderType === 'market' ? price : values.price,
-    });
-    showNotice(`${side === 'buy' ? 'Buy' : 'Sell'} order placed successfully`);
+    try {
+      await createOrder.mutateAsync({
+        symbol,
+        side,
+        type: orderType,
+        ...values,
+        price: orderType === 'market' ? price : values.price,
+      });
+      showNotice(t('trade.orderPlaced'));
+    } catch {
+      showNotice(t('trade.orderFailed'));
+    }
   };
   return (
     <Stack spacing={2}>
@@ -104,7 +102,7 @@ export default function TradePage() {
               {symbol.replace('-', ' / ')}
             </Typography>
             <Typography color="text.secondary" variant="caption">
-              Bitcoin / Tether
+              {market ? `${market.name} / ${market.quoteAsset}` : symbol.replace('-', ' / ')}
             </Typography>
           </Box>
           <IconButton
@@ -129,17 +127,17 @@ export default function TradePage() {
               24h change
             </Typography>
             <Typography
-              color={(tick?.change24h ?? 2.47) >= 0 ? 'success.main' : 'error.main'}
+              color={(tick?.change24h ?? market?.change24h ?? 0) >= 0 ? 'success.main' : 'error.main'}
               fontWeight={750}
             >
-              {formatPercent(tick?.change24h ?? 2.47)}
+              {formatPercent(tick?.change24h ?? market?.change24h ?? 0)}
             </Typography>
           </Box>
           <Box sx={styles.box4}>
             <Typography color="text.secondary" variant="caption">
               24h volume
             </Typography>
-            <Typography fontWeight={750}>$1.82B</Typography>
+            <Typography fontWeight={750}>{formatCurrency(market?.volume24h ?? 0)}</Typography>
           </Box>
         </Box>
       </Box>
@@ -160,26 +158,33 @@ export default function TradePage() {
           <CardContent sx={styles.cardContent11}>
             <Box sx={styles.box12}>
               <Tabs value={chartTab} onChange={(_, value: number) => setChartTab(value)}>
-                <Tab label="Trading chart" />
-                <Tab label="Market info" />
+                <Tab label={t('trade.chart')} />
+                <Tab label={t('trade.marketInfo')} />
               </Tabs>
             </Box>
             {chartTab === 0 ? (
-              <CandlestickChart />
+              trading.candles.data ? (
+                <CandlestickChart
+                  candles={trading.candles.data}
+                  onTimeframeChange={setTimeframe}
+                  symbol={symbol}
+                  timeframe={timeframe}
+                />
+              ) : (
+                <Box sx={{ minHeight: 430, display: 'grid', placeItems: 'center' }}>
+                  {t('trade.loadingChart')}
+                </Box>
+              )
             ) : (
               <Box sx={styles.marketInfo}>
                 <Typography variant="h3">{symbol.replace('-', ' / ')}</Typography>
                 <Box sx={styles.marketInfoGrid}>
-                  <MarketMetric label="24h high" value={formatCurrency(price * 1.031)} />
-                  <MarketMetric label="24h low" value={formatCurrency(price * 0.974)} />
-                  <MarketMetric label="24h volume" value="$1.82B" />
-                  <MarketMetric label="Market rank" value="#1" />
-                  <MarketMetric label="Circulating supply" value="19.7M BTC" />
-                  <MarketMetric label="Market cap" value="$1.34T" />
+                  <MarketMetric label={t('trade.high24h')} value={formatCurrency(market?.high24h ?? 0)} />
+                  <MarketMetric label={t('trade.low24h')} value={formatCurrency(market?.low24h ?? 0)} />
+                  <MarketMetric label={t('trade.volume24h')} value={formatCurrency(market?.volume24h ?? 0)} />
                 </Box>
                 <Typography color="text.secondary" variant="body2">
-                  Bitcoin is traded continuously. Prices and statistics shown here are demo market data
-                  updated by the live stream.
+                  {t('trade.marketDescription')}
                 </Typography>
               </Box>
             )}
@@ -202,13 +207,16 @@ export default function TradePage() {
               onChange={(_, value: 'limit' | 'market') => setOrderType(value)}
               sx={styles.orderTypeTabs}
             >
-              <Tab label="Limit" value="limit" />
-              <Tab label="Market" value="market" />
+              <Tab label={t('trade.limit')} value="limit" />
+              <Tab label={t('trade.market')} value="market" />
             </Tabs>
             <Box component="form" onSubmit={(event) => void handleSubmit(submit)(event)}>
               <Stack spacing={2}>
                 <Typography color="text.secondary" variant="body2">
-                  Available <b style={styles.availableValue}>$24,320.50</b>
+                  {t('trade.available')}{' '}
+                  <b style={styles.availableValue}>
+                    {available.toLocaleString()} {side === 'buy' ? quote : base}
+                  </b>
                 </Typography>
                 <Controller
                   name="price"
@@ -218,12 +226,12 @@ export default function TradePage() {
                       {...field}
                       disabled={orderType === 'market'}
                       error={Boolean(errors.price)}
-                      label={orderType === 'market' ? 'Market price' : t('trade.price')}
+                      label={orderType === 'market' ? t('trade.marketPrice') : t('trade.price')}
                       type="number"
                       value={orderType === 'market' ? price.toFixed(2) : field.value}
                       slotProps={{
                         input: {
-                          endAdornment: 'USDT',
+                          endAdornment: quote,
                         },
                       }}
                     />
@@ -251,7 +259,15 @@ export default function TradePage() {
                     <Button
                       key={percent}
                       onClick={() =>
-                        setValue('amount', Number(((24_320.5 * percent) / 100 / orderPrice).toFixed(6)))
+                        setValue(
+                          'amount',
+                          Number(
+                            (side === 'buy'
+                              ? (available * percent) / 100 / Math.max(orderPrice, Number.EPSILON)
+                              : (available * percent) / 100
+                            ).toFixed(8)
+                          )
+                        )
                       }
                       size="small"
                       variant="outlined"

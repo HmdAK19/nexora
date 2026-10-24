@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
 import {
   Alert,
@@ -20,6 +21,7 @@ import { formatCurrency } from '@shared/lib';
 import { styles } from './TradeOrdersPanel.styles';
 
 export function TradeOrdersPanel({ symbol }: { symbol: string }) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState(0);
   const ordersQuery = useOrders();
   const cancelOrder = useCancelOrder();
@@ -30,8 +32,8 @@ export function TradeOrdersPanel({ symbol }: { symbol: string }) {
   return (
     <Card sx={styles.card}>
       <Tabs value={tab} onChange={(_, value: number) => setTab(value)} sx={styles.tabs}>
-        <Tab label="Open orders" />
-        <Tab label="Order history" />
+        <Tab label={t('trade.openOrders')} />
+        <Tab label={t('trade.orderHistory')} />
       </Tabs>
       {ordersQuery.isLoading && (
         <Stack spacing={1} sx={styles.loading}>
@@ -45,27 +47,38 @@ export function TradeOrdersPanel({ symbol }: { symbol: string }) {
           sx={styles.alert}
           action={
             <Button color="inherit" onClick={() => void ordersQuery.refetch()} size="small">
-              Retry
+              {t('trade.retry')}
             </Button>
           }
         >
-          Orders could not be loaded.
+          {t('trade.ordersLoadError')}
         </Alert>
       )}
       {!ordersQuery.isLoading && !ordersQuery.isError && orders.length === 0 && (
         <Box sx={styles.empty}>
           <Typography fontWeight={700}>
-            No {tab === 0 ? 'open orders' : 'order history'} for {symbol}
+            {t(tab === 0 ? 'trade.noOpenOrders' : 'trade.noOrderHistory', { symbol })}
           </Typography>
           <Typography color="text.secondary" variant="body2">
-            Orders placed from this panel will appear here.
+            {t('trade.ordersEmptyDescription')}
           </Typography>
         </Box>
       )}
       {orders.length > 0 && (
         <Box sx={styles.scroller}>
           <Box sx={styles.table}>
-            <OrderHeader />
+            <OrderHeader
+              labels={[
+                t('trade.time'),
+                t('trade.type'),
+                t('trade.side'),
+                t('trade.price'),
+                t('trade.amount'),
+                t('trade.filled'),
+                t('trade.status'),
+                '',
+              ]}
+            />
             {orders.map((order) => (
               <Box key={order.id} sx={[styles.row, styles.dataRow]}>
                 <Typography variant="caption">
@@ -111,10 +124,10 @@ export function TradeOrdersPanel({ symbol }: { symbol: string }) {
   );
 }
 
-function OrderHeader() {
+function OrderHeader({ labels }: { labels: string[] }) {
   return (
     <Box sx={styles.row}>
-      {['Time', 'Type', 'Side', 'Price', 'Amount', 'Filled', 'Status', ''].map((label) => (
+      {labels.map((label) => (
         <Typography color="text.secondary" key={label} variant="caption">
           {label}
         </Typography>

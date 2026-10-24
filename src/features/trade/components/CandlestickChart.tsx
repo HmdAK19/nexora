@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 import { Box, Button, Divider, IconButton, Menu, MenuItem, Stack, Tooltip, Typography } from '@mui/material';
 
-import { chartTimeframes, generateCandles, linePath, movingAverage, type Timeframe } from '../lib';
+import { chartTimeframes, linePath, movingAverage, type Candle, type Timeframe } from '../lib';
 import { styles } from './CandlestickChart.styles';
 
 type DrawingTool = 'cursor' | 'trend' | 'horizontal' | 'measure' | 'text';
@@ -60,8 +60,14 @@ function ToolButton({
     </Tooltip>
   );
 }
-export function CandlestickChart() {
-  const [timeframe, setTimeframe] = useState<Timeframe>('15m');
+interface CandlestickChartProps {
+  candles: Candle[];
+  onTimeframeChange: (timeframe: Timeframe) => void;
+  symbol: string;
+  timeframe: Timeframe;
+}
+
+export function CandlestickChart({ candles, onTimeframeChange, symbol, timeframe }: CandlestickChartProps) {
   const [tool, setTool] = useState<DrawingTool>('cursor');
   const [zoom, setZoom] = useState(1);
   const [hover, setHover] = useState<Point | null>(null);
@@ -72,7 +78,6 @@ export function CandlestickChart() {
   const [showBands, setShowBands] = useState(true);
   const [settingsAnchor, setSettingsAnchor] = useState<HTMLElement | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const candles = useMemo(() => generateCandles(timeframe), [timeframe]);
   const visibleCount = Math.max(28, Math.round(candles.length / zoom));
   const visible = useMemo(() => candles.slice(-visibleCount), [candles, visibleCount]);
   const bounds = useMemo(() => {
@@ -215,7 +220,7 @@ export function CandlestickChart() {
               key={item}
               aria-pressed={timeframe === item}
               color={timeframe === item ? 'primary' : 'inherit'}
-              onClick={() => setTimeframe(item)}
+              onClick={() => onTimeframeChange(item)}
               size="small"
               sx={styles.button8}
             >
@@ -319,7 +324,7 @@ export function CandlestickChart() {
             viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
             preserveAspectRatio="none"
             role="img"
-            aria-label="Interactive BTC USDT candlestick chart"
+            aria-label={`Interactive ${symbol.replace('-', ' ')} candlestick chart`}
             onPointerMove={(event) => setHover(eventPoint(event))}
             onPointerLeave={() => setHover(null)}
             onClick={handleClick}

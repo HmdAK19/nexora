@@ -44,6 +44,10 @@ export interface Order {
   filled: number;
   status: 'open' | 'filled' | 'cancelled';
   createdAt: string;
+  updatedAt: string;
+  averagePrice: number;
+  feeAmount: number;
+  quoteAmount: number;
 }
 export interface DashboardData {
   portfolioValue: number;

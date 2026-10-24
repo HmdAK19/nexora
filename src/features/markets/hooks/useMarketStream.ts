@@ -6,6 +6,27 @@ interface PriceTick {
   change24h: number;
   timestamp: number;
 }
+
+function parseTick(value: unknown, expectedSymbol: string): PriceTick | null {
+  if (typeof value !== 'object' || value === null) return null;
+
+  const tick = value as Record<string, unknown>;
+
+  if (
+    tick.symbol !== expectedSymbol ||
+    typeof tick.price !== 'number' ||
+    !Number.isFinite(tick.price) ||
+    tick.price <= 0 ||
+    typeof tick.change24h !== 'number' ||
+    !Number.isFinite(tick.change24h) ||
+    typeof tick.timestamp !== 'number' ||
+    !Number.isFinite(tick.timestamp)
+  ) {
+    return null;
+  }
+
+  return tick as unknown as PriceTick;
+}
 export const useMarketStream = (symbol: string) => {
   const [tick, setTick] = useState<PriceTick | null>(null);
   const retryRef = useRef(0);
@@ -21,7 +42,10 @@ export const useMarketStream = (symbol: string) => {
       };
       socket.onmessage = (event) => {
         try {
-          setTick(JSON.parse(event.data) as PriceTick);
+          const nextTick = parseTick(JSON.parse(event.data) as unknown, symbol);
+
+          if (nextTick)
+            setTick((current) => (!current || nextTick.timestamp > current.timestamp ? nextTick : current));
         } catch {
           /* Ignore malformed ticks at the network boundary. */
         }
