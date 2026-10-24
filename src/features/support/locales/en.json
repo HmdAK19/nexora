@@ -1,16 +1,52 @@
 {
   "title": "Support center",
-  "description": "Create requests and track support responses.",
-  "newTicket": "New ticket",
-  "dialogTitle": "Create support ticket",
-  "subject": "Subject",
-  "category": "Category",
-  "wallet": "Wallet",
-  "account": "Account",
-  "descriptionField": "Description",
-  "cancel": "Cancel",
-  "submit": "Submit ticket",
-  "answered": "Answered",
-  "underReview": "Under review",
-  "sampleSubject": "Crypto deposit follow-up"
+  "description": "Create requests, continue conversations, and track support responses.",
+  "actions": {
+    "newTicket": "New ticket",
+    "cancel": "Cancel",
+    "submit": "Submit ticket",
+    "submitting": "Submitting…",
+    "close": "Close",
+    "closeTicket": "Close ticket",
+    "closing": "Closing…",
+    "sendReply": "Send reply",
+    "sending": "Sending…",
+    "retry": "Try again"
+  },
+  "create": { "title": "Create support ticket" },
+  "details": { "title": "Ticket details" },
+  "fields": {
+    "subject": "Subject",
+    "category": "Category",
+    "message": "Describe your request",
+    "reply": "Write a reply"
+  },
+  "category": {
+    "wallet": "Wallet",
+    "account": "Account",
+    "trading": "Trading",
+    "verification": "Verification",
+    "security": "Security"
+  },
+  "status": {
+    "open": "Open",
+    "waiting_for_support": "Waiting for support",
+    "waiting_for_user": "Waiting for you",
+    "closed": "Closed"
+  },
+  "author": { "user": "You", "support": "Nexora support" },
+  "empty": {
+    "title": "No support tickets yet",
+    "description": "Create a ticket when you need help and continue the conversation here."
+  },
+  "errors": {
+    "loadTitle": "Tickets could not be loaded",
+    "loadDescription": "Check your connection and try again.",
+    "network": "The support service is unavailable. Check your connection and try again.",
+    "unexpected": "The request could not be completed. Try again.",
+    "VALIDATION_ERROR": "Review the entered information and try again.",
+    "RATE_LIMITED": "Too many requests were sent. Wait a while and try again.",
+    "TICKET_NOT_FOUND": "This ticket is unavailable or you no longer have access to it.",
+    "TICKET_CLOSED": "This ticket is closed and cannot receive new replies."
+  }
 }
