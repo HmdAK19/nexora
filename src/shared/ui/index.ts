@@ -1,4 +1,5 @@
 export { AssetAvatar } from './AssetAvatar';
+export { DetailRow } from './DetailRow';
 export { BrandLogo } from './BrandLogo';
 export { PageFeedback } from './PageFeedback';
 export { PageHeading } from './PageHeading';
