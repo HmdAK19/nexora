@@ -1,23 +1,27 @@
 # Nexora Digital Asset Exchange
 
-Nexora is a bilingual cryptocurrency exchange frontend built from the supplied Cryptolly Figma screenshots. It provides a responsive trading interface and integrates with an API through `/api` and `/ws`.
+Nexora is a bilingual, responsive digital-asset exchange application based on the supplied Cryptolly designs. The tracked repository contains the React frontend. A runnable reference API exists under `server/`, but that directory is intentionally ignored because it will become a separate repository.
 
-> This repository is an engineering foundation and working demo. Before handling real funds, replace the in-memory repositories and simulated market feed with audited custody, ledger, KYC/AML, pricing, and order-matching infrastructure.
+> Nexora is currently an engineering-grade demo, not a licensed production exchange. The reference server uses in-memory state and simulated market data. Real funds require durable accounting, custody, payment, KYC/AML and operational infrastructure described in the security documentation.
 
-## Included
+## Current capabilities
 
-- React 19 + TypeScript + Vite, feature-based architecture
-- Material UI design system with dark/light themes and RTL/LTR
-- TanStack Query, Axios interceptors, optimistic order cancellation
-- React Hook Form + Yup typed validation
-- Lazy-loaded routes and explicit vendor chunks
-- Virtualized, infinite-loading market list
-- WebSocket price stream with exponential reconnect
-- Redux Toolkit + Redux Persist for durable UI preferences
-- i18next Persian and English localization
-- Installable PWA with market-data runtime caching
-- Short-lived access tokens kept in memory with refresh-cookie support
-- Vitest unit and component tests
+- Authentication with in-memory access tokens and HttpOnly refresh-cookie sessions
+- Portfolio dashboard, allocation/performance charts and recent activity
+- Paginated and virtualized markets, search, filters and local favorites
+- Responsive trade terminal with validated streaming ticks, API-backed OHLCV/depth, balance-aware idempotent orders, chart tools and order management
+- Wallet balances, transaction history, deposits and withdrawals
+- Server-priced express purchase with expiring quotes and idempotent execution
+- Server-priced asset conversion with atomic debit/credit semantics and safe retry
+- Persistent support-ticket conversations plus orders, settings, verification, cards, referrals and administration views
+- Persian/English localization with automatic RTL/LTR layout
+- Dark/light themes, responsive sidebar and installable PWA
+
+The exact integration status of every screen is documented in [Features](docs/FEATURES.md).
+
+## Technology
+
+React 19, TypeScript, Vite, Material UI, TanStack Query, Axios, React Hook Form, Yup, Redux Toolkit, Redux Persist, i18next, Vitest, Framer Motion and React Virtuoso.
 
 ## Quick start
 
@@ -28,26 +32,40 @@ npm install
 npm run dev
 ```
 
-Web: `http://localhost:5173`  
+Frontend: `http://localhost:5173`
+
+Expected API/WebSocket server: `http://localhost:4000`
+
 Demo account: `demo@nexora.dev` / `Nexora123!`
 
-The dev server proxies `/api` and `/ws` to `http://localhost:4000`. The backend is intentionally maintained in a separate repository and is not tracked here.
+The Vite development server proxies `/api` and `/ws` to port `4000`. If the separate backend is not running, authentication and server-backed screens correctly report connection errors.
 
 ## Commands
 
-| Command                 | Purpose                           |
-| ----------------------- | --------------------------------- |
-| `npm run dev`           | Run the frontend with live reload |
-| `npm run build`         | Type-check and build the frontend |
-| `npm run typecheck`     | Strict TypeScript checks          |
-| `npm run test`          | Unit and component tests          |
-| `npm run test:coverage` | Coverage report                   |
-| `npm run lint`          | ESLint checks                     |
+| Command                 | Purpose                                  |
+| ----------------------- | ---------------------------------------- |
+| `npm run dev`           | Start the frontend development server    |
+| `npm run build`         | Type-check and create a production build |
+| `npm run preview`       | Preview the production build             |
+| `npm run typecheck`     | Run strict TypeScript checks             |
+| `npm run lint`          | Run ESLint with zero warnings allowed    |
+| `npm run test`          | Run the unit/component suite once        |
+| `npm run test:watch`    | Run tests in watch mode                  |
+| `npm run test:coverage` | Generate a coverage report               |
+| `npm run format`        | Format the repository with Prettier      |
+| `npm run format:check`  | Verify formatting without changing files |
 
 ## Documentation
 
-- [Architecture](docs/ARCHITECTURE.md)
-- [API contract](docs/API.md)
-- [Design system](docs/DESIGN_SYSTEM.md)
+- [Feature catalogue and implementation status](docs/FEATURES.md)
+- [Architecture and module boundaries](docs/ARCHITECTURE.md)
+- [HTTP and WebSocket API contract](docs/API.md)
+- [Design system, responsiveness and accessibility](docs/DESIGN_SYSTEM.md)
+- [Security model and production checklist](docs/SECURITY.md)
 - [Testing strategy](docs/TESTING.md)
-- [Security and production checklist](docs/SECURITY.md)
+- [Development and contribution guide](docs/DEVELOPMENT.md)
+- [Configuration, deployment and operations](docs/OPERATIONS.md)
+
+## Documentation policy
+
+Documentation is part of the implementation. Any change to behavior, routes, API contracts, configuration, security assumptions, architecture or user-facing capabilities must update the relevant document in the same change. A feature is not complete when its documentation is stale.

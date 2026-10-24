@@ -1,51 +1,109 @@
 # Architecture
 
-## Boundaries
+## System boundary
 
-The frontend follows the reference repository's feature-first layout:
+The tracked application is a React single-page frontend. It communicates with a separate HTTP/WebSocket backend through `/api` and `/ws`. The local `server/` directory is a runnable reference implementation, is ignored by Git, and is not the production security boundary.
+
+```text
+Browser
+  ├─ React UI and routing
+  ├─ TanStack Query remote-state cache
+  ├─ Redux persisted UI preferences
+  ├─ i18next language/direction
+  └─ Axios + WebSocket transport
+         │
+         ├─ /api → authentication, markets, wallet, orders, purchases
+         └─ /ws  → live market ticks
+```
+
+## Source layout
 
 ```text
 src/
-├── app/        providers, router, shell, theme and Redux store
-├── features/   auth, dashboard, markets, trade, wallet, orders, settings
-├── shared/     API infrastructure, design primitives, formatters and types
-└── test/       global test setup
+├── app/          composition, providers, routing, layout, theme and Redux store
+├── features/     independently owned business capabilities
+│   └── <name>/
+│       ├── api/          transport contract and query keys
+│       ├── components/   stateless or narrowly stateful feature UI
+│       ├── hooks/        orchestration and server-state workflows
+│       ├── lib/          pure feature functions
+│       ├── locales/      English and Persian resources
+│       ├── model/        types, schemas and constants
+│       └── pages/        route composition
+├── shared/       framework-neutral types, API infrastructure, hooks and UI primitives
+└── test/         global Vitest/Testing Library setup
 ```
 
-Feature modules may import `shared` and application composition. Shared code never imports features. Pages coordinate hooks and stateless view components; network and mutation logic lives in API/hook modules.
+Folders are created only when a feature needs that layer. Every folder exposes an `index.ts`; consumers use public barrels instead of deep imports.
 
-## Import rules
+## Dependency rules
 
-1. External packages first.
-2. Blank line.
-3. Absolute internal aliases in order: `@app`, `@features`, `@shared`.
-4. Blank line.
-5. Relative sibling imports.
-6. Use `import type` when an import has no runtime value.
-7. Prefer feature public modules and avoid cross-feature deep imports except an intentional shared workflow (trade creating an order is one such workflow).
+1. `shared` never imports from `features` or application composition.
+2. Features may import `shared`; cross-feature imports must use the target feature’s public API.
+3. `app` composes providers and features but does not own feature business rules.
+4. Pages coordinate hooks and view components. Network calls do not live in JSX components.
+5. Financial authority stays on the server. UI calculations are never accepted as ledger facts.
 
-## Data ownership
+Import grouping is external packages, blank line, absolute aliases (`@app`, `@features`, `@shared`), blank line, relative imports. Type-only dependencies use `import type`.
 
-- TanStack Query owns remote state: dashboard, markets, wallet and orders.
-- Redux owns only durable client preferences. It must not duplicate server resources.
-- React Hook Form owns short-lived form state.
-- Component state owns ephemeral presentation state such as tabs and drawers.
-- Access tokens stay in module memory. The browser cannot persist them.
+## Provider order
+
+`AppProviders` installs providers in this order:
+
+1. i18next
+2. language/direction
+3. Redux and persistence gate
+4. direction-aware Material UI theme
+5. TanStack Query
+6. authentication
+
+This order lets theme creation consume direction and preferences, and lets authenticated features consume the shared query client.
+
+## State ownership
+
+| State                  | Owner                              | Examples                                            |
+| ---------------------- | ---------------------------------- | --------------------------------------------------- |
+| Remote server state    | TanStack Query                     | markets, wallet, orders, purchases, support tickets |
+| Durable UI preference  | Redux Persist                      | light/dark mode, compact-number preference          |
+| Language               | Language provider + local storage  | `fa`/`en`, document direction                       |
+| Short-lived form state | React Hook Form or component state | login, order, profile, dialogs                      |
+| Access token           | module-memory token store          | bearer token; never local/session storage           |
+| Refresh session        | backend HttpOnly cookie            | session restoration and rotation                    |
+
+Default queries are stale for 30 seconds, retained for five minutes, retry at most twice except authentication failures, and do not refetch on focus. Mutations do not retry automatically.
+
+## API and authentication flow
+
+Axios targets `/api`, sends cookies, has a 12-second timeout and attaches the in-memory access token. A 401 triggers one shared refresh promise. The failed request is retried once with the new token; refresh failure clears memory and signals the authentication provider.
+
+Financial purchase responses cross a runtime validation boundary before entering application state. Expand this validation pattern to other high-risk endpoints as the API matures.
+
+Purchase, conversion and support share strict response-field readers at their network boundary. Purchase and conversion also share quote countdown calculation, secure idempotency-key generation and the reusable `DetailRow` presentation primitive. Workflow-specific orchestration remains isolated in each feature hook; support page components receive state and commands from `useSupportCenter` instead of performing transport work.
+
+## Cache mutation rules
+
+- Use optimistic updates only for reversible operations such as cancelling an open order.
+- Use `createOptimisticHandlers` and `updateInList` from `shared/api/react-query` for consistent snapshot, rollback and invalidation behavior.
+- Never optimistically mutate balances, ledger entries, purchases or withdrawals.
+- Invalidate the narrowest relevant query keys after confirmed server completion.
 
 ## Routing and code splitting
 
-The application shell is stable. Every product page is loaded through `React.lazy`; Vite splits the feature boundary and selected heavy vendor groups. The protected route restores the refresh session before deciding whether to redirect.
+All product pages are loaded with `React.lazy`. `ProtectedRoute` waits for refresh-session restoration before redirecting. The application shell stays mounted while pages change. Vite creates explicit vendor chunks for React, MUI, query/Axios, forms, animation, state, localization, icons and virtualization.
 
-## Performance
+## Performance and offline behavior
 
-- Markets use `react-virtuoso`; only visible rows render.
-- Infinite queries fetch 25 rows at a time.
-- Search uses `useDeferredValue` to keep input responsive.
-- Chart elements are vector primitives with no charting runtime.
-- WebSocket reconnect uses a capped exponential delay.
-- Query stale/gc times avoid duplicate API work.
-- PWA market reads use a network-first cache. Auth and order writes are never cached.
+- Markets render through `react-virtuoso` and infinite queries.
+- Search uses deferred input.
+- Charts are SVG/vector primitives without a charting bundle.
+- WebSocket reconnection uses a capped exponential delay.
+- The PWA shell supports installation.
+- Only market read requests use a network-first runtime cache; mutations and authentication are excluded.
 
-## Backend boundary
+## Error and loading model
 
-The backend is maintained in a separate repository. This frontend depends only on the HTTP and WebSocket contracts documented in [API.md](API.md). Production services should provide a transaction-safe ledger, an audited matching engine, custody isolation and idempotent financial operations.
+Pages use shared loaders and feedback blocks for route-level states. Forms keep recoverable input, disable duplicate submissions and expose explicit progress. Financial errors use allow-listed codes so arbitrary server messages are not rendered to users.
+
+## Backend evolution
+
+The reference backend uses in-memory repositories and synchronous services. A production backend must preserve the API contract while replacing repositories with durable, transaction-safe implementations. Purchases must atomically consume a quote, debit fiat, credit the asset and persist the idempotent response.

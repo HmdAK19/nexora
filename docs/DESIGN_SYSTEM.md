@@ -1,31 +1,62 @@
 # Design system
 
-Nexora translates the supplied Figma screenshots into reusable Material UI tokens rather than page-local colors.
+Nexora converts the supplied Figma references into reusable Material UI theme tokens and feature-owned components. Avoid page-local brand colors and duplicated primitives.
 
 ## Foundations
 
-| Token                | Dark value | Use                                |
-| -------------------- | ---------- | ---------------------------------- |
-| `background.default` | `#0b0e14`  | application canvas                 |
-| `background.paper`   | `#141821`  | cards and panels                   |
-| `surface.elevated`   | `#1a1f2b`  | controls and raised regions        |
-| `primary.main`       | `#1769ff`  | primary actions and selection      |
-| `secondary.main`     | `#20d6c7`  | brand accent and positive emphasis |
-| `success.main`       | `#28d7a2`  | buy/positive movement              |
-| `error.main`         | `#ff4d78`  | sell/negative movement             |
-| `warning.main`       | `#ffad32`  | risk and attention                 |
+| Token                | Dark      | Light     | Purpose                  |
+| -------------------- | --------- | --------- | ------------------------ |
+| `background.default` | `#0b0e14` | `#f5f7fb` | Application canvas       |
+| `background.paper`   | `#141821` | `#ffffff` | Cards and panels         |
+| `surface.elevated`   | `#1a1f2b` | `#f9fafc` | Raised controls          |
+| `surface.border`     | `#252c3c` | `#e6e9f0` | Structural borders       |
+| `primary.main`       | `#1769ff` | `#1769ff` | Primary action/selection |
+| `secondary.main`     | `#20d6c7` | `#20d6c7` | Brand accent             |
+| `success.main`       | `#28d7a2` | `#28d7a2` | Positive/buy state       |
+| `error.main`         | `#ff4d78` | `#ff4d78` | Negative/sell state      |
+| `warning.main`       | `#ffad32` | `#ffad32` | Attention/risk           |
 
-Spacing uses MUI's 8px base. Corners are 11–14px. Borders carry hierarchy instead of large shadows. Type uses Inter/Vazirmatn/system fallbacks and fluid headings.
+Spacing uses MUI’s 8px base. Global corner radius is 14px; buttons and outlined inputs use 11px. Cards use borders rather than large shadows. Typography uses Inter, Vazirmatn and system fallbacks with fluid page headings.
 
-## Interaction rules
+## Layout
 
-- Green and red always appear with text, arrows, or side labels; color is never the sole signal.
-- Controls retain visible browser/MUI focus rings.
-- Motion is limited to route transitions, login ambience and live-chart state.
-- Tables collapse into two-column summaries on small screens.
-- Desktop sidebar becomes a focus-managed drawer below the medium breakpoint.
-- Loading, error, empty and success states are explicit.
+- Minimum supported viewport width is 320px.
+- Desktop uses a compact permanent sidebar; below `md` it becomes a direction-aware drawer.
+- Main page padding and grids step down at small breakpoints.
+- Trading panels use responsive grid templates so Full HD laptop screens keep the primary terminal together as long as usable width permits.
+- Tabs may scroll horizontally instead of forcing translated labels to wrap.
+- Long IDs and financial values use controlled wrapping and end alignment.
 
-## Extending
+## Component ownership
 
-Add brand colors only in `src/app/theme/index.ts`. Build domain components inside their feature; promote them to `shared/ui` only after at least two unrelated features need the same API.
+- Shared primitives (`PageHeading`, `PageFeedback`, `PageLoader`, `StatCard`, `AssetAvatar`, `Sparkline`, `BrandLogo`) live in `shared/ui`.
+- Domain-specific components stay in their feature.
+- Promote a component to `shared/ui` only after at least two unrelated features need the same stable API.
+- Component-specific styles live in a neighboring `*.styles.ts` or the feature style module, not inline in page orchestration.
+
+## Interaction states
+
+Every data-driven interaction should define loading, empty, error, success, disabled and retry behavior. Financial forms additionally prevent rapid duplicate submission, show quote expiry and preserve safe retry identifiers.
+
+Green/red states always include text, sign, icon or side labels; color is not the only signal. Controls remain keyboard accessible through native elements and MUI focus behavior.
+
+## Localization and direction
+
+- User-visible text belongs in feature locale JSON, not conditional `fa ? ... : ...` expressions.
+- English uses LTR and Persian uses RTL.
+- Drawer anchor, document direction and theme direction follow the active language.
+- Layout must tolerate longer translated strings and localized numbers/dates.
+- New namespaces must be declared in `app/i18n/namespaces.ts` and registered for both languages in `app/i18n/config.ts`.
+
+## Accessibility
+
+- Use semantic forms, buttons, headings and landmarks.
+- Associate labels and validation feedback with form controls.
+- Dialogs rely on MUI focus containment, Escape handling and focus restoration.
+- Async results that matter use alerts or `aria-live` regions.
+- Icons without independent meaning are hidden from assistive technology.
+- Keep visible focus indicators and WCAG AA contrast for essential text/actions.
+
+## Motion
+
+Motion is restrained to route transitions, login ambience and live/chart interactions. New animations should honor `prefers-reduced-motion`; functional information must remain available without animation.
