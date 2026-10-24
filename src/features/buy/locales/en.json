@@ -1,19 +1,62 @@
 {
   "title": "Buy crypto",
   "description": "Choose the best way to fund your account or buy crypto.",
-  "tabs": { "express": "Express", "p2p": "P2P", "bank": "Bank deposit" },
+  "tabs": {
+    "label": "Purchase methods",
+    "express": "Express",
+    "p2p": "P2P",
+    "bank": "Bank deposit"
+  },
   "instant": "Instant purchase",
   "spend": "You spend",
-  "receive": "You receive",
-  "estimated": "Estimated amount",
-  "success": "Demo order placed.",
-  "continue": "Continue purchase",
-  "fast": "Fast and transparent",
-  "rateNotice": "The final rate and fee are shown before confirmation.",
+  "receive": "Asset",
+  "serverQuote": "Live server quote",
+  "serverQuoteDescription": "Your exact rate, fee and received amount will be locked before confirmation.",
+  "getQuote": "Get live quote",
+  "quoteLoading": "Getting quote…",
+  "fast": "Secure and transparent",
+  "rateNotice": "The server validates ownership, limits, balance and the final rate. A financial order is never applied optimistically.",
   "merchantCompletion": "Verified merchant · {{completion}}% completion",
   "buy": "Buy",
   "depositTitle": "Deposit to Nexora account",
   "depositWarning": "Only deposit from a bank account verified in your name.",
   "bank": "Bank: Ayandeh Bank",
-  "iban": "IBAN: IR12 0620 0000 1020 1234 5600 01"
+  "iban": "IBAN: IR12 0620 0000 1020 1234 5600 01",
+  "cancel": "Cancel",
+  "confirmPurchase": "Confirm purchase",
+  "processing": "Processing…",
+  "validation": {
+    "hint": "From {{minimum}} to {{maximum}} USD per purchase.",
+    "invalid": "Enter a valid amount.",
+    "minimum": "The minimum purchase is {{minimum}} USD.",
+    "maximum": "The maximum purchase is {{maximum}} USD."
+  },
+  "quote": {
+    "title": "Review purchase",
+    "description": "Review the server-issued quote before confirming. The quote cannot be modified by the browser.",
+    "price": "Unit price",
+    "receive": "You receive",
+    "fee": "Fee",
+    "total": "Total charge",
+    "expiresIn": "This quote expires in {{seconds}} seconds.",
+    "expired": "This quote has expired. Request a fresh quote to continue.",
+    "refresh": "Refresh quote"
+  },
+  "order": {
+    "pending": "Your purchase was accepted and is being processed.",
+    "completed": "Your purchase is complete and your balance has been refreshed.",
+    "failed": "The purchase could not be completed. No duplicate order will be created when you retry safely.",
+    "reference": "Order reference",
+    "newPurchase": "Start a new purchase"
+  },
+  "errors": {
+    "network": "The order status could not be confirmed. Check your connection and try again; the same request key prevents a duplicate purchase.",
+    "unexpected": "The request could not be completed. Please try again.",
+    "QUOTE_EXPIRED": "The quote expired. Request a fresh quote.",
+    "QUOTE_NOT_FOUND": "This quote is unavailable. Request a fresh quote.",
+    "INSUFFICIENT_BALANCE": "Your available balance is insufficient for this purchase.",
+    "LIMIT_EXCEEDED": "This purchase exceeds your current account limit.",
+    "PURCHASE_BLOCKED": "This purchase cannot be completed for this account. Contact support if you need help.",
+    "RATE_LIMITED": "Too many purchase requests were sent. Wait a moment and try again."
+  }
 }
