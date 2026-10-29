@@ -16,3 +16,11 @@ export function useTradingMarket(symbol: string, timeframe: Timeframe) {
     }),
   };
 }
+
+export function useRecentMarketTrades(symbol: string) {
+  return useQuery({
+    queryKey: tradeKeys.recentTrades(symbol),
+    queryFn: () => tradeApi.getRecentTrades(symbol),
+    refetchInterval: 3_000,
+  });
+}

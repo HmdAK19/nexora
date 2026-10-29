@@ -44,8 +44,13 @@ export const styles = {
     gridTemplateColumns: {
       xs: '1fr',
       md: 'minmax(0, 1fr) minmax(260px, .42fr)',
-      lg: 'minmax(190px, .68fr) minmax(380px, 2fr) minmax(260px, .9fr)',
-      xl: '240px minmax(480px, 1fr) 300px',
+      lg: 'minmax(190px, .68fr) minmax(380px, 2fr) minmax(250px, .86fr)',
+      xl: '230px minmax(480px, 1fr) 290px',
+    },
+    gridTemplateAreas: {
+      xs: '"chart" "order" "sidebar"',
+      md: '"chart order" "sidebar sidebar"',
+      lg: '"book chart sidebar" "book order sidebar"',
     },
     minWidth: 0,
   },
@@ -76,10 +81,7 @@ export const styles = {
     p: 0,
   },
   chartCard: {
-    gridColumn: {
-      md: '1',
-      lg: '2',
-    },
+    gridArea: 'chart',
     minWidth: 0,
     overflow: 'hidden',
   },
@@ -99,10 +101,7 @@ export const styles = {
     },
   },
   orderCard: {
-    gridColumn: {
-      md: '2',
-      lg: '3',
-    },
+    gridArea: 'order',
     minWidth: 0,
   },
   tabs14: {

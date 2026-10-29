@@ -1,11 +1,15 @@
 export const styles = {
   desktopCard: {
+    alignSelf: 'stretch',
     display: { xs: 'none', lg: 'block' },
+    gridArea: 'book',
+    height: '100%',
     minWidth: 0,
   },
   compactCard: { display: { lg: 'none' } },
   content: { p: 0 },
   title: { p: 2 },
+  state: { m: 1.5 },
   currentPrice: {
     borderBlock: '1px solid',
     borderColor: 'divider',

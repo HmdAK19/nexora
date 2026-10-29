@@ -26,7 +26,7 @@ import { useTransientState } from '@shared/hooks';
 import { formatCurrency, formatPercent } from '@shared/lib';
 import { AssetAvatar } from '@shared/ui';
 
-import { CandlestickChart, OrderBook, TradeOrdersPanel } from '../components';
+import { CandlestickChart, OrderBook, TradeMarketSidebar, TradeOrdersPanel } from '../components';
 import { useTradingMarket } from '../hooks';
 import type { Timeframe } from '../lib';
 import { styles } from './TradePage.styles';
@@ -153,6 +153,11 @@ export default function TradePage() {
           currentPrice={price}
           onSelectPrice={(selectedPrice) => setValue('price', Number(selectedPrice.toFixed(2)))}
           title={t('trade.orderBook')}
+          error={trading.market.isError}
+          errorMessage={t('trade.orderBookLoadError')}
+          loading={trading.market.isLoading}
+          onRetry={() => void trading.market.refetch()}
+          retryLabel={t('trade.retry')}
         />
         <Card sx={styles.chartCard}>
           <CardContent sx={styles.cardContent11}>
@@ -298,6 +303,7 @@ export default function TradePage() {
             </Box>
           </CardContent>
         </Card>
+        <TradeMarketSidebar symbol={symbol} />
       </Box>
       <OrderBook
         asks={book.asks}
@@ -306,6 +312,11 @@ export default function TradePage() {
         onSelectPrice={(selectedPrice) => setValue('price', Number(selectedPrice.toFixed(2)))}
         title={t('trade.orderBook')}
         variant="compact"
+        error={trading.market.isError}
+        errorMessage={t('trade.orderBookLoadError')}
+        loading={trading.market.isLoading}
+        onRetry={() => void trading.market.refetch()}
+        retryLabel={t('trade.retry')}
       />
       <TradeOrdersPanel symbol={symbol} />
     </Stack>

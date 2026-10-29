@@ -1,4 +1,14 @@
-import { Box, Card, CardContent, LinearProgress, Stack, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  LinearProgress,
+  Skeleton,
+  Stack,
+  Typography,
+} from '@mui/material';
 
 import { formatCurrency } from '@shared/lib';
 
@@ -16,7 +26,15 @@ interface OrderBookProps {
   onSelectPrice: (price: number) => void;
   title: string;
   variant?: 'desktop' | 'compact';
+  error?: boolean;
+  errorMessage?: string;
+  loading?: boolean;
+  onRetry?: () => void;
+  retryLabel?: string;
 }
+
+const compactDepth = 6;
+const desktopDepth = 8;
 
 export function OrderBook({
   asks,
@@ -25,7 +43,47 @@ export function OrderBook({
   onSelectPrice,
   title,
   variant = 'desktop',
+  error = false,
+  errorMessage,
+  loading = false,
+  onRetry,
+  retryLabel,
 }: OrderBookProps) {
+  const cardStyle = variant === 'compact' ? styles.compactCard : styles.desktopCard;
+
+  if (loading || error) {
+    return (
+      <Card sx={cardStyle}>
+        <CardContent sx={styles.content}>
+          <Typography sx={styles.title} variant="h3">
+            {title}
+          </Typography>
+          {loading ? (
+            <Stack spacing={0.8} sx={styles.state}>
+              {Array.from({ length: 8 }, (_, index) => (
+                <Skeleton height={22} key={index} />
+              ))}
+            </Stack>
+          ) : (
+            <Alert
+              severity="error"
+              sx={styles.state}
+              action={
+                onRetry ? (
+                  <Button color="inherit" onClick={onRetry} size="small">
+                    {retryLabel}
+                  </Button>
+                ) : undefined
+              }
+            >
+              {errorMessage}
+            </Alert>
+          )}
+        </CardContent>
+      </Card>
+    );
+  }
+
   if (variant === 'compact') {
     return (
       <Card sx={styles.compactCard}>
@@ -34,8 +92,8 @@ export function OrderBook({
             {title}
           </Typography>
           <Box sx={styles.compactGrid}>
-            <BookRows rows={asks.slice(0, 6)} side="sell" onSelect={onSelectPrice} />
-            <BookRows rows={bids.slice(0, 6)} side="buy" onSelect={onSelectPrice} />
+            <BookRows rows={asks.slice(0, compactDepth).reverse()} side="sell" onSelect={onSelectPrice} />
+            <BookRows rows={bids.slice(0, compactDepth)} side="buy" onSelect={onSelectPrice} />
           </Box>
         </CardContent>
       </Card>
@@ -48,9 +106,9 @@ export function OrderBook({
         <Typography sx={styles.title} variant="h3">
           {title}
         </Typography>
-        <BookRows rows={asks} side="sell" onSelect={onSelectPrice} />
+        <BookRows rows={asks.slice(0, desktopDepth).reverse()} side="sell" onSelect={onSelectPrice} />
         <Box sx={styles.currentPrice}>{formatCurrency(currentPrice)}</Box>
-        <BookRows rows={bids} side="buy" onSelect={onSelectPrice} />
+        <BookRows rows={bids.slice(0, desktopDepth)} side="buy" onSelect={onSelectPrice} />
       </CardContent>
     </Card>
   );

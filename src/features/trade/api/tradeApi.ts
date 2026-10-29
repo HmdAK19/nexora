@@ -16,6 +16,14 @@ export interface TradingMarket {
   volume24h: number;
 }
 
+export interface RecentMarketTrade {
+  amount: number;
+  id: number;
+  price: number;
+  side: 'buy' | 'sell';
+  time: number;
+}
+
 function parseLevel(value: unknown): OrderBookRow {
   if (!isRecord(value)) throw new Error('Invalid order book level');
   return { amount: readPositiveNumber(value, 'amount'), price: readPositiveNumber(value, 'price') };
@@ -62,10 +70,25 @@ function parseCandle(value: unknown): Candle {
   };
 }
 
+function parseRecentTrade(value: unknown): RecentMarketTrade {
+  if (!isRecord(value) || (value.side !== 'buy' && value.side !== 'sell')) {
+    throw new Error('Invalid recent trade response');
+  }
+
+  return {
+    amount: readPositiveNumber(value, 'amount'),
+    id: readFiniteNumber(value, 'id'),
+    price: readPositiveNumber(value, 'price'),
+    side: value.side,
+    time: readPositiveNumber(value, 'time'),
+  };
+}
+
 export const tradeKeys = {
   all: ['trade'] as const,
   candles: (symbol: string, timeframe: Timeframe) => ['trade', symbol, 'candles', timeframe] as const,
   market: (symbol: string) => ['trade', symbol, 'market'] as const,
+  recentTrades: (symbol: string) => ['trade', symbol, 'recent-trades'] as const,
 };
 export const tradeApi = {
   getCandles: async (symbol: string, timeframe: Timeframe): Promise<Candle[]> => {
@@ -79,4 +102,13 @@ export const tradeApi = {
   },
   getMarket: async (symbol: string): Promise<TradingMarket> =>
     parseMarket((await apiClient.get(`/markets/${encodeURIComponent(symbol)}/trading`)).data),
+  getRecentTrades: async (symbol: string): Promise<RecentMarketTrade[]> => {
+    const data: unknown = (
+      await apiClient.get(`/markets/${encodeURIComponent(symbol)}/trades`, { params: { limit: 30 } })
+    ).data;
+
+    if (!Array.isArray(data)) throw new Error('Invalid recent trades response');
+
+    return data.map(parseRecentTrade);
+  },
 };
