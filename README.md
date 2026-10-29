@@ -124,7 +124,7 @@ npm run test:e2e
 
 ## Deployment status
 
-A public deployment is not currently maintained from this repository. The production build is a static SPA and can be deployed to a CDN or static host when a compatible backend and same-origin `/api` and `/ws` gateway are available. Deployment, CSP, cookies, WebSocket proxying and observability requirements are documented in [Operations](docs/OPERATIONS.md).
+The frontend can be deployed to Vercel as a static Vite SPA. [`vercel.json`](vercel.json) provides client-route fallback while reserving `/api` and `/ws` for backend integration, and prevents caching of the public runtime configuration. The committed `public/runtime-config.json` points the deployed frontend at the separately deployed Nexora API for HTTP and WebSocket traffic. Deployment, CSP, cookies, WebSocket proxying and observability requirements are documented in [Operations](docs/OPERATIONS.md).
 
 ## Scope and limitations
 

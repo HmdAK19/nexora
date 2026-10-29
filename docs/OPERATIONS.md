@@ -84,6 +84,12 @@ Deploy the generated `dist/` directory. Configure the host to fall back unknown 
 
 Treat the JavaScript/CSS assets as immutable and long-cacheable, but deploy `runtime-config.json` with the no-cache policy above. Updating only this file changes the backend destination without rebuilding the application.
 
+### Vercel
+
+The repository includes `vercel.json` for Vite framework detection, SPA navigation fallback and the required no-cache header on `runtime-config.json`. The fallback excludes `/api` and `/ws`, which remain reserved for a separately deployed backend or gateway. Without that integration, a Vercel deployment is a frontend preview only: public routes render, while authentication and live-data requests reach no production service.
+
+Deploy from the repository root with the Vercel CLI or import the Git repository in Vercel. The current `public/runtime-config.json` uses the separately deployed Nexora API's absolute HTTPS and WSS endpoints. When either Vercel domain changes, update both runtime URLs and the backend `CLIENT_ORIGIN`, then verify CORS, cookies, CSRF controls and WebSocket upgrades end to end.
+
 Production source maps help error diagnosis but may expose source. Upload them privately to the monitoring service or restrict public delivery according to deployment policy.
 
 ## PWA behavior

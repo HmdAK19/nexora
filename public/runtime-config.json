@@ -1,4 +1,4 @@
 {
-  "apiBaseUrl": "/api",
-  "webSocketUrl": "/ws"
+  "apiBaseUrl": "https://nexora-api-hmd12.vercel.app/api",
+  "webSocketUrl": "wss://nexora-api-hmd12.vercel.app/ws"
 }
