@@ -64,6 +64,7 @@ export default function AdminSettingsPage() {
       <AdminQueryState
         error={settings.error}
         loading={settings.isLoading}
+        loadingVariant="form"
         retry={() => void settings.refetch()}
       />
     );

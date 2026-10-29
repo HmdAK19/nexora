@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 import { Box, Card, Chip, IconButton, Stack, Tab, Tabs, Typography } from '@mui/material';
 
 import { formatCurrency } from '@shared/lib';
-import { PageFeedback, PageLoader } from '@shared/ui';
+import { PageFeedback, TablePageSkeleton } from '@shared/ui';
 
 import { useCancelOrder, useOrders } from '../hooks';
 import { styles } from './OrdersPage.styles';
@@ -14,7 +14,7 @@ export default function OrdersPage() {
   const [tab, setTab] = useState(0);
   const query = useOrders();
   const cancel = useCancelOrder();
-  if (query.isLoading) return <PageLoader />;
+  if (query.isLoading) return <TablePageSkeleton columns={7} />;
   const orders = (query.data ?? []).filter((order) => tab === 1 || order.status === 'open');
   return (
     <Stack spacing={3}>

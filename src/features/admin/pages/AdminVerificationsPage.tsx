@@ -20,6 +20,7 @@ export default function AdminVerificationsPage() {
       <AdminQueryState
         error={verifications.error}
         loading={verifications.isLoading}
+        loadingVariant="cards"
         retry={() => void verifications.refetch()}
       />
     );

@@ -3,7 +3,6 @@ import {
   Alert,
   Box,
   Button,
-  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -15,6 +14,7 @@ import {
 } from '@mui/material';
 
 import { NAMESPACES } from '@app/i18n';
+import { SkeletonRows } from '@shared/ui';
 import type { SupportTicket } from '../api';
 import { getSupportErrorKey } from '../lib';
 import { supportLimits } from '../model';
@@ -57,9 +57,9 @@ export function TicketDetailsDialog(props: TicketDetailsDialogProps) {
       </DialogTitle>
       <DialogContent>
         {props.loading && (
-          <Stack alignItems="center" py={5}>
-            <CircularProgress size={28} />
-          </Stack>
+          <Box py={2}>
+            <SkeletonRows columns={1} minWidth={0} rows={5} rowHeight={54} />
+          </Box>
         )}
         {Boolean(props.error) && <Alert severity="error">{t(getSupportErrorKey(props.error))}</Alert>}
         {props.ticket && (

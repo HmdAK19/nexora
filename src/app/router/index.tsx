@@ -4,7 +4,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AppLayout } from '@app/layouts';
 import { ADMIN_ENTRY_PERMISSIONS, PERMISSIONS } from '@shared/lib';
 import type { Permission } from '@shared/model';
-import { PageLoader } from '@shared/ui';
+import { DashboardPageSkeleton } from '@shared/ui';
 
 import { ProtectedRoute } from './ProtectedRoute';
 import { AuthorizedRoute } from './AuthorizedRoute';
@@ -60,7 +60,7 @@ const AdminSupportPage = lazy(() =>
 const AdminSettingsPage = lazy(() =>
   import('@features/admin').then(({ AdminSettingsPage }) => ({ default: AdminSettingsPage }))
 );
-const lazyPage = (page: React.ReactNode) => <Suspense fallback={<PageLoader />}>{page}</Suspense>;
+const lazyPage = (page: React.ReactNode) => <Suspense fallback={<DashboardPageSkeleton />}>{page}</Suspense>;
 const authorizedPage = (permission: Permission, page: React.ReactNode) => (
   <AuthorizedRoute permission={permission}>{lazyPage(page)}</AuthorizedRoute>
 );

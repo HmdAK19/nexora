@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 
 import { formatCompact, formatCurrency, formatPercent } from '@shared/lib';
-import { AssetAvatar, PageFeedback, PageLoader, Sparkline } from '@shared/ui';
+import { AssetAvatar, PageFeedback, SkeletonRows, Sparkline, TablePageSkeleton } from '@shared/ui';
 
 import { useMarketFavorites, useMarkets } from '../hooks';
 import { styles } from './MarketsPage.styles';
@@ -40,7 +40,7 @@ export default function MarketsPage() {
       }),
     [favorites, filter, markets]
   );
-  if (query.isLoading) return <PageLoader />;
+  if (query.isLoading) return <TablePageSkeleton columns={5} rows={8} />;
   if (query.isError)
     return (
       <PageFeedback
@@ -149,9 +149,9 @@ export default function MarketsPage() {
             components={{
               Footer: () =>
                 query.isFetchingNextPage ? (
-                  <Typography color="text.secondary" sx={styles.typography7}>
-                    {t('common.loading')}
-                  </Typography>
+                  <Box sx={styles.typography7}>
+                    <SkeletonRows columns={5} rows={2} rowHeight={38} />
+                  </Box>
                 ) : null,
             }}
             itemContent={(_, market) => (

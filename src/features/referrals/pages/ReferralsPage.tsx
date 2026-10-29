@@ -15,7 +15,7 @@ import {
 
 import { NAMESPACES } from '@app/i18n';
 import { useLanguage } from '@shared/hooks';
-import { PageFeedback, PageHeading, PageLoader, StatCard } from '@shared/ui';
+import { DashboardPageSkeleton, PageFeedback, PageHeading, StatCard } from '@shared/ui';
 
 import { ReferralList } from '../components';
 import { useReferrals } from '../hooks';
@@ -27,7 +27,7 @@ export default function ReferralsPage() {
   const referrals = useReferrals();
   const locale = lang === 'fa' ? 'fa-IR' : 'en-US';
 
-  if (referrals.loading) return <PageLoader />;
+  if (referrals.loading) return <DashboardPageSkeleton />;
   if (referrals.error || !referrals.summary)
     return (
       <PageFeedback

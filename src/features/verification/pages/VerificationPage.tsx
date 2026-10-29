@@ -21,7 +21,7 @@ import {
 } from '@mui/material';
 
 import { NAMESPACES } from '@app/i18n';
-import { PageFeedback, PageHeading, PageLoader } from '@shared/ui';
+import { FormPageSkeleton, PageFeedback, PageHeading } from '@shared/ui';
 
 import { useVerification } from '../hooks';
 import { createVerificationProfileSchema } from '../lib';
@@ -66,7 +66,7 @@ export default function VerificationPage() {
     });
   }, [reset, verification.record]);
 
-  if (verification.loading) return <PageLoader />;
+  if (verification.loading) return <FormPageSkeleton />;
   if (verification.error && !verification.record) {
     return (
       <PageFeedback
@@ -206,7 +206,7 @@ export default function VerificationPage() {
                   {verification.documentError && (
                     <Alert severity="error">{t(`errors.document.${verification.documentError}`)}</Alert>
                   )}
-                  <Stack direction="row" justifyContent="space-between">
+                  <Stack direction="row" gap={1.5} justifyContent="space-between">
                     <Button disabled={verification.pending} onClick={() => verification.setStep(0)}>
                       {t('back')}
                     </Button>

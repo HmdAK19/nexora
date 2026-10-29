@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Alert, Box, Button, Stack } from '@mui/material';
 
 import { NAMESPACES } from '@app/i18n';
-import { PageFeedback, PageHeading, PageLoader } from '@shared/ui';
+import { CardGridPageSkeleton, PageFeedback, PageHeading } from '@shared/ui';
 
 import { AddBankCardDialog, BankCardList, RemoveBankCardDialog } from '../components';
 import { useBankCards } from '../hooks';
@@ -13,7 +13,7 @@ export default function CardsPage() {
   const { t } = useTranslation(NAMESPACES.cards);
   const bankCards = useBankCards();
 
-  if (bankCards.loading) return <PageLoader />;
+  if (bankCards.loading) return <CardGridPageSkeleton />;
   if (bankCards.error)
     return (
       <PageFeedback

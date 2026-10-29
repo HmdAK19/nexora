@@ -5,7 +5,7 @@ import { Box, Button, Stack } from '@mui/material';
 import { NAMESPACES } from '@app/i18n';
 import { useLanguage } from '@shared/hooks';
 import type { Language } from '@shared/model';
-import { PageFeedback, PageHeading, PageLoader } from '@shared/ui';
+import { PageFeedback, PageHeading, TablePageSkeleton } from '@shared/ui';
 
 import { CreateTicketDialog, TicketDetailsDialog, TicketList } from '../components';
 import { useSupportCenter } from '../hooks';
@@ -33,7 +33,7 @@ export default function SupportPage() {
           {t('actions.newTicket')}
         </Button>
       </Stack>
-      {support.ticketsLoading && <PageLoader />}
+      {support.ticketsLoading && <TablePageSkeleton columns={4} rows={5} />}
       {support.ticketsError && (
         <PageFeedback
           actionLabel={t('actions.retry')}

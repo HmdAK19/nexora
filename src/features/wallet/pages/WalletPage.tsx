@@ -9,7 +9,6 @@ import {
   Chip,
   IconButton,
   InputAdornment,
-  Skeleton,
   Snackbar,
   Stack,
   TextField,
@@ -18,7 +17,7 @@ import {
 
 import { formatCurrency } from '@shared/lib';
 import { useLanguage } from '@shared/hooks';
-import { AssetAvatar, PageFeedback, PageLoader } from '@shared/ui';
+import { AssetAvatar, DashboardPageSkeleton, PageFeedback, SkeletonRows } from '@shared/ui';
 
 import { WalletTransferDialog } from '../components';
 import { useWalletPage } from '../hooks';
@@ -43,7 +42,7 @@ export default function WalletPage() {
     transactionsQuery,
     transfer,
   } = useWalletPage();
-  if (assetsQuery.isLoading) return <PageLoader />;
+  if (assetsQuery.isLoading) return <DashboardPageSkeleton />;
   if (assetsQuery.isError)
     return (
       <PageFeedback
@@ -197,9 +196,7 @@ export default function WalletPage() {
           </Typography>
           {transactionsQuery.isLoading && (
             <Stack spacing={1} sx={styles.stack24}>
-              {[1, 2, 3].map((item) => (
-                <Skeleton height={52} key={item} />
-              ))}
+              <SkeletonRows columns={4} rows={3} rowHeight={44} />
             </Stack>
           )}
           {transactionsQuery.isError && (
