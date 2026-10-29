@@ -8,7 +8,11 @@ export const styles = {
     minWidth: 0,
     overflow: 'hidden',
   },
-  section: { minHeight: 0 },
+  section: {
+    display: 'flex',
+    flexDirection: 'column',
+    minHeight: 0,
+  },
   marketsSection: { flex: '1 1 52%' },
   tradesSection: { flex: '1 1 48%' },
   heading: {
@@ -26,7 +30,13 @@ export const styles = {
     px: 1.5,
     py: 0.6,
   },
-  list: { maxHeight: 260, overflowY: 'auto' },
+  list: {
+    flex: 1,
+    minHeight: 0,
+    overflowY: 'auto',
+    overscrollBehavior: 'contain',
+  },
+  loadingList: { px: 1.5, py: 1 },
   marketRow: {
     alignItems: 'center',
     appearance: 'none',

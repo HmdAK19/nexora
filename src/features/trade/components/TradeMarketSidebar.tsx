@@ -125,5 +125,9 @@ export function TradeMarketSidebar({ symbol }: { symbol: string }) {
 }
 
 function LoadingRows() {
-  return <SkeletonRows columns={3} minWidth={0} rows={5} rowHeight={22} />;
+  return (
+    <Box sx={[styles.list, styles.loadingList]}>
+      <SkeletonRows columns={3} minWidth={0} rows={5} rowHeight={22} />
+    </Box>
+  );
 }
