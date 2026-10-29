@@ -8,6 +8,7 @@ export function usePasswordReset() {
   const [email, setEmailValue] = useState('');
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<PasswordResetStatus>('idle');
+  const [touched, setTouched] = useState(false);
   const valid = /^\S+@\S+\.\S+$/.test(email);
 
   const setEmail = (value: string) => {
@@ -19,6 +20,7 @@ export function usePasswordReset() {
     setOpen(false);
     setEmailValue('');
     setStatus('idle');
+    setTouched(false);
   };
 
   const submit = async () => {
@@ -34,7 +36,18 @@ export function usePasswordReset() {
     }
   };
 
-  return { close, email, open, setEmail, setOpen, status, submit, valid };
+  return {
+    close,
+    email,
+    open,
+    setEmail,
+    setOpen,
+    status,
+    submit,
+    touched,
+    touch: () => setTouched(true),
+    valid,
+  };
 }
 
 export type PasswordResetController = ReturnType<typeof usePasswordReset>;

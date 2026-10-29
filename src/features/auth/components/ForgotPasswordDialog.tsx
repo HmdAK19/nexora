@@ -30,11 +30,17 @@ export function ForgotPasswordDialog({ controller }: { controller: PasswordReset
           <TextField
             autoFocus
             autoComplete="email"
-            error={controller.status === 'error'}
+            error={controller.status === 'error' || (controller.touched && !controller.valid)}
+            helperText={
+              controller.touched && !controller.valid
+                ? t(controller.email.trim() ? 'validation.emailInvalid' : 'validation.emailRequired')
+                : undefined
+            }
             label={t('forgotEmail')}
             type="email"
             value={controller.email}
             onChange={(event) => controller.setEmail(event.target.value)}
+            onBlur={controller.touch}
           />
           {controller.status === 'sent' && <Alert severity="success">{t('forgotSent')}</Alert>}
           {controller.status === 'error' && <Alert severity="error">{t('forgotError')}</Alert>}
