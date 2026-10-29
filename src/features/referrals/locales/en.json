@@ -1,9 +1,31 @@
 {
   "title": "Refer friends",
-  "description": "Invite friends and earn a share of their trading fees.",
-  "reward": "Earn up to 20% forever",
-  "shareHint": "Share your unique link or code with friends.",
+  "description": "Invite friends, track their progress and earn a share of eligible trading fees.",
+  "reward": "Earn up to {{rate}}% in rewards",
+  "shareHint": "Share your unique code or invitation link. Rewards are credited after an invite becomes eligible.",
+  "codeLabel": "Referral code",
   "copy": "Copy",
-  "copied": "Referral code copied.",
-  "friends": "Friends invited"
+  "copied": "Invitation details copied.",
+  "friends": "Friends invited",
+  "friendsHelper": "Accepted invitations",
+  "qualified": "Qualified friends",
+  "qualifiedHelper": "Eligible for rewards",
+  "history": "Referral activity",
+  "earned": "Total earned: {{amount}} {{currency}}",
+  "empty": "No one has used your referral code yet.",
+  "retry": "Try again",
+  "share": {
+    "action": "Share invitation",
+    "title": "Join me on Nexora",
+    "text": "Use my referral code to join Nexora."
+  },
+  "status": {
+    "joined": "Joined",
+    "qualified": "Qualified",
+    "rewarded": "Rewarded"
+  },
+  "errors": {
+    "load": "Referral information could not be loaded.",
+    "copy": "The invitation could not be copied. Check clipboard permission and try again."
+  }
 }

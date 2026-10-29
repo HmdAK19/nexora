@@ -1,17 +1,21 @@
 export const styles = {
-  cardContent1: {
-    p: 3,
+  inviteCard: { height: '100%' },
+  inviteContent: {
+    alignItems: 'flex-start',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 1.5,
+    p: { xs: 2, sm: 3 },
   },
-  typography2: {
-    my: 1,
+  gift: {
+    bgcolor: 'primary.main',
+    borderRadius: 2,
+    color: 'primary.contrastText',
+    display: 'grid',
+    height: 48,
+    placeItems: 'center',
+    width: 48,
   },
-  textField3: {
-    mt: 3,
-  },
-  alert4: {
-    mt: 2,
-  },
-  typography5: {
-    mt: 2,
-  },
+  code: { mt: 1 },
+  historyHeading: { mb: 2 },
 };

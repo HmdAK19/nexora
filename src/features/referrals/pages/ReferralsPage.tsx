@@ -1,6 +1,5 @@
-import { useState } from 'react';
+import { Copy, Gift, Share2, UserCheck, Users } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { Copy, Gift, Users } from 'lucide-react';
 import {
   Alert,
   Box,
@@ -9,49 +8,67 @@ import {
   CardContent,
   Grid,
   InputAdornment,
+  Stack,
   TextField,
   Typography,
 } from '@mui/material';
 
-import { PageHeading } from '@shared/ui';
 import { NAMESPACES } from '@app/i18n';
+import { useLanguage } from '@shared/hooks';
+import { PageFeedback, PageHeading, PageLoader, StatCard } from '@shared/ui';
 
+import { ReferralList } from '../components';
+import { useReferrals } from '../hooks';
 import { styles } from './ReferralsPage.styles';
 
 export default function ReferralsPage() {
   const { t } = useTranslation(NAMESPACES.referrals);
-  const [copied, setCopied] = useState(false);
-  const copy = async () => {
-    await navigator.clipboard.writeText('NEXORA-HAMED-20');
-    setCopied(true);
-  };
+  const { lang } = useLanguage();
+  const referrals = useReferrals();
+  const locale = lang === 'fa' ? 'fa-IR' : 'en-US';
+
+  if (referrals.loading) return <PageLoader />;
+  if (referrals.error || !referrals.summary)
+    return (
+      <PageFeedback
+        type="error"
+        title={t('errors.load')}
+        actionLabel={t('retry')}
+        onAction={() => void referrals.retry()}
+      />
+    );
+
+  const summary = referrals.summary;
+  const formatNumber = (value: number) =>
+    new Intl.NumberFormat(locale, { maximumFractionDigits: 2 }).format(value);
+  const formatDate = (value: string) =>
+    new Intl.DateTimeFormat(locale, { dateStyle: 'medium' }).format(new Date(value));
+
   return (
     <Box>
       <PageHeading title={t('title')} description={t('description')} />
       <Grid container spacing={2.5}>
-        <Grid
-          size={{
-            xs: 12,
-            md: 8,
-          }}
-        >
-          <Card>
-            <CardContent sx={styles.cardContent1}>
-              <Gift size={32} />
-              <Typography fontWeight={850} variant="h5" sx={styles.typography2}>
-                {t('reward')}
+        <Grid size={{ xs: 12, lg: 7 }}>
+          <Card sx={styles.inviteCard}>
+            <CardContent sx={styles.inviteContent}>
+              <Box sx={styles.gift}>
+                <Gift size={28} />
+              </Box>
+              <Typography fontWeight={850} variant="h5">
+                {t('reward', { rate: formatNumber(summary.rewardRate) })}
               </Typography>
               <Typography color="text.secondary">{t('shareHint')}</Typography>
               <TextField
                 fullWidth
-                value="NEXORA-HAMED-20"
-                sx={styles.textField3}
+                label={t('codeLabel')}
+                value={summary.code}
+                sx={styles.code}
                 slotProps={{
                   input: {
                     readOnly: true,
                     endAdornment: (
                       <InputAdornment position="end">
-                        <Button startIcon={<Copy size={16} />} onClick={() => void copy()}>
+                        <Button startIcon={<Copy size={16} />} onClick={() => void referrals.copyCode()}>
                           {t('copy')}
                         </Button>
                       </InputAdornment>
@@ -59,32 +76,64 @@ export default function ReferralsPage() {
                   },
                 }}
               />
-              {copied && (
-                <Alert severity="success" sx={styles.alert4}>
-                  {t('copied')}
+              <Button
+                startIcon={<Share2 size={17} />}
+                variant="outlined"
+                onClick={() => void referrals.share(t('share.title'), t('share.text'))}
+              >
+                {t('share.action')}
+              </Button>
+              {referrals.feedback && (
+                <Alert role="status" severity={referrals.feedback === 'copied' ? 'success' : 'error'}>
+                  {t(referrals.feedback === 'copied' ? 'copied' : 'errors.copy')}
                 </Alert>
               )}
             </CardContent>
           </Card>
         </Grid>
-        <Grid
-          size={{
-            xs: 12,
-            md: 4,
-          }}
-        >
+        <Grid size={{ xs: 12, sm: 6, lg: 2.5 }}>
+          <StatCard
+            label={t('friends')}
+            value={formatNumber(summary.inviteCount)}
+            icon={<Users size={20} />}
+            helper={t('friendsHelper')}
+          />
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, lg: 2.5 }}>
+          <StatCard
+            label={t('qualified')}
+            value={formatNumber(summary.qualifiedCount)}
+            icon={<UserCheck size={20} />}
+            helper={t('qualifiedHelper')}
+            accent="#10b981"
+          />
+        </Grid>
+        <Grid size={{ xs: 12 }}>
           <Card>
             <CardContent>
-              <Users size={28} />
-              <Typography color="text.secondary" sx={styles.typography5}>
-                {t('friends')}
-              </Typography>
-              <Typography fontWeight={850} variant="h3">
-                12
-              </Typography>
-              <Typography color="success.main" fontWeight={750}>
-                +$184.20 USDT
-              </Typography>
+              <Stack
+                direction={{ xs: 'column', sm: 'row' }}
+                justifyContent="space-between"
+                gap={1}
+                sx={styles.historyHeading}
+              >
+                <Typography variant="h6" fontWeight={800}>
+                  {t('history')}
+                </Typography>
+                <Typography color="success.main" fontWeight={800}>
+                  {t('earned', {
+                    amount: formatNumber(summary.rewardTotal),
+                    currency: summary.rewardCurrency,
+                  })}
+                </Typography>
+              </Stack>
+              <ReferralList
+                currency={summary.rewardCurrency}
+                entries={summary.referrals}
+                emptyLabel={t('empty')}
+                formatDate={formatDate}
+                formatReward={(value, currency) => `${formatNumber(value)} ${currency}`}
+              />
             </CardContent>
           </Card>
         </Grid>
