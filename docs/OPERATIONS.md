@@ -25,36 +25,20 @@ The current frontend has no required build-time environment variables. Developme
 
 If targets become configurable, expose only non-secret `VITE_*` values. Never put private API keys, token secrets or provider credentials into a Vite environment variable because they are embedded in browser code.
 
-## Reference server configuration
+## Backend integration
 
-When the ignored local `server/` workspace is present, it expects:
+The backend is maintained and deployed independently from this repository. In local development the frontend expects it on port `4000`; production should expose it behind the same public origin as `/api` and `/ws`.
 
-| Variable                 | Purpose                               | Development default                |
-| ------------------------ | ------------------------------------- | ---------------------------------- |
-| `PORT`                   | HTTP/WebSocket port                   | `4000`                             |
-| `CLIENT_ORIGIN`          | Allowed browser origin                | `http://localhost:5173`            |
-| `ACCESS_TOKEN_SECRET`    | Access JWT signing secret             | development fallback only          |
-| `REFRESH_TOKEN_SECRET`   | Refresh JWT signing secret            | development fallback only          |
-| `NODE_ENV`               | Runtime mode                          | `development`                      |
-| `MARKET_DATA_REST_URL`   | Public Spot REST provider             | `https://data-api.binance.vision`  |
-| `MARKET_DATA_STREAM_URL` | Public Spot WebSocket provider        | `wss://stream.binance.com:9443/ws` |
-| `MARKET_DATA_TIMEOUT_MS` | Upstream REST timeout in milliseconds | `8000`                             |
+The backend deployment must provide its own documented configuration for:
 
-Production must fail startup when secrets are absent and must load them from a secrets manager. The reference server’s in-memory data resets on process restart.
+- HTTP/WebSocket listeners and trusted client origins;
+- access/refresh signing keys loaded from a secrets manager;
+- durable database, ledger and audit stores;
+- custody, identity, payment and notification providers;
+- market-data provider URLs, credentials, timeouts and failover;
+- rate limits, request-size limits, telemetry and alerting.
 
-If available locally:
-
-```bash
-cd server
-npm install
-npm run build
-npm test
-npm run dev
-```
-
-The server directory remains ignored and must be published independently when it becomes its own repository.
-
-The reference server makes outbound requests to Binance Spot public market-data services. Deployment egress, regional availability and provider terms must be reviewed before release. Production should add rate-limit telemetry, circuit breaking, provider failover and a clear stale-data state; it must not silently fall back to fabricated prices.
+Production services must fail startup when required secrets or durable dependencies are absent. Market-data egress, regional availability and provider terms must be reviewed before release. Provider failure must produce an explicit stale/error state rather than fabricated prices.
 
 ## Build and artifact
 

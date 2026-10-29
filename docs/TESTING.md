@@ -9,29 +9,29 @@ Nexora uses Vitest and Testing Library. Tests should verify observable behavior 
 - Language persistence and synchronized HTML direction.
 - Concurrent session-restoration calls are coalesced, while later restoration attempts remain possible after settlement.
 - Frontend authorization predicates deny absent/ungranted permissions and accept only explicit grants.
-- Reference-server policy tests cover customer/admin grants, and HTTP integration tests verify `403` denial for a customer plus successful administrator access.
+- Authorization predicate tests cover explicit grants, absent permissions and deny-by-default behavior. Backend policy enforcement requires an independent integration suite in the backend repository.
 - Administration API contract tests accept valid privileged summaries, reject malformed roles before caching and verify encoded resource identifiers.
 - Administration settings schema tests cover accepted values and unsafe fee/withdrawal boundaries.
-- Reference-server integration tests verify validated settings persistence and actor-attributed audit-event creation.
+- Administration API-boundary tests validate response shapes and reject malformed privileged data before caching.
 - Purchase and conversion amount boundaries, precision, quote expiration and safe public-error mapping.
 - Trading-chart moving averages and SVG path generation, including missing data points.
 - Order-book rendering keeps the nearest buy and sell levels simultaneously visible and excludes overflow depth from the visual window.
 - Recent-trade API contract tests accept normalized provider trades and reject malformed side/amount data.
-- The reference-server trading integration mocks Binance's distinct REST ticker, depth, kline and recent-trade payloads; the Order Book exposes an explicit retry state instead of silently rendering an empty book after snapshot failure.
+- Recent-trade API-boundary tests reject malformed payloads; the Order Book exposes an explicit retry state instead of silently rendering an empty book after snapshot failure.
 - Cryptographically secure idempotency-key generation and fail-closed behavior when the platform API is unavailable.
 - Iranian card and IBAN checksum validation, including repeated-digit and invalid-checksum rejection.
 - Schema normalization and boundary validation for bank-card registration, support-ticket creation and verification profiles.
 - MSW-backed API contract tests reject malformed card responses before they enter application state.
 - The bank-card dialog has behavior and automated axe accessibility coverage for invalid and valid submissions.
 - Playwright smoke coverage validates login, authenticated navigation and horizontal overflow at 360, 1366 and 1920 pixel widths.
-- The ignored reference server has HTTP tests for health, authentication, refresh-cookie issuance, wallet mutation, insufficient balances, idempotent purchase/conversion/trading settlement, provider-normalized trading contracts, limit-order reservation release, support tickets, verification profile/upload/submission locking, masked bank-card registration/duplicate rejection/removal, and referral summary totals/data isolation. Provider HTTP responses are mocked in automated tests; a separate manual connectivity check verifies the public REST and WebSocket endpoints.
+- Backend integration tests are outside this repository. A compatible backend should independently cover authentication, permission denial, ownership, validation, idempotency, ledger atomicity, quote consumption, order reservation release, document/card privacy and audit-event persistence.
 
 ## Test layers
 
 1. **Pure unit tests:** formatters, validation, calculation, reducers and cache transformations.
 2. **Component tests:** forms, dialogs, localization, accessibility names and async states using role/label queries.
-3. **API integration tests:** authentication, authorization, ownership, validation, idempotency and transaction behavior.
-4. **E2E smoke tests:** login, market navigation, order creation/cancellation, wallet transfer and purchase against staging.
+3. **Frontend API-boundary tests:** runtime response validation, request encoding, cache effects and public error mapping with MSW.
+4. **E2E smoke tests:** login, authenticated routing and responsive overflow against deterministic mocked contracts; staging should add real integration journeys.
 5. **Non-functional tests:** responsive layout, keyboard navigation, accessibility, performance, load, reconnect and security tests.
 
 ## Required commands

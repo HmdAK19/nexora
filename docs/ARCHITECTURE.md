@@ -2,7 +2,7 @@
 
 ## System boundary
 
-The tracked application is a React single-page frontend. It communicates with a separate HTTP/WebSocket backend through `/api` and `/ws`. The local `server/` directory is a runnable reference implementation, is ignored by Git, and is not the production security boundary.
+The tracked application is a React single-page frontend. It communicates with a separately deployed HTTP/WebSocket backend through `/api` and `/ws`. The backend is not part of this repository; its required contract and security responsibilities are documented here so frontend behavior can be reviewed independently.
 
 ```text
 Browser
@@ -88,13 +88,13 @@ Administration remains a bounded, lazy-loaded feature inside the existing SPA be
 
 Each administration resource has a feature-owned API adapter, runtime response validation, deterministic TanStack Query keys and a focused orchestration hook. Remote data never lives in a page-level controller. Mutations reconcile only their resource keys and overview counts. Presentational cards, query states and route layout are reusable without owning business state.
 
-The reference API is the policy enforcement point: authentication is applied to the administration router and an action-specific permission is applied to every endpoint. Services contain workflows, repositories contain persistence, and mutation services append audit events. This division keeps HTTP validation, policy enforcement, orchestration and storage replaceable independently.
+The backend must be the policy-enforcement point: authentication applies to the administration router and an action-specific permission applies to every endpoint. A recommended backend design separates HTTP validation, authorization policy, workflow services, persistence and audit-event delivery so each can evolve and be tested independently.
 
 Financial purchase responses cross a runtime validation boundary before entering application state. Expand this validation pattern to other high-risk endpoints as the API matures.
 
 Purchase, conversion and support share strict response-field readers at their network boundary. Purchase and conversion also share quote countdown calculation, secure idempotency-key generation and the reusable `DetailRow` presentation primitive. Workflow-specific orchestration remains isolated in each feature hook; support page components receive state and commands from `useSupportCenter` instead of performing transport work.
 
-The reference backend isolates external market transport behind `MarketDataProvider`. Its Binance Spot adapter uses separate schemas for the verbose REST ticker contract and compact WebSocket ticker contract, validates depth/kline/trade payloads and normalizes them into Nexora's provider-neutral shapes. Provider URLs and timeout are environment configuration; upstream failure is surfaced rather than replaced with synthetic prices.
+The frontend consumes provider-neutral market shapes. A compatible backend should isolate external market transport behind a provider adapter, validate ticker, depth, candle and trade payloads, and normalize them before delivery. Upstream failure must be surfaced explicitly rather than replaced with synthetic prices.
 
 ## Cache mutation rules
 
@@ -120,6 +120,6 @@ All product pages are loaded with `React.lazy`. `ProtectedRoute` waits for refre
 
 Pages use shared loaders and feedback blocks for route-level states. Forms keep recoverable input, disable duplicate submissions and expose explicit progress. Financial errors use allow-listed codes so arbitrary server messages are not rendered to users.
 
-## Backend evolution
+## Backend requirements
 
-The reference backend uses in-memory repositories and synchronous services. A production backend must preserve the API contract while replacing repositories with durable, transaction-safe implementations. Purchases must atomically consume a quote, debit fiat, credit the asset and persist the idempotent response.
+A production backend must preserve the documented contract while using durable, transaction-safe persistence. Purchases and conversions must atomically consume a quote, record balanced ledger entries and persist the idempotent response. Order, wallet, verification and administration workflows require ownership checks, auditable state transitions and concurrency-safe storage.

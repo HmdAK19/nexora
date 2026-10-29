@@ -1,6 +1,6 @@
 # Design system
 
-Nexora converts the supplied Figma references into reusable Material UI theme tokens and feature-owned components. Avoid page-local brand colors and duplicated primitives.
+Nexora uses a reusable Material UI token system and feature-owned components to keep visual decisions consistent across the product. Avoid page-local brand colors and duplicated primitives.
 
 ## Foundations
 

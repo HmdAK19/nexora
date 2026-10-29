@@ -37,7 +37,7 @@ Access tokens expire after 15 minutes. Refresh tokens expire after seven days an
 Login request:
 
 ```json
-{ "email": "demo@nexora.dev", "password": "Nexora123!" }
+{ "email": "user@example.com", "password": "example-password" }
 ```
 
 Login and refresh response:
@@ -46,9 +46,9 @@ Login and refresh response:
 {
   "accessToken": "eyJ...",
   "user": {
-    "id": "user-demo",
+    "id": "user-example",
     "name": "Hamed Akbarzadeh",
-    "email": "demo@nexora.dev",
+    "email": "user@example.com",
     "level": "verified",
     "role": "admin",
     "permissions": ["admin:overview:read", "admin:settings:manage"]
@@ -74,7 +74,7 @@ Login and refresh response:
 
 Product route families require their corresponding `*:access` permission (`wallet:access`, `orders:access`, `markets:access`, and so on). Administration permissions are action-scoped rather than inferred from a broad role check. Clients must not infer access from the role name or hidden UI.
 
-Administration writes are rate-limited and server-validated. Verification decisions, support replies and settings updates append an audit event containing actor, action, target and timestamp. The ignored reference server persists these records only in memory; production must use transactional durable storage and an append-only audit sink.
+Administration writes must be rate-limited and server-validated. Verification decisions, support replies and settings updates must append an audit event containing actor, action, target and timestamp. Production requires transactional durable storage and an append-only audit sink.
 
 `POST /auth/forgot-password` accepts `{ "email": "user@example.com" }` and should return `204` for both existing and absent accounts. `POST /auth/logout` returns `204`. `GET /auth/me` returns only the `user` object.
 
@@ -88,8 +88,8 @@ Administration writes are rate-limited and server-validated. Verification decisi
 | GET    | `/markets/:symbol/trading`               | Trading metadata and sequenced depth snapshot |
 | GET    | `/markets/:symbol/candles`               | Timeframe-based OHLCV candle history          |
 | GET    | `/wallet`                                | User balances with USD value                  |
-| GET    | `/wallet/transactions`                   | Recent demo deposits and withdrawals          |
-| POST   | `/wallet/transfers`                      | Create a validated demo deposit or withdrawal |
+| GET    | `/wallet/transactions`                   | Recent deposit and withdrawal records         |
+| POST   | `/wallet/transfers`                      | Request a validated deposit or withdrawal     |
 | GET    | `/orders`                                | User-owned orders                             |
 | POST   | `/orders`                                | Create validated limit/market order           |
 | PATCH  | `/orders/:id/cancel`                     | Cancel an owned open order                    |
@@ -115,7 +115,7 @@ Administration writes are rate-limited and server-validated. Verification decisi
 | GET    | `/referrals`                             | Read referral code, metrics and activity      |
 | GET    | `/health`                                | Service readiness                             |
 
-Wallet transfer payloads use `{ asset, type, amount, network, address? }`. A destination address is required for withdrawals. Demo transfers complete immediately and mutate only the in-memory balance; they never move real assets.
+Wallet transfer payloads use `{ asset, type, amount, network, address? }`. A destination address is required for withdrawals. The backend owns validation, risk checks, custody execution, finality and balance mutation; a successful HTTP response must not be treated as blockchain finality unless the response contract explicitly states it.
 
 ## Resource shapes
 
@@ -233,7 +233,7 @@ Ticker updates originate from Binance Spot's public `<symbol>@ticker` stream. Tr
 
 The production protocol should still add application sequence numbers, heartbeats, subscription acknowledgements, provider failover and snapshot reconciliation.
 
-The client expects the WebSocket endpoint on the same public origin. In development Vite proxies `/ws` to the reference server. Production messages should include a monotonically increasing sequence and subscription acknowledgement before the frontend treats the stream as authoritative.
+The client expects the WebSocket endpoint on the same public origin. In development Vite proxies `/ws` to the configured backend. Production messages should include a monotonically increasing sequence and subscription acknowledgement before the frontend treats the stream as authoritative.
 
 ## Express purchase
 
@@ -386,7 +386,7 @@ List responses contain summaries ordered by most recently updated. Detail and mu
 }
 ```
 
-Statuses are `open`, `waiting_for_support`, `waiting_for_user` and `closed`. `POST /support/tickets/:id/messages` accepts `{ "message": "..." }`; a user reply moves an active ticket to `waiting_for_support`. Closing is idempotent. Further replies return `TICKET_CLOSED`; missing and non-owned resources both return `TICKET_NOT_FOUND` to avoid disclosing existence. Writes are rate-limited. The reference server does not implement the support-agent side or external notifications.
+Statuses are `open`, `waiting_for_support`, `waiting_for_user` and `closed`. `POST /support/tickets/:id/messages` accepts `{ "message": "..." }`; a user reply moves an active ticket to `waiting_for_support`. Closing is idempotent. Further replies return `TICKET_CLOSED`; missing and non-owned resources both return `TICKET_NOT_FOUND` to avoid disclosing existence. Writes must be rate-limited. Agent assignment, delivery and external notifications are backend responsibilities outside this repository.
 
 ## Identity verification
 
@@ -394,7 +394,7 @@ All verification routes require bearer authentication and are scoped to the curr
 
 `POST /verification/document` accepts a raw `application/pdf`, `image/jpeg` or `image/png` body up to 5 MB and an encoded `X-Document-Name` header. The response exposes only metadata: `{ id, name, mimeType, size, uploadedAt }`. `POST /verification/submit` requires both profile and document and changes the case to `pending`. Repeated submission is safe, while profile/document mutations are rejected with `VERIFICATION_LOCKED` after submission or verification.
 
-Statuses are `not_started`, `draft`, `ready`, `pending`, `verified` and `rejected`. The ignored reference server keeps only document metadata in memory and discards uploaded bytes after validation. Production must stream bytes directly to encrypted malware-scanned object storage and retain an immutable reviewer audit trail.
+Statuses are `not_started`, `draft`, `ready`, `pending`, `verified` and `rejected`. Production must stream document bytes directly to encrypted, malware-scanned object storage and retain an immutable reviewer audit trail. The frontend must receive only display-safe metadata and status fields.
 
 ## Bank cards
 
@@ -406,7 +406,7 @@ The first registered card becomes the default. Selecting another card through `P
 
 `GET /referrals` requires bearer authentication and returns the current user's referral code, configured reward rate, aggregate counts, total credited rewards and recent referral activity. Activity status is one of `joined`, `qualified` or `rewarded`; reward amounts are denominated by `rewardCurrency`.
 
-The reference server exposes deterministic in-memory sample activity so the frontend contract and lifecycle can be exercised. It does not attribute new registrations or settle real rewards. Production needs a server-generated immutable attribution token, signup capture with fraud/abuse controls, eligibility rules based on settled fees, an auditable reward ledger and idempotent payout processing.
+Production needs a server-generated immutable attribution token, signup capture with fraud and abuse controls, eligibility rules based on settled fees, an auditable reward ledger and idempotent payout processing. The frontend consumes only the resulting summary and display-safe activity.
 
 ## Cache consequences
 

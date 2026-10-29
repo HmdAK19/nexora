@@ -42,7 +42,7 @@
 - Do not use optimistic updates for balances or ledger records.
 - Use an append-only double-entry ledger and reconcile it with custody/payment providers.
 
-The reference purchase server demonstrates quote ownership, expiration, one-time consumption, balance settlement, safe retry and request rate limiting. Its in-memory repository is not durable and is not suitable for real funds or multi-instance concurrency.
+The frontend contract requires quote ownership, expiration, one-time consumption, safe retry and rate limiting. These guarantees must be implemented and verified by the backend; the browser cannot provide ledger atomicity or prevent multi-instance races.
 
 The conversion workflow applies the same trust model: the server owns the rate and fee, verifies the source balance, consumes the quote once and returns the original order for an idempotent retry. Production settlement must replace the synchronous in-memory balance operation with a fixed-precision database/ledger transaction.
 

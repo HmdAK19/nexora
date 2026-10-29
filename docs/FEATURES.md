@@ -1,25 +1,25 @@
 # Feature catalogue
 
-This document is the product-level source of truth for implemented behavior. “Server-backed” means the UI calls the API contract in [API.md](API.md). “Local demo” means behavior exists only in browser memory or local storage and must not be mistaken for a durable production workflow.
+This document is the product-level source of truth for implemented frontend behavior. “Frontend-integrated” means the UI implements and consumes the contract in [API.md](API.md); it does not assert that a production backend is included in this repository. “Local-only” means state remains in browser memory or local storage.
 
 ## Route map
 
-| Route            | Feature        | Current status | Main behavior                                                                                  |
-| ---------------- | -------------- | -------------- | ---------------------------------------------------------------------------------------------- |
-| `/login`         | Authentication | Server-backed  | Login, session restoration and password-reset request                                          |
-| `/`              | Dashboard      | Server-backed  | Portfolio KPIs, charts, allocation, featured markets and activity                              |
-| `/markets`       | Markets        | Server-backed  | Search, infinite pagination, virtualization, quote filters and local favorites                 |
-| `/trade/:symbol` | Trade          | Server-backed  | Market snapshot, OHLCV/depth, validated ticker, balance-aware order execution and cancellation |
-| `/wallet`        | Wallet         | Server-backed  | Balances, availability, transaction history, deposit and withdrawal                            |
-| `/orders`        | Orders         | Server-backed  | Order listing and cancellation                                                                 |
-| `/buy-crypto`    | Buy crypto     | Server-backed  | Expiring server quote, confirmation, idempotent purchase and status polling                    |
-| `/convert`       | Convert        | Server-backed  | Expiring rate quote, idempotent settlement, status polling and wallet refresh                  |
-| `/verification`  | Verification   | Server-backed  | Profile draft, validated document upload, review submission and persisted status               |
-| `/cards`         | Bank cards     | Server-backed  | Validated registration, masked listing, default selection, duplicate prevention and removal    |
-| `/referrals`     | Referrals      | Server-backed  | Code, share fallback, aggregate metrics, eligibility states and reward activity                |
-| `/support`       | Support        | Server-backed  | Create, list, inspect, reply to and close authenticated support tickets                        |
-| `/settings`      | Settings       | Mixed          | Profile persisted locally; security actions and notification preferences are demonstrations    |
-| `/admin/*`       | Administration | Server-backed  | Permission-scoped overview, users, verification, support and platform settings                 |
+| Route            | Feature        | Current status      | Main behavior                                                                    |
+| ---------------- | -------------- | ------------------- | -------------------------------------------------------------------------------- |
+| `/login`         | Authentication | Frontend-integrated | Login, session restoration and password-reset request                            |
+| `/`              | Dashboard      | Frontend-integrated | Portfolio KPIs, charts, allocation, featured markets and activity                |
+| `/markets`       | Markets        | Frontend-integrated | Search, infinite pagination, virtualization, quote filters and local favorites   |
+| `/trade/:symbol` | Trade          | Frontend-integrated | Market snapshot, OHLCV/depth, validated ticker, order execution and cancellation |
+| `/wallet`        | Wallet         | Frontend-integrated | Balances, availability, transaction history, deposit and withdrawal              |
+| `/orders`        | Orders         | Frontend-integrated | Order listing and cancellation                                                   |
+| `/buy-crypto`    | Buy crypto     | Frontend-integrated | Expiring server quote, confirmation, idempotent purchase and status polling      |
+| `/convert`       | Convert        | Frontend-integrated | Expiring rate quote, idempotent settlement, status polling and wallet refresh    |
+| `/verification`  | Verification   | Frontend-integrated | Profile draft, validated document upload, review submission and persisted status |
+| `/cards`         | Bank cards     | Frontend-integrated | Validated registration, masked listing, default selection and removal            |
+| `/referrals`     | Referrals      | Frontend-integrated | Code, share fallback, aggregate metrics, eligibility states and reward activity  |
+| `/support`       | Support        | Frontend-integrated | Create, list, inspect, reply to and close authenticated support tickets          |
+| `/settings`      | Settings       | Mixed               | Local profile preferences; security controls require backend integration         |
+| `/admin/*`       | Administration | Frontend-integrated | Permission-scoped overview, users, verification, support and platform settings   |
 
 All product routes except `/login` are protected by session restoration. Unknown routes redirect to the dashboard.
 
@@ -40,7 +40,7 @@ All product routes except `/login` are protected by session restoration. Unknown
 - Clears authentication and raises `auth:expired` if refresh fails.
 - Password-reset UI returns a privacy-preserving result and must not disclose account existence.
 - Login, refresh and current-user responses include a role plus explicit permissions. Navigation and routes use permissions rather than hard-coded role-name checks.
-- Every `/admin/*` workspace has an action-specific read permission; unauthorized authenticated users are sent to the localized forbidden page, while every reference API endpoint independently returns `403` for denied access.
+- Every `/admin/*` workspace has an action-specific read permission; unauthorized authenticated users are sent to the localized forbidden page. A compatible API must independently return `403` for denied access.
 - Limited `support`, `compliance` and `operations` operators enter their first permitted workspace; administration navigation and customer-product navigation are both derived from explicit permissions.
 
 ## Dashboard and markets
@@ -64,7 +64,7 @@ All product routes except `/login` are protected by session restoration. Unknown
 - Creation uses a cryptographically random idempotency key and retains it across uncertain retries. Successful execution refreshes wallet and dashboard state.
 - Cancellation uses the shared optimistic React Query utility and rolls back on failure.
 - Orders can be filtered between open orders and history.
-- The ignored reference server contains a replaceable market-provider adapter. Its Binance implementation validates public 24-hour ticker, klines and depth payloads and relays the live ticker stream without fabricating fallback prices. Demo order settlement and balances are still in-memory simulations and are not Binance orders.
+- The frontend contract expects provider-normalized ticker, candle, depth and recent-trade data. Production order execution must be implemented by an authoritative backend and must never be inferred from public market-data responses.
 
 ## Wallet
 
@@ -72,7 +72,7 @@ All product routes except `/login` are protected by session restoration. Unknown
 - Supports search, balance privacy toggle and asset-specific deposit/withdraw dialogs.
 - Validates amount, network and withdrawal address.
 - Successful transfers invalidate wallet assets, transactions and dashboard queries.
-- The reference server completes demo transfers immediately; production withdrawals require risk, MFA, address and custody workflows.
+- Production withdrawals require authoritative balance checks, idempotency, risk screening, MFA, address policy and custody workflows.
 
 ## Express purchase
 
@@ -95,8 +95,8 @@ All product routes except `/login` are protected by session restoration. Unknown
 - Executes only the opaque quote ID with a cryptographically random idempotency key.
 - Preserves the key after uncertain failures, polls pending conversions every two seconds and refreshes wallet/dashboard data only after a terminal state.
 - Validates every quote/order response at the network boundary before it enters application state.
-- The reference server verifies ownership, expiration and source balance, consumes the quote once, then debits and credits balances as one synchronous repository operation.
-- Production requires a database transaction and fixed-precision ledger; the in-memory reference implementation is not multi-instance safe.
+- A compatible backend must verify ownership, expiration and source balance, then consume the quote and record both sides of the conversion atomically.
+- Production requires a database transaction and fixed-precision double-entry ledger.
 
 ## User-service modules
 
@@ -104,8 +104,8 @@ All product routes except `/login` are protected by session restoration. Unknown
 - Cards: uses normalized schema validation plus Iranian card and IBAN checksums on both client and server, keeps only masked values plus a user-scoped duplicate fingerprint, supports default-card selection and requires confirmation before removal. External ownership verification remains a production integration.
 - Referrals: loads an authenticated summary, supports native sharing with clipboard fallback, and presents responsive aggregate metrics plus joined/qualified/rewarded activity. The reference data is deterministic; signup attribution and monetary settlement remain production integrations.
 - Support: lists authenticated tickets, shows full conversations, provides localized schema errors for ticket fields and reply boundaries, and supports creation, replies and idempotent closure through the API. Five localized categories and four lifecycle states are represented consistently in Persian and English.
-- Settings: profile form uses Yup and local storage; selected photo uses a temporary object URL. MFA, password and session controls are UI demonstrations.
-- Administration: nested URL-addressable workspaces load server-owned overview metrics, searchable user summaries, pending verification cases, support tickets and platform settings. Review, reply and settings mutations use separate permissions, server validation, rate limiting, focused cache invalidation and audit events. The reference persistence and audit store remain in-memory demonstrations; production requires durable transactional repositories, immutable centralized audit storage and step-up authentication for high-risk controls.
+- Settings: profile form uses Yup and local storage; selected photos use temporary object URLs. MFA, password and session controls require backend integration before they are functional security controls.
+- Administration: nested URL-addressable workspaces consume overview metrics, searchable user summaries, pending verification cases, support tickets and platform settings. Review, reply and settings mutations use separate permissions and focused cache invalidation. Production requires server validation, rate limiting, durable transactional repositories, immutable centralized audit storage and step-up authentication for high-risk controls.
 
 ## Cross-cutting behavior
 
