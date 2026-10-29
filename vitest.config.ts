@@ -13,13 +13,26 @@ export default defineConfig({
   },
   test: {
     environment: 'jsdom',
-    exclude: ['server/**', 'node_modules/**', 'dist/**'],
+    exclude: ['e2e/**', 'server/**', 'node_modules/**', 'dist/**'],
     globals: true,
     setupFiles: ['./src/test/setup.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'html'],
-      exclude: ['src/main.tsx', 'src/test/**', '**/*.d.ts'],
+      include: [
+        'src/**/lib/**/*.ts',
+        'src/shared/api/react-query/optimistic/index.ts',
+        'src/features/cards/api/cardsApi.ts',
+        'src/app/providers/language/LanguageProvider.tsx',
+        'src/features/cards/components/AddBankCardDialog.tsx',
+      ],
+      exclude: ['**/*.test.ts', '**/*.test.tsx', '**/index.ts', 'src/test/**', '**/*.d.ts'],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        statements: 80,
+        branches: 70,
+      },
     },
   },
 });

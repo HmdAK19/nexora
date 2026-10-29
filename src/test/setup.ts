@@ -1,4 +1,11 @@
 import '@testing-library/jest-dom/vitest';
+import { afterAll, afterEach, beforeAll } from 'vitest';
+
+import { mockServer } from './mockServer';
+
+beforeAll(() => mockServer.listen({ onUnhandledRequest: 'bypass' }));
+afterEach(() => mockServer.resetHandlers());
+afterAll(() => mockServer.close());
 
 if (typeof window !== 'undefined') {
   Object.defineProperty(window, 'matchMedia', {
