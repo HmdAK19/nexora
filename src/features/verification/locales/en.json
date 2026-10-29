@@ -22,11 +22,40 @@
   "documentHint": "The image must be clear, in color, and uncropped.",
   "back": "Back",
   "submit": "Submit for review",
+  "submitting": "Submitting…",
   "submittedTitle": "Documents submitted",
   "submittedDescription": "We will notify you of the result within 24 hours.",
   "reviewDetails": "Review details",
+  "verifiedTitle": "Identity verified",
+  "verifiedDescription": "Your identity is verified and higher account limits are active.",
   "accountLevel": "Account level",
   "basic": "Basic",
   "incomplete": "Incomplete",
-  "dailyWithdrawalLimit": "Daily withdrawal limit"
+  "dailyWithdrawalLimit": "Daily withdrawal limit",
+  "retry": "Try again",
+  "levels": { "basic": "Basic", "verified": "Verified" },
+  "status": {
+    "not_started": "Not started",
+    "draft": "Draft",
+    "ready": "Ready to submit",
+    "pending": "Under review",
+    "verified": "Verified",
+    "rejected": "Needs correction"
+  },
+  "errors": {
+    "load": "Verification details could not be loaded.",
+    "request": "The request could not be completed. Review the information and try again.",
+    "document": {
+      "empty": "Choose a non-empty document.",
+      "type": "Only PDF, JPEG and PNG documents are accepted.",
+      "size": "The document must be no larger than 5 MB."
+    }
+  },
+  "validation": {
+    "fullNameRequired": "Enter your full legal name.",
+    "fullNameMin": "Full name must contain at least 3 characters.",
+    "fullNameMax": "Full name cannot exceed {{max}} characters.",
+    "nationalIdRequired": "Enter your national ID or passport number.",
+    "nationalIdInvalid": "Use 8–32 Latin letters, numbers or hyphens."
+  }
 }
