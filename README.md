@@ -1,77 +1,143 @@
-# Nexora Digital Asset Exchange
+# Nexora
 
-Nexora is a bilingual, responsive digital-asset exchange application based on the supplied Cryptolly designs. The tracked repository contains the React frontend. A runnable reference API exists under `server/`, but that directory is intentionally ignored because it will become a separate repository.
+Nexora is a bilingual digital-asset exchange frontend built with React and TypeScript. It demonstrates a production-oriented frontend architecture for portfolio monitoring, market discovery, trading, wallet workflows, identity verification, customer support and permission-scoped administration.
 
-> Nexora is currently an engineering-grade demo, not a licensed production exchange. The reference server uses in-memory account state; its trade terminal consumes public Binance Spot market data, but orders and balances remain local simulations. Real funds require durable accounting, custody, payment, KYC/AML and operational infrastructure described in the security documentation.
+The repository contains the web client and its automated tests. Financial execution, custody, identity review and durable account state belong to a separately deployed backend and are deliberately not represented as production-ready capabilities here.
 
-## Current capabilities
+## Product preview
 
-- Authentication with in-memory access tokens and HttpOnly refresh-cookie sessions
-- Permission-based authorization with guarded navigation/routes and independent API enforcement
-- Portfolio dashboard, allocation/performance charts and recent activity
-- Paginated and virtualized markets, search, filters and local favorites
-- Responsive trade terminal with validated Binance Spot streaming ticks and REST-backed OHLCV/depth, balance-aware idempotent demo orders, chart tools and order management
-- Wallet balances, transaction history, deposits and withdrawals
-- Server-priced express purchase with expiring quotes and idempotent execution
-- Server-priced asset conversion with atomic debit/credit semantics and safe retry
-- Permission-scoped administration workspaces for overview, users, verification, support and platform settings
-- Server-backed identity-verification drafts, document validation and review submission
-- Server-backed bank-card registration with Iranian checksum validation, masking, duplicate prevention, default-card selection and confirmed removal
-- Server-backed referral summary, eligibility states, reward totals and native share/clipboard fallbacks
-- Schema-based localized validation for financial, identity, support, authentication and profile forms
-- Unit, component, MSW contract, axe accessibility and multi-viewport Playwright smoke-test infrastructure
-- Persian/English localization with automatic RTL/LTR layout
-- Dark/light themes, responsive sidebar and installable PWA
+![Nexora portfolio dashboard](docs/assets/dashboard.png)
 
-The exact integration status of every screen is documented in [Features](docs/FEATURES.md).
+<details>
+<summary>Authentication screen</summary>
+
+![Nexora authentication screen](docs/assets/login.png)
+
+</details>
+
+## Engineering highlights
+
+- Feature-oriented modules with explicit `api`, `components`, `hooks`, `lib`, `model`, `locales` and `pages` boundaries
+- Strict TypeScript, runtime validation at sensitive API boundaries and schema-driven form validation
+- TanStack Query for remote state, narrow cache invalidation and reusable optimistic-update helpers
+- Short-lived in-memory access tokens with refresh-session restoration and concurrent refresh deduplication
+- Deny-by-default, permission-based route and navigation presentation; the API remains the authoritative security boundary
+- Responsive trading workspace with live-market transport abstractions, order book, recent trades, chart tools and order entry
+- English and Persian localization with synchronized LTR/RTL layout
+- Accessible loading, empty, error, retry, validation and confirmation states
+- Route-level code splitting, virtualized market lists and an installable PWA shell
+- Unit, component, API-boundary, accessibility and multi-viewport E2E test infrastructure
+
+## Application surface
+
+| Area                   | Implemented in the frontend                                                         | Required for a real exchange                                                      |
+| ---------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Authentication         | Login, refresh restoration, logout and password-reset request                       | Identity provider, secure session store, recovery delivery and abuse controls     |
+| Markets and trading    | Market directory, streaming transport, charts, depth, order entry and order history | Licensed market data, matching/liquidity integration and durable order processing |
+| Wallet and conversion  | Balance views, transfer forms, quote confirmation and idempotent request handling   | Double-entry ledger, custody, risk engine and settlement                          |
+| Verification and cards | Validated forms, document/card workflows and masked display contracts               | KYC provider, encrypted object storage and payment-provider tokenization          |
+| Administration         | Permission-scoped workspaces for users, verification, support and settings          | Server-side policy enforcement, durable audit trail and step-up authentication    |
+
+The detailed implementation status for every route is maintained in [Feature catalogue](docs/FEATURES.md).
+
+## Architecture
+
+```mermaid
+flowchart LR
+  UI[React UI and routing] --> Hooks[Feature hooks]
+  Hooks --> Query[TanStack Query]
+  Query --> API[Typed API adapters]
+  API --> Gateway[/api and /ws]
+  Store[Redux persisted preferences] --> UI
+  I18n[i18next and direction] --> UI
+  Gateway --> Backend[Separately deployed backend]
+```
+
+The frontend is organized around business capabilities rather than technical page types. Pages compose feature hooks and view components; network calls live in API adapters; validation and calculations remain reusable pure modules. Shared code is restricted to stable cross-feature infrastructure and primitives.
+
+See [Architecture](docs/ARCHITECTURE.md) for dependency rules, state ownership, authentication flow and cache-mutation policy.
 
 ## Technology
 
-React 19, TypeScript, Vite, Material UI, TanStack Query, Axios, React Hook Form, Yup, Redux Toolkit, Redux Persist, i18next, Vitest, Framer Motion and React Virtuoso.
+- React 19, TypeScript and Vite
+- Material UI and Emotion
+- TanStack Query, Redux Toolkit and Redux Persist
+- React Hook Form and Yup
+- Axios and WebSocket transport
+- i18next with Persian/English resources
+- Vitest, Testing Library, MSW, `vitest-axe` and Playwright
+- Vite PWA
 
-## Quick start
+## Local development
 
-Requirements: Node.js 20+ and npm.
+### Requirements
+
+- Node.js 20 or newer
+- npm
+- A backend implementing the contract in [API contract](docs/API.md) for authenticated and frontend-integrated flows
+
+### Install and run
 
 ```bash
-npm install
+npm ci
 npm run dev
 ```
 
-Frontend: `http://localhost:5173`
+The frontend is served at `http://localhost:5173`. During development, Vite proxies `/api` and `/ws` to `http://localhost:4000`. Without a compatible backend, the public shell can load but authenticated data workflows will display their error states.
 
-Expected API/WebSocket server: `http://localhost:4000`
+## Quality gates
 
-Demo account: `demo@nexora.dev` / `Nexora123!`
+```bash
+npm run format:check
+npm run typecheck
+npm run lint
+npm test
+npm run test:coverage
+npm run build
+npm run test:e2e
+```
 
-The Vite development server proxies `/api` and `/ws` to port `4000`. If the separate backend is not running, authentication and server-backed screens correctly report connection errors.
+| Command                 | Purpose                                               |
+| ----------------------- | ----------------------------------------------------- |
+| `npm run dev`           | Start the Vite development server                     |
+| `npm run build`         | Type-check and generate the production bundle         |
+| `npm run preview`       | Serve the generated bundle locally                    |
+| `npm run typecheck`     | Run strict TypeScript checks                          |
+| `npm run lint`          | Run ESLint with zero warnings allowed                 |
+| `npm test`              | Run the unit and component suite once                 |
+| `npm run test:coverage` | Enforce coverage thresholds on critical modules       |
+| `npm run test:e2e`      | Run Playwright smoke tests at multiple viewport sizes |
+| `npm run format:check`  | Verify Prettier formatting                            |
 
-## Commands
+## Deployment status
 
-| Command                 | Purpose                                  |
-| ----------------------- | ---------------------------------------- |
-| `npm run dev`           | Start the frontend development server    |
-| `npm run build`         | Type-check and create a production build |
-| `npm run preview`       | Preview the production build             |
-| `npm run typecheck`     | Run strict TypeScript checks             |
-| `npm run lint`          | Run ESLint with zero warnings allowed    |
-| `npm run test`          | Run the unit/component suite once        |
-| `npm run test:watch`    | Run tests in watch mode                  |
-| `npm run test:coverage` | Generate a coverage report               |
-| `npm run format`        | Format the repository with Prettier      |
-| `npm run format:check`  | Verify formatting without changing files |
+A public deployment is not currently maintained from this repository. The production build is a static SPA and can be deployed to a CDN or static host when a compatible backend and same-origin `/api` and `/ws` gateway are available. Deployment, CSP, cookies, WebSocket proxying and observability requirements are documented in [Operations](docs/OPERATIONS.md).
+
+## Scope and limitations
+
+Nexora is a frontend engineering project, not a licensed exchange or a custody system. The repository does not include:
+
+- a durable double-entry ledger;
+- custody or signing infrastructure;
+- payment settlement;
+- a matching engine or external liquidity execution;
+- production KYC/AML and sanctions integrations;
+- production-grade audit storage, monitoring or incident operations.
+
+These boundaries are intentional and documented so that UI completeness is not confused with financial-system readiness. See [Security](docs/SECURITY.md) for the trust model and production checklist.
 
 ## Documentation
 
-- [Feature catalogue and implementation status](docs/FEATURES.md)
+- [Documentation index](docs/README.md)
+- [Feature catalogue and route status](docs/FEATURES.md)
 - [Architecture and module boundaries](docs/ARCHITECTURE.md)
 - [HTTP and WebSocket API contract](docs/API.md)
 - [Design system, responsiveness and accessibility](docs/DESIGN_SYSTEM.md)
 - [Security model and production checklist](docs/SECURITY.md)
-- [Testing strategy](docs/TESTING.md)
+- [Testing strategy and coverage](docs/TESTING.md)
 - [Development and contribution guide](docs/DEVELOPMENT.md)
 - [Configuration, deployment and operations](docs/OPERATIONS.md)
 
 ## Documentation policy
 
-Documentation is part of the implementation. Any change to behavior, routes, API contracts, configuration, security assumptions, architecture or user-facing capabilities must update the relevant document in the same change. A feature is not complete when its documentation is stale.
+Documentation is part of the definition of done. Changes to behavior, routes, API contracts, architecture, configuration, security assumptions, test coverage or feature status must update the relevant document in the same change.
