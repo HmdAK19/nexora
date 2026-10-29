@@ -18,6 +18,10 @@ Nexora uses a reusable Material UI token system and feature-owned components to 
 
 Spacing uses MUI’s 8px base. Global corner radius is 14px; buttons and outlined inputs use 11px. Cards use borders rather than large shadows. Typography uses Inter, Vazirmatn and system fallbacks with fluid page headings.
 
+### Brand identity
+
+The Nexora mark is a continuous `N` monogram representing connected markets and exchange flow. Its cyan node represents the user at the center of the network. The mark uses the primary blue gradient and secondary cyan accent, remains recognizable without the wordmark and is shared by the application shell, authentication surface, favicon and PWA icons. The wordmark highlights the `x` as the visual exchange point.
+
 ## Layout
 
 - Minimum supported viewport width is 320px.
