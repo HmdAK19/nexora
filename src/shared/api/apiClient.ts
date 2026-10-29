@@ -1,11 +1,12 @@
 import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 
+import { getRuntimeConfig } from '@shared/config';
 import type { AuthResponse } from '@shared/model';
 
 import { tokenStore } from './tokenStore';
 
 export const apiClient = axios.create({
-  baseURL: '/api',
+  baseURL: getRuntimeConfig().apiBaseUrl,
   timeout: 12_000,
   withCredentials: true,
   headers: {

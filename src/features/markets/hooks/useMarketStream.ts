@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
+import { createMarketWebSocketUrl } from '@shared/config';
+
 interface PriceTick {
   symbol: string;
   price: number;
@@ -35,8 +37,7 @@ export const useMarketStream = (symbol: string) => {
     let reconnectTimer: number | undefined;
     let cancelled = false;
     const connect = () => {
-      const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-      socket = new WebSocket(`${protocol}://${window.location.host}/ws?symbol=${encodeURIComponent(symbol)}`);
+      socket = new WebSocket(createMarketWebSocketUrl(symbol, window.location.origin));
       socket.onopen = () => {
         retryRef.current = 0;
       };

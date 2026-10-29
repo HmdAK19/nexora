@@ -22,6 +22,7 @@ export default defineConfig({
         ],
       },
       workbox: {
+        globIgnores: ['**/runtime-config.json'],
         navigateFallback: '/index.html',
         runtimeCaching: [
           {
