@@ -11,7 +11,7 @@ export const statCardStyles = (accent: string) => ({
     height: 78,
     opacity: 0.12,
     position: 'absolute',
-    right: -22,
+    insetInlineEnd: -22,
     top: -24,
     width: 78,
   },
@@ -25,6 +25,7 @@ export const statCardStyles = (accent: string) => ({
   box4: {
     alignItems: 'center',
     display: 'flex',
+    gap: 1.5,
     justifyContent: 'space-between',
   },
   box5: {

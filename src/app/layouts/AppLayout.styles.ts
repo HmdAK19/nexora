@@ -2,6 +2,7 @@ import { alpha } from '@mui/material/styles';
 import type { Theme } from '@mui/material/styles';
 
 const sidebarWidth = 216;
+const appHeaderHeight = { xs: 68, md: 80 } as const;
 export const styles = {
   listItemButton1: (theme: Theme) => ({
     border: '1px solid transparent',
@@ -110,7 +111,8 @@ export const styles = {
     borderBottom: '1px solid',
     borderColor: 'divider',
     display: 'flex',
-    height: 68,
+    gap: 1.5,
+    height: appHeaderHeight,
     justifyContent: 'space-between',
     px: 2,
   },
@@ -162,16 +164,13 @@ export const styles = {
     display: 'flex',
     minHeight: '100vh',
   },
-  box19: (direction: 'ltr' | 'rtl') => ({
+  box19: {
     flex: 1,
     minWidth: 0,
-    ml: {
-      md: direction === 'ltr' ? `${sidebarWidth}px` : 0,
+    marginInlineStart: {
+      md: `${sidebarWidth}px`,
     },
-    mr: {
-      md: direction === 'rtl' ? `${sidebarWidth}px` : 0,
-    },
-  }),
+  },
   appBar20: (activeTheme: Theme) => ({
     backdropFilter: 'blur(18px)',
     WebkitBackdropFilter: 'blur(18px)',
@@ -193,10 +192,7 @@ export const styles = {
   }),
   toolbar21: (activeTheme: Theme) => ({
     gap: 1.5,
-    minHeight: {
-      xs: 68,
-      md: 80,
-    },
+    minHeight: appHeaderHeight,
     '& .MuiIconButton-root': {
       border: '1px solid transparent',
       color: 'text.secondary',
@@ -258,7 +254,7 @@ export const styles = {
     borderRadius: '50%',
     height: 8,
     position: 'absolute',
-    right: 8,
+    insetInlineEnd: 8,
     top: 8,
     width: 8,
   },

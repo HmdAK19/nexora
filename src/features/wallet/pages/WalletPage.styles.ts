@@ -30,6 +30,7 @@ export const styles = {
   cardContent5: {
     alignItems: 'center',
     display: 'flex',
+    gap: 2,
     justifyContent: 'space-between',
     minHeight: 176,
     p: {

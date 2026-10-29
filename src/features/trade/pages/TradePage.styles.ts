@@ -90,6 +90,7 @@ export const styles = {
     borderBottom: '1px solid',
     borderColor: 'divider',
     display: 'flex',
+    gap: 1.5,
     justifyContent: 'space-between',
     px: 2,
   },
@@ -139,6 +140,7 @@ export const styles = {
   },
   box19: {
     display: 'flex',
+    gap: 1.5,
     justifyContent: 'space-between',
   },
   button20: (side: 'buy' | 'sell') => ({

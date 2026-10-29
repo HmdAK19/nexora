@@ -6,6 +6,7 @@ export const styles = {
   header: {
     alignItems: 'center',
     display: 'flex',
+    gap: 1.5,
     justifyContent: 'space-between',
     px: 2,
     py: 1.25,

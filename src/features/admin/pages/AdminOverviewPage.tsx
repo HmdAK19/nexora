@@ -15,7 +15,12 @@ export default function AdminOverviewPage() {
 
   if (!query.data) {
     return (
-      <AdminQueryState error={query.error} loading={query.isLoading} retry={() => void query.refetch()} />
+      <AdminQueryState
+        error={query.error}
+        loading={query.isLoading}
+        loadingVariant="dashboard"
+        retry={() => void query.refetch()}
+      />
     );
   }
 
@@ -62,7 +67,7 @@ export default function AdminOverviewPage() {
               </Typography>
               <Stack spacing={1.5} sx={styles.sectionSpacing}>
                 {services.map((service) => (
-                  <Stack direction="row" justifyContent="space-between" key={service.key}>
+                  <Stack direction="row" gap={1.5} justifyContent="space-between" key={service.key}>
                     <Typography>{t(`services.${service.key}`)}</Typography>
                     <Chip
                       color={service.status === 'operational' ? 'success' : 'warning'}

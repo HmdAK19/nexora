@@ -11,7 +11,7 @@ export const styles = {
   },
   box3: {
     border: '9px solid #1769ff',
-    borderRightColor: 'transparent',
+    borderInlineEndColor: 'transparent',
     borderRadius: '50%',
     inset: 0,
     position: 'absolute',
@@ -23,7 +23,7 @@ export const styles = {
     borderRadius: '50%',
     height: 17,
     position: 'absolute',
-    right: 0,
+    insetInlineEnd: 0,
     top: 9,
     width: 17,
   },

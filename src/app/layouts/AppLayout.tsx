@@ -250,7 +250,6 @@ export function AppLayout() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const theme = useTheme();
   const dispatch = useAppDispatch();
   const mode = useAppSelector((state) => state.preferences.colorMode);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -264,7 +263,7 @@ export function AppLayout() {
   return (
     <Box sx={styles.box18}>
       <Sidebar mobileOpen={mobileOpen} onClose={() => setMobileOpen(false)} />
-      <Box sx={styles.box19(theme.direction)}>
+      <Box sx={styles.box19}>
         <AppBar color="transparent" elevation={0} position="sticky" sx={styles.appBar20}>
           <Toolbar sx={styles.toolbar21}>
             <IconButton aria-label="Open menu" onClick={() => setMobileOpen(true)} sx={styles.iconButton22}>

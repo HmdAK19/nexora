@@ -44,6 +44,7 @@ export const styles = {
   box7: {
     alignItems: 'center',
     display: 'flex',
+    gap: 1.5,
     justifyContent: 'space-between',
     mb: 2,
   },
@@ -67,6 +68,7 @@ export const styles = {
   box12: {
     alignItems: 'center',
     display: 'flex',
+    gap: 1.5,
     justifyContent: 'space-between',
     p: 2.5,
   },
@@ -101,6 +103,7 @@ export const styles = {
   box19: {
     alignItems: 'center',
     display: 'flex',
+    gap: 1.5,
     justifyContent: 'space-between',
     mb: 1,
   },

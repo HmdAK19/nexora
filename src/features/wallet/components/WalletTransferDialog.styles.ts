@@ -16,6 +16,7 @@ export const styles = {
   box3: {
     alignItems: 'center',
     display: 'flex',
+    gap: 1.5,
     justifyContent: 'space-between',
   },
   dialogActions4: {

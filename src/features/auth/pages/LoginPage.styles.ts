@@ -95,6 +95,7 @@ export const styles = {
   box12: {
     alignItems: 'center',
     display: 'flex',
+    gap: 1.5,
     justifyContent: 'space-between',
   },
   button13: {

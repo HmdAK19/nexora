@@ -66,13 +66,13 @@ export const styles = {
     flex: 1,
   },
   typography11: {
-    ml: 1.25,
+    marginInlineStart: 1.25,
   },
   typography12: {
-    ml: 1.25,
+    marginInlineStart: 1.25,
   },
   typography13: {
-    ml: 1.25,
+    marginInlineStart: 1.25,
   },
   box14: {
     position: 'relative',
@@ -106,6 +106,6 @@ export const styles = {
     px: 1.25,
     py: 0.6,
     position: 'absolute',
-    right: 74,
+    insetInlineEnd: 74,
   }),
 };
