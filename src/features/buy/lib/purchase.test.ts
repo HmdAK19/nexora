@@ -1,8 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import axios from 'axios';
+import { describe, expect, it, vi } from 'vitest';
 
 import { getSecondsRemaining } from '@shared/lib';
 
-import { validatePurchaseAmount } from './purchase';
+import { getPurchaseErrorKey, validatePurchaseAmount } from './purchase';
 
 describe('purchase validation', () => {
   it.each(['', 'not-a-number', 'Infinity', '0x10', '10.001'])('rejects an invalid amount: %s', (value) => {
@@ -20,5 +21,20 @@ describe('purchase validation', () => {
     expect(getSecondsRemaining('2026-01-01T00:00:05.001Z', Date.parse('2026-01-01T00:00:00Z'))).toBe(6);
     expect(getSecondsRemaining('2025-12-31T23:59:59Z', Date.parse('2026-01-01T00:00:00Z'))).toBe(0);
     expect(getSecondsRemaining('invalid', Date.now())).toBe(0);
+  });
+
+  it('maps only allow-listed purchase errors to translation keys', () => {
+    vi.spyOn(axios, 'isAxiosError').mockReturnValue(true);
+
+    expect(getPurchaseErrorKey({ response: { data: { code: 'QUOTE_EXPIRED' } } })).toBe(
+      'errors.QUOTE_EXPIRED'
+    );
+    expect(getPurchaseErrorKey({ response: { data: { code: 'PRIVATE_INTERNAL_CODE' } } })).toBe(
+      'errors.unexpected'
+    );
+    expect(getPurchaseErrorKey({})).toBe('errors.network');
+
+    vi.restoreAllMocks();
+    expect(getPurchaseErrorKey(new Error('failure'))).toBe('errors.unexpected');
   });
 });
