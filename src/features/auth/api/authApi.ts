@@ -10,17 +10,30 @@ export interface PasswordResetInput {
   email: string;
 }
 
+let restorePromise: Promise<AuthResponse> | null = null;
+
+const restoreSession = (): Promise<AuthResponse> => {
+  restorePromise ??= apiClient
+    .post<AuthResponse>('/auth/refresh')
+    .then(({ data }) => {
+      tokenStore.set(data.accessToken);
+
+      return data;
+    })
+    .finally(() => {
+      restorePromise = null;
+    });
+
+  return restorePromise;
+};
+
 export const authApi = {
   login: async (input: LoginInput): Promise<AuthResponse> => {
     const { data } = await apiClient.post<AuthResponse>('/auth/login', input);
     tokenStore.set(data.accessToken);
     return data;
   },
-  restore: async (): Promise<AuthResponse> => {
-    const { data } = await apiClient.post<AuthResponse>('/auth/refresh');
-    tokenStore.set(data.accessToken);
-    return data;
-  },
+  restore: restoreSession,
   me: async (): Promise<User> => (await apiClient.get<User>('/auth/me')).data,
   requestPasswordReset: async (input: PasswordResetInput): Promise<void> => {
     await apiClient.post('/auth/forgot-password', input);
