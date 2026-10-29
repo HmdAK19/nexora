@@ -49,10 +49,32 @@ Login and refresh response:
     "id": "user-demo",
     "name": "Hamed Akbarzadeh",
     "email": "demo@nexora.dev",
-    "level": "verified"
+    "level": "verified",
+    "role": "admin",
+    "permissions": ["admin:overview:read", "admin:settings:manage"]
   }
 }
 ```
+
+`role` is descriptive client context. The frontend uses the server-issued `permissions` array for navigation and route presentation, but neither value is a security boundary: every protected API resolves the current user and enforces its required permission server-side. Permission checks are deny-by-default. A valid session without the required capability receives `403 FORBIDDEN`; missing or invalid authentication receives `401`.
+
+## Authorization
+
+| Method | Path                                      | Required permission         | Purpose                                  |
+| ------ | ----------------------------------------- | --------------------------- | ---------------------------------------- |
+| GET    | `/admin/overview`                         | `admin:overview:read`       | Operational metrics and attention counts |
+| GET    | `/admin/users?search=&page=1&pageSize=25` | `admin:users:read`          | Paginated display-safe user search       |
+| GET    | `/admin/verifications`                    | `admin:verification:read`   | List pending verification cases          |
+| POST   | `/admin/verifications/:id/decision`       | `admin:verification:review` | Approve or reject a pending case         |
+| GET    | `/admin/tickets`                          | `admin:support:read`        | List support tickets across users        |
+| POST   | `/admin/tickets/:id/replies`              | `admin:support:reply`       | Add a support reply                      |
+| GET    | `/admin/settings`                         | `admin:settings:read`       | Read platform financial settings         |
+| PUT    | `/admin/settings`                         | `admin:settings:manage`     | Validate and replace platform settings   |
+| GET    | `/admin/audit-events`                     | `admin:audit:read`          | Read administration audit events         |
+
+Product route families require their corresponding `*:access` permission (`wallet:access`, `orders:access`, `markets:access`, and so on). Administration permissions are action-scoped rather than inferred from a broad role check. Clients must not infer access from the role name or hidden UI.
+
+Administration writes are rate-limited and server-validated. Verification decisions, support replies and settings updates append an audit event containing actor, action, target and timestamp. The ignored reference server persists these records only in memory; production must use transactional durable storage and an append-only audit sink.
 
 `POST /auth/forgot-password` accepts `{ "email": "user@example.com" }` and should return `204` for both existing and absent accounts. `POST /auth/logout` returns `204`. `GET /auth/me` returns only the `user` object.
 
@@ -82,6 +104,15 @@ Login and refresh response:
 | GET    | `/support/tickets/:id`                   | Read an owned ticket conversation             |
 | POST   | `/support/tickets/:id/messages`          | Add a user reply to an open owned ticket      |
 | PATCH  | `/support/tickets/:id/close`             | Close an owned ticket                         |
+| GET    | `/verification`                          | Read the authenticated user's verification    |
+| PUT    | `/verification/profile`                  | Save validated identity profile details       |
+| POST   | `/verification/document`                 | Upload a validated identity document          |
+| POST   | `/verification/submit`                   | Submit a complete case for review             |
+| GET    | `/cards`                                 | List the authenticated user's masked cards    |
+| POST   | `/cards`                                 | Register a validated bank card and IBAN       |
+| PATCH  | `/cards/:id/default`                     | Select an owned card as the default           |
+| DELETE | `/cards/:id`                             | Remove an owned card                          |
+| GET    | `/referrals`                             | Read referral code, metrics and activity      |
 | GET    | `/health`                                | Service readiness                             |
 
 Wallet transfer payloads use `{ asset, type, amount, network, address? }`. A destination address is required for withdrawals. Demo transfers complete immediately and mutate only the in-memory balance; they never move real assets.
@@ -142,6 +173,8 @@ Market resources use:
 
 `GET /markets/:symbol/trading` returns `baseAsset`, `quoteAsset`, display name, last/high/low prices, 24-hour change/volume and a depth object containing `symbol`, monotonic `sequence`, `asks` and `bids`. Each level has positive `price` and `amount` fields. `GET /markets/:symbol/candles?timeframe=15m&limit=110` accepts `1m`, `5m`, `15m`, `1h`, `4h` or `1D` and returns chronological `{ time, open, high, low, close, volume }` values. Limits are constrained to 28–500.
 
+`GET /markets/:symbol/trades?limit=30` returns the provider's newest normalized public trades as `{ id, price, amount, side, time }`. `side` is inferred from the provider's buyer-maker flag and is `buy` or `sell`; limits are constrained to 1–100.
+
 ### Wallet
 
 `GET /wallet` returns market fields plus:
@@ -190,13 +223,15 @@ Recommended public order errors are `ORDER_NOT_FOUND`, `ORDER_NOT_OPEN`, `INSUFF
 
 ## WebSocket
 
-Connect to `/ws?symbol=BTC-USDT`. The demo feed sends:
+Connect to `/ws?symbol=BTC-USDT`. The reference gateway validates and relays the provider's Binance Spot 24-hour ticker stream in the stable application shape:
 
 ```json
 { "symbol": "BTC-USDT", "price": 67842.29, "change24h": 2.47, "timestamp": 1792368000000 }
 ```
 
-The production protocol should add sequence numbers, heartbeats, subscription messages and snapshot reconciliation.
+Ticker updates originate from Binance Spot's public `<symbol>@ticker` stream. Trading snapshots use the public 24-hour ticker and order-book endpoints, while candles use public klines. Provider payloads are validated at the backend boundary and provider errors close the downstream socket with code `1011`; the frontend reconnects with capped exponential backoff.
+
+The production protocol should still add application sequence numbers, heartbeats, subscription acknowledgements, provider failover and snapshot reconciliation.
 
 The client expects the WebSocket endpoint on the same public origin. In development Vite proxies `/ws` to the reference server. Production messages should include a monotonically increasing sequence and subscription acknowledgement before the frontend treats the stream as authoritative.
 
@@ -353,6 +388,26 @@ List responses contain summaries ordered by most recently updated. Detail and mu
 
 Statuses are `open`, `waiting_for_support`, `waiting_for_user` and `closed`. `POST /support/tickets/:id/messages` accepts `{ "message": "..." }`; a user reply moves an active ticket to `waiting_for_support`. Closing is idempotent. Further replies return `TICKET_CLOSED`; missing and non-owned resources both return `TICKET_NOT_FOUND` to avoid disclosing existence. Writes are rate-limited. The reference server does not implement the support-agent side or external notifications.
 
+## Identity verification
+
+All verification routes require bearer authentication and are scoped to the current user. `PUT /verification/profile` accepts `{ fullName, nationalId, country }`, where country is `IR`, `AE` or `TR`. Responses never return the raw national identifier; only `nationalIdMasked` is exposed.
+
+`POST /verification/document` accepts a raw `application/pdf`, `image/jpeg` or `image/png` body up to 5 MB and an encoded `X-Document-Name` header. The response exposes only metadata: `{ id, name, mimeType, size, uploadedAt }`. `POST /verification/submit` requires both profile and document and changes the case to `pending`. Repeated submission is safe, while profile/document mutations are rejected with `VERIFICATION_LOCKED` after submission or verification.
+
+Statuses are `not_started`, `draft`, `ready`, `pending`, `verified` and `rejected`. The ignored reference server keeps only document metadata in memory and discards uploaded bytes after validation. Production must stream bytes directly to encrypted malware-scanned object storage and retain an immutable reviewer audit trail.
+
+## Bank cards
+
+All card routes require bearer authentication and scope reads and mutations to the current user. `POST /cards` accepts `{ number, iban }`, validates the Iranian 16-digit card checksum and `IR` IBAN checksum, rejects duplicates with `CARD_ALREADY_EXISTS`, and returns only `{ id, maskedNumber, maskedIban, isDefault, createdAt }`. Raw card and IBAN values are not retained by the reference repository; a user-scoped SHA-256 fingerprint is retained solely for duplicate detection.
+
+The first registered card becomes the default. Selecting another card through `PATCH /cards/:id/default` atomically clears the previous default in the reference repository. Removing the default promotes the oldest remaining card. These endpoints register payment methods only; they do not prove bank-account ownership. Production requires a licensed payment-provider ownership check, encrypted durable storage or provider tokenization, audit events and stricter transaction-aware deletion rules.
+
+## Referrals
+
+`GET /referrals` requires bearer authentication and returns the current user's referral code, configured reward rate, aggregate counts, total credited rewards and recent referral activity. Activity status is one of `joined`, `qualified` or `rewarded`; reward amounts are denominated by `rewardCurrency`.
+
+The reference server exposes deterministic in-memory sample activity so the frontend contract and lifecycle can be exercised. It does not attribute new registrations or settle real rewards. Production needs a server-generated immutable attribution token, signup capture with fraud/abuse controls, eligibility rules based on settled fees, an auditable reward ledger and idempotent payout processing.
+
 ## Cache consequences
 
 | Successful mutation | Frontend cache action                                              |
@@ -366,6 +421,7 @@ Statuses are `open`, `waiting_for_support`, `waiting_for_user` and `closed`. `PO
 | Terminal purchase   | Invalidate wallet, dashboard and order families                    |
 | Terminal conversion | Invalidate wallet and dashboard families                           |
 | Support mutation    | Invalidate ticket list and the affected ticket detail              |
+| Verification change | Replace the current verification case                              |
 
 ## Contract evolution
 

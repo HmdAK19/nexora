@@ -29,13 +29,16 @@ If targets become configurable, expose only non-secret `VITE_*` values. Never pu
 
 When the ignored local `server/` workspace is present, it expects:
 
-| Variable               | Purpose                    | Development default       |
-| ---------------------- | -------------------------- | ------------------------- |
-| `PORT`                 | HTTP/WebSocket port        | `4000`                    |
-| `CLIENT_ORIGIN`        | Allowed browser origin     | `http://localhost:5173`   |
-| `ACCESS_TOKEN_SECRET`  | Access JWT signing secret  | development fallback only |
-| `REFRESH_TOKEN_SECRET` | Refresh JWT signing secret | development fallback only |
-| `NODE_ENV`             | Runtime mode               | `development`             |
+| Variable                 | Purpose                               | Development default                |
+| ------------------------ | ------------------------------------- | ---------------------------------- |
+| `PORT`                   | HTTP/WebSocket port                   | `4000`                             |
+| `CLIENT_ORIGIN`          | Allowed browser origin                | `http://localhost:5173`            |
+| `ACCESS_TOKEN_SECRET`    | Access JWT signing secret             | development fallback only          |
+| `REFRESH_TOKEN_SECRET`   | Refresh JWT signing secret            | development fallback only          |
+| `NODE_ENV`               | Runtime mode                          | `development`                      |
+| `MARKET_DATA_REST_URL`   | Public Spot REST provider             | `https://data-api.binance.vision`  |
+| `MARKET_DATA_STREAM_URL` | Public Spot WebSocket provider        | `wss://stream.binance.com:9443/ws` |
+| `MARKET_DATA_TIMEOUT_MS` | Upstream REST timeout in milliseconds | `8000`                             |
 
 Production must fail startup when secrets are absent and must load them from a secrets manager. The reference server’s in-memory data resets on process restart.
 
@@ -50,6 +53,8 @@ npm run dev
 ```
 
 The server directory remains ignored and must be published independently when it becomes its own repository.
+
+The reference server makes outbound requests to Binance Spot public market-data services. Deployment egress, regional availability and provider terms must be reviewed before release. Production should add rate-limit telemetry, circuit breaking, provider failover and a clear stale-data state; it must not silently fall back to fabricated prices.
 
 ## Build and artifact
 

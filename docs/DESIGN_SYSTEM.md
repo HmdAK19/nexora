@@ -24,7 +24,11 @@ Spacing uses MUI’s 8px base. Global corner radius is 14px; buttons and outline
 - Desktop uses a compact permanent sidebar; below `md` it becomes a direction-aware drawer.
 - Main page padding and grids step down at small breakpoints.
 - Trading panels use responsive grid templates so Full HD laptop screens keep the primary terminal together as long as usable width permits.
+- Desktop order books show the nearest eight asks and bids around the midpoint so both sides remain visible together; compact layouts show six levels per side.
+- On wide layouts the Order Book card spans the chart and order-entry rows, while its title and depth rows retain their compact spacing at the top of the card.
+- The wide trading terminal uses named grid areas: order book, chart/order entry and market/recent-trade sidebar. At medium and small breakpoints these areas stack without removing functionality.
 - Tabs may scroll horizontally instead of forcing translated labels to wrap.
+- Administration workspaces use a horizontally scrollable, permission-filtered navigation; user search is server-paginated inside a responsive table container, while queues and settings collapse to one column on narrow screens.
 - Long IDs and financial values use controlled wrapping and end alignment.
 
 ## Component ownership

@@ -2,18 +2,24 @@
 
 Nexora is a bilingual, responsive digital-asset exchange application based on the supplied Cryptolly designs. The tracked repository contains the React frontend. A runnable reference API exists under `server/`, but that directory is intentionally ignored because it will become a separate repository.
 
-> Nexora is currently an engineering-grade demo, not a licensed production exchange. The reference server uses in-memory state and simulated market data. Real funds require durable accounting, custody, payment, KYC/AML and operational infrastructure described in the security documentation.
+> Nexora is currently an engineering-grade demo, not a licensed production exchange. The reference server uses in-memory account state; its trade terminal consumes public Binance Spot market data, but orders and balances remain local simulations. Real funds require durable accounting, custody, payment, KYC/AML and operational infrastructure described in the security documentation.
 
 ## Current capabilities
 
 - Authentication with in-memory access tokens and HttpOnly refresh-cookie sessions
+- Permission-based authorization with guarded navigation/routes and independent API enforcement
 - Portfolio dashboard, allocation/performance charts and recent activity
 - Paginated and virtualized markets, search, filters and local favorites
-- Responsive trade terminal with validated streaming ticks, API-backed OHLCV/depth, balance-aware idempotent orders, chart tools and order management
+- Responsive trade terminal with validated Binance Spot streaming ticks and REST-backed OHLCV/depth, balance-aware idempotent demo orders, chart tools and order management
 - Wallet balances, transaction history, deposits and withdrawals
 - Server-priced express purchase with expiring quotes and idempotent execution
 - Server-priced asset conversion with atomic debit/credit semantics and safe retry
-- Persistent support-ticket conversations plus orders, settings, verification, cards, referrals and administration views
+- Permission-scoped administration workspaces for overview, users, verification, support and platform settings
+- Server-backed identity-verification drafts, document validation and review submission
+- Server-backed bank-card registration with Iranian checksum validation, masking, duplicate prevention, default-card selection and confirmed removal
+- Server-backed referral summary, eligibility states, reward totals and native share/clipboard fallbacks
+- Schema-based localized validation for financial, identity, support, authentication and profile forms
+- Unit, component, MSW contract, axe accessibility and multi-viewport Playwright smoke-test infrastructure
 - Persian/English localization with automatic RTL/LTR layout
 - Dark/light themes, responsive sidebar and installable PWA
 

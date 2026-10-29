@@ -14,12 +14,12 @@ This document is the product-level source of truth for implemented behavior. “
 | `/orders`        | Orders         | Server-backed  | Order listing and cancellation                                                                 |
 | `/buy-crypto`    | Buy crypto     | Server-backed  | Expiring server quote, confirmation, idempotent purchase and status polling                    |
 | `/convert`       | Convert        | Server-backed  | Expiring rate quote, idempotent settlement, status polling and wallet refresh                  |
-| `/verification`  | Verification   | Local demo     | Multi-step personal details and document-selection UI; no upload API                           |
-| `/cards`         | Bank cards     | Local demo     | Add/remove masked cards in component state                                                     |
-| `/referrals`     | Referrals      | Local demo     | Referral-code display/copy and sample statistics                                               |
+| `/verification`  | Verification   | Server-backed  | Profile draft, validated document upload, review submission and persisted status               |
+| `/cards`         | Bank cards     | Server-backed  | Validated registration, masked listing, default selection, duplicate prevention and removal    |
+| `/referrals`     | Referrals      | Server-backed  | Code, share fallback, aggregate metrics, eligibility states and reward activity                |
 | `/support`       | Support        | Server-backed  | Create, list, inspect, reply to and close authenticated support tickets                        |
 | `/settings`      | Settings       | Mixed          | Profile persisted locally; security actions and notification preferences are demonstrations    |
-| `/admin`         | Administration | Local demo     | User search, KYC queue, tickets and financial controls using local sample data                 |
+| `/admin/*`       | Administration | Server-backed  | Permission-scoped overview, users, verification, support and platform settings                 |
 
 All product routes except `/login` are protected by session restoration. Unknown routes redirect to the dashboard.
 
@@ -39,6 +39,9 @@ All product routes except `/login` are protected by session restoration. Unknown
 - Coalesces concurrent refresh attempts into one request and retries the original request once.
 - Clears authentication and raises `auth:expired` if refresh fails.
 - Password-reset UI returns a privacy-preserving result and must not disclose account existence.
+- Login, refresh and current-user responses include a role plus explicit permissions. Navigation and routes use permissions rather than hard-coded role-name checks.
+- Every `/admin/*` workspace has an action-specific read permission; unauthorized authenticated users are sent to the localized forbidden page, while every reference API endpoint independently returns `403` for denied access.
+- Limited `support`, `compliance` and `operations` operators enter their first permitted workspace; administration navigation and customer-product navigation are both derived from explicit permissions.
 
 ## Dashboard and markets
 
@@ -53,14 +56,15 @@ All product routes except `/login` are protected by session restoration. Unknown
 
 - Route symbol controls the selected market.
 - Supports buy/sell and limit/market forms with validation.
-- Market metadata, OHLCV candles and depth snapshots come from authenticated API contracts and are runtime-validated before rendering.
+- Market metadata, OHLCV candles and depth snapshots come from authenticated API contracts backed by Binance Spot public market data and are runtime-validated before rendering.
 - Streaming ticks are shape-validated, symbol-bound and rejected when stale; reconnect uses capped backoff.
+- The desktop terminal matches the reference hierarchy with Order Book on the left, chart and order entry in the center, and a navigable market list plus provider-backed recent trades on the right. Narrow layouts stack the same functional panels.
 - Market and marketable limit orders execute at the server-authoritative reference price, charge a server fee and atomically debit/credit reference wallet balances.
 - Resting limit orders reserve the required base or quote balance; cancellation releases the exact reservation.
 - Creation uses a cryptographically random idempotency key and retains it across uncertain retries. Successful execution refreshes wallet and dashboard state.
 - Cancellation uses the shared optimistic React Query utility and rolls back on failure.
 - Orders can be filtered between open orders and history.
-- The bundled reference market provider derives repeatable snapshots from its in-memory market catalogue. Production deployment must replace it with an exchange/liquidity-provider adapter supplying authoritative trades, candles and sequenced depth; the frontend contract does not need to change.
+- The ignored reference server contains a replaceable market-provider adapter. Its Binance implementation validates public 24-hour ticker, klines and depth payloads and relays the live ticker stream without fabricating fallback prices. Demo order settlement and balances are still in-memory simulations and are not Binance orders.
 
 ## Wallet
 
@@ -96,12 +100,12 @@ All product routes except `/login` are protected by session restoration. Unknown
 
 ## User-service modules
 
-- Verification: validates basic fields and file selection, but does not transmit files.
-- Cards: validates a 16-digit card number and Iranian IBAN format, then keeps only masked display data in memory.
-- Referrals: copies a sample referral code to the clipboard.
-- Support: lists authenticated tickets, shows full conversations, validates ticket/reply lengths, and supports creation, replies and idempotent closure through the API. Five localized categories and four lifecycle states are represented consistently in Persian and English.
+- Verification: uses localized field-level schema validation, saves an authenticated profile draft, uploads a PDF/JPEG/PNG document with 5 MB enforcement, submits a complete case once and renders persisted draft/pending/verified states. Sensitive national identifiers are masked in every response.
+- Cards: uses normalized schema validation plus Iranian card and IBAN checksums on both client and server, keeps only masked values plus a user-scoped duplicate fingerprint, supports default-card selection and requires confirmation before removal. External ownership verification remains a production integration.
+- Referrals: loads an authenticated summary, supports native sharing with clipboard fallback, and presents responsive aggregate metrics plus joined/qualified/rewarded activity. The reference data is deterministic; signup attribution and monetary settlement remain production integrations.
+- Support: lists authenticated tickets, shows full conversations, provides localized schema errors for ticket fields and reply boundaries, and supports creation, replies and idempotent closure through the API. Five localized categories and four lifecycle states are represented consistently in Persian and English.
 - Settings: profile form uses Yup and local storage; selected photo uses a temporary object URL. MFA, password and session controls are UI demonstrations.
-- Administration: sample queues and financial settings demonstrate workflows but do not call privileged APIs. A production admin area must enforce server-side roles and audit all actions.
+- Administration: nested URL-addressable workspaces load server-owned overview metrics, searchable user summaries, pending verification cases, support tickets and platform settings. Review, reply and settings mutations use separate permissions, server validation, rate limiting, focused cache invalidation and audit events. The reference persistence and audit store remain in-memory demonstrations; production requires durable transactional repositories, immutable centralized audit storage and step-up authentication for high-risk controls.
 
 ## Cross-cutting behavior
 
@@ -113,4 +117,4 @@ All product routes except `/login` are protected by session restoration. Unknown
 
 ## Production gaps
 
-The following are intentionally not claimed as production-complete: durable database state, double-entry ledger, external payment processing, custody, an external matching/liquidity engine, externally sourced market-depth/candle feeds, KYC document storage, MFA/WebAuthn, admin RBAC, staffed support delivery/notifications, card verification and referral settlement.
+The following are intentionally not claimed as production-complete: durable database state, double-entry ledger, external payment processing, custody, an external matching/liquidity engine, durable encrypted KYC object storage and reviewer integration, MFA/WebAuthn, durable administration workflows and audit storage, staffed support delivery/notifications, card verification, referral attribution/fraud controls and referral settlement.

@@ -72,13 +72,29 @@ This order lets theme creation consume direction and preferences, and lets authe
 
 Default queries are stale for 30 seconds, retained for five minutes, retry at most twice except authentication failures, and do not refetch on focus. Mutations do not retry automatically.
 
+### Form validation boundary
+
+Server-mutating forms use React Hook Form with feature-owned Yup schema factories. Schemas normalize values and enforce field constraints independently of rendering, while localized messages are injected by the UI. Components render accessible field errors and submit only typed, validated values to feature hooks; hooks own async orchestration and never duplicate presentation validation. Domain validators remain reusable for server parity and focused unit tests. The server is always the authoritative validation boundary.
+
 ## API and authentication flow
 
-Axios targets `/api`, sends cookies, has a 12-second timeout and attaches the in-memory access token. A 401 triggers one shared refresh promise. The failed request is retried once with the new token; refresh failure clears memory and signals the authentication provider.
+Axios targets `/api`, sends cookies, has a 12-second timeout and attaches the in-memory access token. Initial session restoration and 401 recovery each use a shared single-flight refresh promise, preventing React StrictMode or concurrent requests from rotating the same refresh token twice. The failed request is retried once with the new token; refresh failure clears memory and signals the authentication provider.
+
+Authorization is capability-based. The backend owns the role-to-permission policy and includes a display-safe permission list in login, refresh and current-user responses. Pure frontend predicates, `useAuthorization`, the reusable `Authorized` boundary and `AuthorizedRoute` consume that list for presentation. The application shell filters protected navigation through the same predicate. These client checks improve UX only: the API resolves the current user on each protected request and applies `requirePermission` before the route handler. New privileged routes must declare a permission at composition time and default to denied access when no grant exists.
+
+### Administration module
+
+Administration remains a bounded, lazy-loaded feature inside the existing SPA because it shares the same identity, design system and deployment lifecycle; a separate app or micro-frontend would add release, dependency and cross-app session complexity without a current organizational need. It is not a monolithic tab page. `/admin` owns a nested layout with URL-addressable overview, users, verification, support and settings workspaces. The index route selects the first workspace the operator may access, navigation filters by capability and each child route repeats its own permission boundary.
+
+Each administration resource has a feature-owned API adapter, runtime response validation, deterministic TanStack Query keys and a focused orchestration hook. Remote data never lives in a page-level controller. Mutations reconcile only their resource keys and overview counts. Presentational cards, query states and route layout are reusable without owning business state.
+
+The reference API is the policy enforcement point: authentication is applied to the administration router and an action-specific permission is applied to every endpoint. Services contain workflows, repositories contain persistence, and mutation services append audit events. This division keeps HTTP validation, policy enforcement, orchestration and storage replaceable independently.
 
 Financial purchase responses cross a runtime validation boundary before entering application state. Expand this validation pattern to other high-risk endpoints as the API matures.
 
 Purchase, conversion and support share strict response-field readers at their network boundary. Purchase and conversion also share quote countdown calculation, secure idempotency-key generation and the reusable `DetailRow` presentation primitive. Workflow-specific orchestration remains isolated in each feature hook; support page components receive state and commands from `useSupportCenter` instead of performing transport work.
+
+The reference backend isolates external market transport behind `MarketDataProvider`. Its Binance Spot adapter uses separate schemas for the verbose REST ticker contract and compact WebSocket ticker contract, validates depth/kline/trade payloads and normalizes them into Nexora's provider-neutral shapes. Provider URLs and timeout are environment configuration; upstream failure is surfaced rather than replaced with synthetic prices.
 
 ## Cache mutation rules
 

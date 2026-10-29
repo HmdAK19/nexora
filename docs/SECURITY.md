@@ -18,9 +18,23 @@
 - Password reset must always return an account-neutral response.
 - Cross-site deployments require explicit CSRF protection in addition to cookie attributes.
 
+## Authorization
+
+- The backend is authoritative. It resolves the current user for each protected request and evaluates an explicit permission before the route handler runs.
+- Authentication failures return `401`; authenticated users without the required grant receive a generic `403` response.
+- Role names are not checked throughout UI components. The server owns role-to-permission mapping, while the frontend consumes the returned permission list through shared predicates and reusable route/component boundaries.
+- Navigation filtering and guarded React routes are usability controls only and must never replace API enforcement.
+- Policies deny access unless a permission is explicitly granted. New privileged actions require a named permission, negative tests and an audit-event design.
+- The reference in-memory repository cannot provide durable role administration, revocation across instances, separation-of-duties approval or immutable audit history. Production must store grants durably, constrain role changes and invalidate or re-evaluate active sessions.
+- Administration permissions are separated by resource and action (`read`, `review`, `reply`, `manage`, and `audit:read`). The administration router authenticates once, while each endpoint acts as its own policy enforcement point.
+- `support`, `compliance` and `operations` roles receive only the workspace permissions needed for their duties; `admin` receives the complete administration set. Customer-product navigation and routes also check their product permissions so staff-only accounts are not presented with inaccessible customer workflows.
+- Privileged responses expose display-safe summaries only and are runtime-validated again by the frontend. Administration writes are rate-limited and append actor/action/target audit records.
+- Production settings changes and high-risk verification decisions should require step-up authentication, optional four-eyes approval and an append-only external audit sink; the in-memory reference implementation does not satisfy those controls.
+
 ## Financial operations
 
 - Never accept browser-computed rates, fees, totals, fills or balances as authoritative.
+- Treat third-party market feeds as untrusted input: validate every payload, enforce timeouts, monitor staleness and stop price-dependent operations when the provider is unavailable.
 - Use fixed-precision decimal or integer minor-unit arithmetic, not binary floating point.
 - Require an idempotency key for purchases, withdrawals and external settlements.
 - Bind idempotency records to user, endpoint and request fingerprint; reject mismatched reuse.
@@ -59,9 +73,15 @@ Trading orders use server-side market lookup, balance checks, fee calculation, r
 
 ## Data privacy
 
-Profile, identity documents, bank details and support data must be encrypted in transit and at rest, access logged, retention-limited and deleted according to legal policy. The current verification and card screens do not upload or persist sensitive documents/card data to a backend.
+Profile, identity documents, bank details and support data must be encrypted in transit and at rest, access logged, retention-limited and deleted according to legal policy. The reference verification flow sends document bytes for validation but discards them immediately; the card flow sends card/IBAN values over the authenticated API but retains only masked values and a user-scoped SHA-256 duplicate fingerprint in memory.
 
 Support ticket routes require authentication, scope every read/write by the authenticated owner, validate category and text limits, and rate-limit writes. User-authored text is rendered only through React's escaped text nodes. The reference repository remains in-memory; production support data needs durable encrypted storage, agent RBAC, attachment malware scanning, immutable audit events and retention/deletion enforcement.
+
+Verification endpoints are owner-scoped and rate-limited. They enforce strict identifier, country, MIME type and 5 MB size boundaries; raw national identifiers are never returned to the browser. Cases become immutable while under review. The reference implementation deliberately discards document bytes and retains metadata only. Production must use direct-to-object-storage uploads with short-lived signed URLs, content sniffing, malware scanning, encryption with separate keys, reviewer RBAC, access audit logs and jurisdiction-specific retention/deletion controls.
+
+Bank-card endpoints are owner-scoped and write-rate-limited. Card and IBAN checksums are validated server-side, raw values are never returned or stored, duplicate detection is isolated by user, and deletion requires an explicit UI confirmation. A hash is not a substitute for provider tokenization or encryption when the input space is enumerable. Production must use a licensed provider for ownership verification/tokenization, keep encryption keys outside the application database, record immutable audit events and avoid logging request bodies.
+
+Referral summaries are owner-scoped and never expose invitee identifiers beyond the display-safe name supplied by the contract. Production attribution tokens must be unguessable, bound once on the server and protected against self-referral, account farming, replay and reward manipulation. Reward eligibility and settlement must be derived from an auditable ledger rather than client input.
 
 ## Release security gate
 
