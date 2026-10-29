@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { supportApi, supportKeys } from '../api';
-import { initialTicketFormValues, supportLimits, type CreateTicketFormValues } from '../model';
+import { supportLimits, type CreateTicketFormValues } from '../model';
 
 export function useSupportCenter() {
   const queryClient = useQueryClient();
   const [createOpen, setCreateOpen] = useState(false);
   const [selectedTicketId, setSelectedTicketId] = useState<string>();
-  const [formValues, setFormValues] = useState<CreateTicketFormValues>(initialTicketFormValues);
   const [reply, setReply] = useState('');
+  const [replyTouched, setReplyTouched] = useState(false);
 
   const ticketsQuery = useQuery({
     queryKey: supportKeys.tickets(),
@@ -36,7 +36,6 @@ export function useSupportCenter() {
     mutationFn: supportApi.createTicket,
     onSuccess: async (ticket) => {
       setCreateOpen(false);
-      setFormValues(initialTicketFormValues);
       setSelectedTicketId(ticket.id);
       queryClient.setQueryData(supportKeys.detail(ticket.id), ticket);
       await queryClient.invalidateQueries({ queryKey: supportKeys.tickets() });
@@ -46,6 +45,7 @@ export function useSupportCenter() {
     mutationFn: ({ id, message }: { id: string; message: string }) => supportApi.reply(id, message),
     onSuccess: async (ticket) => {
       setReply('');
+      setReplyTouched(false);
       queryClient.setQueryData(supportKeys.detail(ticket.id), ticket);
       await synchronizeTicket(ticket.id);
     },
@@ -58,11 +58,6 @@ export function useSupportCenter() {
     },
   });
 
-  const createValid =
-    formValues.subject.trim().length >= supportLimits.subjectMinLength &&
-    formValues.subject.trim().length <= supportLimits.subjectMaxLength &&
-    formValues.message.trim().length >= supportLimits.messageMinLength &&
-    formValues.message.trim().length <= supportLimits.messageMaxLength;
   const replyValid =
     reply.trim().length >= supportLimits.messageMinLength &&
     reply.trim().length <= supportLimits.messageMaxLength;
@@ -87,10 +82,8 @@ export function useSupportCenter() {
     createError: createMutation.error,
     createOpen,
     createPending: createMutation.isPending,
-    createTicket: () => createValid && createMutation.mutate(formValues),
-    createValid,
+    createTicket: (values: CreateTicketFormValues) => createMutation.mutate(values),
     detailsOpen: Boolean(selectedTicketId),
-    formValues,
     openCreate: () => {
       createMutation.reset();
       setCreateOpen(true);
@@ -99,19 +92,21 @@ export function useSupportCenter() {
       replyMutation.reset();
       closeMutation.reset();
       setReply('');
+      setReplyTouched(false);
       setSelectedTicketId(id);
     },
     reply,
     replyError: replyMutation.error,
     replyPending: replyMutation.isPending,
+    replyTouched,
     replyValid,
     selectedTicket: ticketQuery.data,
     selectedTicketError: ticketQuery.error,
     selectedTicketLoading: ticketQuery.isLoading,
     sendReply: () =>
       selectedTicketId && replyValid && replyMutation.mutate({ id: selectedTicketId, message: reply }),
-    setFormValues,
     setReply,
+    touchReply: () => setReplyTouched(true),
     tickets: ticketsQuery.data ?? [],
     ticketsError: ticketsQuery.error,
     ticketsLoading: ticketsQuery.isLoading,

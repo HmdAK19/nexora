@@ -34,8 +34,10 @@ interface TicketDetailsDialogProps {
   reply: string;
   replyError: unknown;
   replyPending: boolean;
+  replyTouched: boolean;
   replyValid: boolean;
   setReply: (value: string) => void;
+  touchReply: () => void;
   ticket?: SupportTicket;
 }
 
@@ -90,6 +92,18 @@ export function TicketDetailsDialog(props: TicketDetailsDialogProps) {
                 multiline
                 value={props.reply}
                 onChange={(event) => props.setReply(event.target.value)}
+                onBlur={props.touchReply}
+                error={props.replyTouched && !props.replyValid}
+                helperText={
+                  props.replyTouched && !props.replyValid
+                    ? t(
+                        props.reply.trim().length === 0
+                          ? 'validation.messageRequired'
+                          : 'validation.messageMin',
+                        { min: supportLimits.messageMinLength }
+                      )
+                    : undefined
+                }
               />
             )}
           </Stack>

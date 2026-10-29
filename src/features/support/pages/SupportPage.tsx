@@ -60,9 +60,6 @@ export default function SupportPage() {
         onSubmit={support.createTicket}
         open={support.createOpen}
         pending={support.createPending}
-        setValues={support.setFormValues}
-        valid={support.createValid}
-        values={support.formValues}
       />
       <TicketDetailsDialog
         closeError={support.closeError}
@@ -77,8 +74,10 @@ export default function SupportPage() {
         reply={support.reply}
         replyError={support.replyError}
         replyPending={support.replyPending}
+        replyTouched={support.replyTouched}
         replyValid={support.replyValid}
         setReply={support.setReply}
+        touchReply={support.touchReply}
         ticket={support.selectedTicket}
       />
     </Box>

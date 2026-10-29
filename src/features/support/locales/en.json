@@ -48,5 +48,13 @@
     "RATE_LIMITED": "Too many requests were sent. Wait a while and try again.",
     "TICKET_NOT_FOUND": "This ticket is unavailable or you no longer have access to it.",
     "TICKET_CLOSED": "This ticket is closed and cannot receive new replies."
+  },
+  "validation": {
+    "subjectRequired": "Enter a subject.",
+    "subjectMin": "Subject must contain at least {{min}} characters.",
+    "subjectMax": "Subject cannot exceed {{max}} characters.",
+    "messageRequired": "Describe your request.",
+    "messageMin": "Message must contain at least {{min}} characters.",
+    "messageMax": "Message cannot exceed {{max}} characters."
   }
 }

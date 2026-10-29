@@ -1,7 +1,9 @@
-import type { Dispatch, SetStateAction } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect, useMemo } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
   Alert,
+  Box,
   Button,
   Dialog,
   DialogActions,
@@ -13,78 +15,127 @@ import {
 } from '@mui/material';
 
 import { NAMESPACES } from '@app/i18n';
-import { getSupportErrorKey } from '../lib';
-import { supportCategories, supportLimits, type CreateTicketFormValues } from '../model';
+import { useTranslation } from 'react-i18next';
+
+import { getSupportErrorKey, createSupportTicketSchema } from '../lib';
+import {
+  initialTicketFormValues,
+  supportCategories,
+  supportLimits,
+  type CreateTicketFormValues,
+} from '../model';
 import { supportStyles } from '../Support.styles';
 
 interface CreateTicketDialogProps {
   error: unknown;
   onClose: () => void;
-  onSubmit: () => void;
+  onSubmit: (values: CreateTicketFormValues) => void;
   open: boolean;
   pending: boolean;
-  setValues: Dispatch<SetStateAction<CreateTicketFormValues>>;
-  valid: boolean;
-  values: CreateTicketFormValues;
 }
 
-export function CreateTicketDialog({
-  error,
-  onClose,
-  onSubmit,
-  open,
-  pending,
-  setValues,
-  valid,
-  values,
-}: CreateTicketDialogProps) {
+export function CreateTicketDialog({ error, onClose, onSubmit, open, pending }: CreateTicketDialogProps) {
   const { t } = useTranslation(NAMESPACES.support);
+  const messages = useMemo(
+    () => ({
+      messageMax: t('validation.messageMax', { max: supportLimits.messageMaxLength }),
+      messageMin: t('validation.messageMin', { min: supportLimits.messageMinLength }),
+      messageRequired: t('validation.messageRequired'),
+      subjectMax: t('validation.subjectMax', { max: supportLimits.subjectMaxLength }),
+      subjectMin: t('validation.subjectMin', { min: supportLimits.subjectMinLength }),
+      subjectRequired: t('validation.subjectRequired'),
+    }),
+    [t]
+  );
+  const schema = useMemo(() => createSupportTicketSchema(messages), [messages]);
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { isValid },
+  } = useForm<CreateTicketFormValues>({
+    defaultValues: initialTicketFormValues,
+    mode: 'onBlur',
+    resolver: yupResolver(schema),
+  });
+
+  useEffect(() => {
+    if (!open) reset(initialTicketFormValues);
+  }, [open, reset]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>{t('create.title')}</DialogTitle>
       <DialogContent>
-        <Stack spacing={2} sx={supportStyles.dialogFields}>
-          {Boolean(error) && <Alert severity="error">{t(getSupportErrorKey(error))}</Alert>}
-          <TextField
-            autoFocus
-            inputProps={{ maxLength: supportLimits.subjectMaxLength }}
-            label={t('fields.subject')}
-            value={values.subject}
-            onChange={(event) => setValues((current) => ({ ...current, subject: event.target.value }))}
-          />
-          <TextField
-            select
-            label={t('fields.category')}
-            value={values.category}
-            onChange={(event) =>
-              setValues((current) => ({
-                ...current,
-                category: event.target.value as CreateTicketFormValues['category'],
-              }))
-            }
-          >
-            {supportCategories.map((category) => (
-              <MenuItem key={category} value={category}>
-                {t(`category.${category}`)}
-              </MenuItem>
-            ))}
-          </TextField>
-          <TextField
-            inputProps={{ maxLength: supportLimits.messageMaxLength }}
-            label={t('fields.message')}
-            minRows={5}
-            multiline
-            value={values.message}
-            onChange={(event) => setValues((current) => ({ ...current, message: event.target.value }))}
-          />
-        </Stack>
+        <Box
+          component="form"
+          id="create-support-ticket-form"
+          noValidate
+          onSubmit={(event) => void handleSubmit(onSubmit)(event)}
+        >
+          <Stack spacing={2} sx={supportStyles.dialogFields}>
+            {Boolean(error) && <Alert severity="error">{t(getSupportErrorKey(error))}</Alert>}
+            <Controller
+              name="subject"
+              control={control}
+              render={({ field, fieldState }) => (
+                <TextField
+                  {...field}
+                  autoFocus
+                  error={Boolean(fieldState.error)}
+                  helperText={fieldState.error?.message}
+                  label={t('fields.subject')}
+                  slotProps={{ htmlInput: { maxLength: supportLimits.subjectMaxLength } }}
+                />
+              )}
+            />
+            <Controller
+              name="category"
+              control={control}
+              render={({ field, fieldState }) => (
+                <TextField
+                  {...field}
+                  select
+                  error={Boolean(fieldState.error)}
+                  helperText={fieldState.error?.message}
+                  label={t('fields.category')}
+                >
+                  {supportCategories.map((category) => (
+                    <MenuItem key={category} value={category}>
+                      {t(`category.${category}`)}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
+            />
+            <Controller
+              name="message"
+              control={control}
+              render={({ field, fieldState }) => (
+                <TextField
+                  {...field}
+                  error={Boolean(fieldState.error)}
+                  helperText={fieldState.error?.message}
+                  label={t('fields.message')}
+                  minRows={5}
+                  multiline
+                  slotProps={{ htmlInput: { maxLength: supportLimits.messageMaxLength } }}
+                />
+              )}
+            />
+          </Stack>
+        </Box>
       </DialogContent>
       <DialogActions>
         <Button disabled={pending} onClick={onClose}>
           {t('actions.cancel')}
         </Button>
-        <Button disabled={!valid || pending} onClick={onSubmit} variant="contained">
+        <Button
+          form="create-support-ticket-form"
+          type="submit"
+          disabled={!isValid || pending}
+          variant="contained"
+        >
           {pending ? t('actions.submitting') : t('actions.submit')}
         </Button>
       </DialogActions>
