@@ -85,6 +85,19 @@ npm run dev
 
 The frontend is served at `http://localhost:5173`. During development, Vite proxies `/api` and `/ws` to `http://localhost:4000`. Without a compatible backend, the public shell can load but authenticated data workflows will display their error states.
 
+### Runtime backend configuration
+
+The production artifact reads [`public/runtime-config.json`](public/runtime-config.json) before React starts:
+
+```json
+{
+  "apiBaseUrl": "/api",
+  "webSocketUrl": "/ws"
+}
+```
+
+After `npm run build`, edit or mount `dist/runtime-config.json` to point the same frontend bundle at another backend. No rebuild is required. Both root-relative paths and absolute `http(s)`/`ws(s)` URLs are supported; never place secrets in this public file. See [Operations](docs/OPERATIONS.md#runtime-configuration) for deployment and cache requirements.
+
 ## Quality gates
 
 ```bash

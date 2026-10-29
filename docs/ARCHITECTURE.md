@@ -48,7 +48,9 @@ Import grouping is external packages, blank line, absolute aliases (`@app`, `@fe
 
 ## Provider order
 
-`AppProviders` installs providers in this order:
+Before application modules are imported, `main.tsx` fetches and validates `runtime-config.json` with browser caching disabled. Only after a valid API and WebSocket configuration is available does it dynamically import `bootstrap.tsx`. This guarantees that singleton transports such as the Axios client are created with the deployment-time configuration. Invalid or unavailable configuration fails closed with a bilingual startup error instead of sending requests to an unintended backend.
+
+`AppProviders` then installs providers in this order:
 
 1. i18next
 2. language/direction
@@ -78,7 +80,7 @@ Server-mutating forms use React Hook Form with feature-owned Yup schema factorie
 
 ## API and authentication flow
 
-Axios targets `/api`, sends cookies, has a 12-second timeout and attaches the in-memory access token. Initial session restoration and 401 recovery each use a shared single-flight refresh promise, preventing React StrictMode or concurrent requests from rotating the same refresh token twice. The failed request is retried once with the new token; refresh failure clears memory and signals the authentication provider.
+Axios targets the validated runtime `apiBaseUrl`, sends cookies, has a 12-second timeout and attaches the in-memory access token. The market stream resolves `webSocketUrl` against the current origin and converts relative HTTP origins to `ws`/`wss`. Initial session restoration and 401 recovery each use a shared single-flight refresh promise, preventing React StrictMode or concurrent requests from rotating the same refresh token twice. The failed request is retried once with the new token; refresh failure clears memory and signals the authentication provider.
 
 Authorization is capability-based. The backend owns the role-to-permission policy and includes a display-safe permission list in login, refresh and current-user responses. Pure frontend predicates, `useAuthorization`, the reusable `Authorized` boundary and `AuthorizedRoute` consume that list for presentation. The application shell filters protected navigation through the same predicate. These client checks improve UX only: the API resolves the current user on each protected request and applies `requirePermission` before the route handler. New privileged routes must declare a permission at composition time and default to denied access when no grant exists.
 

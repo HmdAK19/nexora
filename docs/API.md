@@ -233,7 +233,7 @@ Ticker updates originate from Binance Spot's public `<symbol>@ticker` stream. Tr
 
 The production protocol should still add application sequence numbers, heartbeats, subscription acknowledgements, provider failover and snapshot reconciliation.
 
-The client expects the WebSocket endpoint on the same public origin. In development Vite proxies `/ws` to the configured backend. Production messages should include a monotonically increasing sequence and subscription acknowledgement before the frontend treats the stream as authoritative.
+The client reads the WebSocket endpoint from `runtime-config.json`; the default `/ws` path uses the current public origin. Cross-origin endpoints require an absolute `ws(s)` URL and compatible gateway policy. In development Vite proxies `/ws` to the configured backend. Production messages should include a monotonically increasing sequence and subscription acknowledgement before the frontend treats the stream as authoritative.
 
 ## Express purchase
 

@@ -13,17 +13,46 @@ https://exchange.example
 
 Same-origin deployment simplifies cookies, CORS and WebSocket configuration. If origins differ, explicitly configure CORS, credentials, cookie domain/SameSite and CSRF controls.
 
-## Frontend configuration
+## Runtime configuration
 
-The current frontend has no required build-time environment variables. Development routing is configured in `vite.config.ts`:
+The frontend does not compile backend addresses into its application chunks. Before React starts, it fetches `/runtime-config.json` with `cache: no-store`, validates the complete payload and initializes HTTP/WebSocket transports from it.
 
-- frontend port: `5173`
-- API target: `http://localhost:4000`
-- WebSocket target: `ws://localhost:4000`
-- build target: ES2022
-- source maps: enabled
+```json
+{
+  "apiBaseUrl": "/api",
+  "webSocketUrl": "/ws"
+}
+```
 
-If targets become configurable, expose only non-secret `VITE_*` values. Never put private API keys, token secrets or provider credentials into a Vite environment variable because they are embedded in browser code.
+| Field          | Accepted values                     | Purpose                                   |
+| -------------- | ----------------------------------- | ----------------------------------------- |
+| `apiBaseUrl`   | Root path or absolute `http(s)` URL | Axios base URL, normally ending in `/api` |
+| `webSocketUrl` | Root path or absolute `ws(s)` URL   | Live market WebSocket endpoint            |
+
+Examples:
+
+```json
+{
+  "apiBaseUrl": "https://api.example.com/api",
+  "webSocketUrl": "wss://api.example.com/ws"
+}
+```
+
+`public/runtime-config.json` is copied to `dist/runtime-config.json` during build. To promote the same immutable frontend image between environments, replace or mount only that JSON file at deployment time. Kubernetes may mount it from a ConfigMap; a container entrypoint or platform release step may render it from non-secret environment values.
+
+Operational requirements:
+
+- serve the file as `application/json` with `Cache-Control: no-store, max-age=0`;
+- do not fingerprint or CDN-cache the file;
+- keep it outside the service-worker precache (already configured in `vite.config.ts`);
+- update it atomically so clients never observe a partial document;
+- use HTTPS/WSS in production;
+- configure credentialed CORS, cookie `SameSite`/domain and CSRF defenses when the API is cross-origin;
+- never include secrets, tokens or private provider credentials because every visitor can read it.
+
+Missing, malformed, incomplete or unsafe configuration stops application bootstrap and displays a bilingual configuration error. The application does not silently fall back to a different production backend.
+
+Development still uses the root-relative defaults. Vite proxies `/api` to `http://localhost:4000` and `/ws` to `ws://localhost:4000`. The build target is ES2022 and source maps are enabled.
 
 ## Backend integration
 
@@ -53,6 +82,8 @@ npm run build
 
 Deploy the generated `dist/` directory. Configure the host to fall back unknown non-API routes to `index.html`; otherwise direct navigation to routes such as `/wallet` will return 404.
 
+Treat the JavaScript/CSS assets as immutable and long-cacheable, but deploy `runtime-config.json` with the no-cache policy above. Updating only this file changes the backend destination without rebuilding the application.
+
 Production source maps help error diagnosis but may expose source. Upload them privately to the monitoring service or restrict public delivery according to deployment policy.
 
 ## PWA behavior
@@ -61,6 +92,7 @@ Production source maps help error diagnosis but may expose source. Upload them p
 - Display mode: standalone.
 - Navigation fallback: `/index.html`.
 - Service-worker updates use prompt registration.
+- `runtime-config.json` is excluded from precache.
 - Market API reads use a three-second network-first strategy.
 - Authentication, wallet, order and purchase mutations are not cached.
 

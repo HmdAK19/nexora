@@ -113,6 +113,7 @@ All product routes except `/login` are protected by session restoration. Unknown
 - Language updates `<html lang>` and `<html dir>` and persists to `localStorage`.
 - Theme and number preferences are persisted through Redux Persist.
 - PWA caches market GET requests network-first; authentication and financial writes are never runtime-cached.
+- API and WebSocket endpoints load from an uncached, validated runtime file, allowing backend changes without rebuilding the frontend artifact.
 - Pages are lazy-loaded and heavy libraries have explicit Vite chunks.
 
 ## Production gaps

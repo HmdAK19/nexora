@@ -8,6 +8,7 @@ Nexora uses Vitest and Testing Library. Tests should verify observable behavior 
 - Shared optimistic cache update, rollback and invalidation utilities.
 - Language persistence and synchronized HTML direction.
 - Concurrent session-restoration calls are coalesced, while later restoration attempts remain possible after settlement.
+- Runtime configuration tests cover relative and absolute endpoints, normalization, protocol/credential rejection, no-store loading, WebSocket resolution and startup failure.
 - Frontend authorization predicates deny absent/ungranted permissions and accept only explicit grants.
 - Authorization predicate tests cover explicit grants, absent permissions and deny-by-default behavior. Backend policy enforcement requires an independent integration suite in the backend repository.
 - Administration API contract tests accept valid privileged summaries, reject malformed roles before caching and verify encoded resource identifiers.

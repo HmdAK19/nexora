@@ -8,6 +8,7 @@
 - API responses are treated as untrusted input; purchase, conversion and support validate their runtime shapes before storing them.
 - React escapes rendered strings. Do not introduce raw HTML from users or APIs.
 - The tracked frontend contains no secrets. `.env*` files are ignored except documented examples.
+- Runtime configuration is public input. It accepts only root-relative paths or protocol-allow-listed HTTP/WebSocket URLs, rejects embedded credentials and must never contain secrets.
 
 ## Authentication
 
