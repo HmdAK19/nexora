@@ -56,6 +56,7 @@ export const styles = {
   },
   activeMarket: { bgcolor: 'action.selected' },
   numeric: { direction: 'ltr', fontFamily: 'monospace', fontSize: 11.5, textAlign: 'end' },
+  price: { textAlign: 'start' },
   tradeRow: {
     display: 'grid',
     gap: 1,

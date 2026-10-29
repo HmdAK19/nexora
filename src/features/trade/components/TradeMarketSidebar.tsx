@@ -108,7 +108,10 @@ export function TradeMarketSidebar({ symbol }: { symbol: string }) {
           <Box sx={styles.list}>
             {recentTrades.map((trade) => (
               <Box key={trade.id} sx={styles.tradeRow}>
-                <Typography color={trade.side === 'buy' ? 'success.main' : 'error.main'} sx={styles.numeric}>
+                <Typography
+                  color={trade.side === 'buy' ? 'success.main' : 'error.main'}
+                  sx={[styles.numeric, styles.price]}
+                >
                   {trade.price.toFixed(trade.price < 1 ? 6 : 2)}
                 </Typography>
                 <Typography sx={styles.numeric}>{trade.amount.toFixed(5)}</Typography>
