@@ -10,6 +10,21 @@ export const styles = {
   content: { p: 0 },
   title: { p: 2 },
   state: { m: 1.5 },
+  errorAlert: {
+    alignItems: 'flex-start',
+    overflowWrap: 'anywhere',
+    py: 1.25,
+    '& .MuiAlert-icon': {
+      flex: '0 0 auto',
+      marginInlineEnd: 1,
+      p: 0,
+    },
+    '& .MuiAlert-message': {
+      lineHeight: 1.8,
+      minWidth: 0,
+      p: 0,
+    },
+  },
   currentPrice: {
     borderBlock: '1px solid',
     borderColor: 'divider',

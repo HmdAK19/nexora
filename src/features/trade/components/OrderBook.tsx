@@ -1,16 +1,7 @@
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  LinearProgress,
-  Skeleton,
-  Stack,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Button, Card, CardContent, LinearProgress, Stack, Typography } from '@mui/material';
 
 import { formatCurrency } from '@shared/lib';
+import { SkeletonRows } from '@shared/ui';
 
 import { styles } from './OrderBook.styles';
 
@@ -59,25 +50,20 @@ export function OrderBook({
             {title}
           </Typography>
           {loading ? (
-            <Stack spacing={0.8} sx={styles.state}>
-              {Array.from({ length: 8 }, (_, index) => (
-                <Skeleton height={22} key={index} />
-              ))}
-            </Stack>
+            <Box sx={styles.state}>
+              <SkeletonRows columns={2} minWidth={0} rows={8} rowHeight={22} />
+            </Box>
           ) : (
-            <Alert
-              severity="error"
-              sx={styles.state}
-              action={
-                onRetry ? (
-                  <Button color="inherit" onClick={onRetry} size="small">
-                    {retryLabel}
-                  </Button>
-                ) : undefined
-              }
-            >
-              {errorMessage}
-            </Alert>
+            <Stack spacing={1.25} sx={styles.state}>
+              <Alert severity="error" sx={styles.errorAlert}>
+                {errorMessage}
+              </Alert>
+              {onRetry && (
+                <Button fullWidth onClick={onRetry} size="small" variant="outlined">
+                  {retryLabel}
+                </Button>
+              )}
+            </Stack>
           )}
         </CardContent>
       </Card>

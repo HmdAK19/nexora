@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Alert, Box, Card, Divider, Skeleton, Stack, Typography } from '@mui/material';
+import { Alert, Box, Card, Divider, Typography } from '@mui/material';
 
 import { useMarkets } from '@features/markets';
 import { formatCurrency, formatPercent } from '@shared/lib';
+import { SkeletonRows } from '@shared/ui';
 
 import { useRecentMarketTrades } from '../hooks';
 import { styles } from './TradeMarketSidebar.styles';
@@ -124,11 +125,5 @@ export function TradeMarketSidebar({ symbol }: { symbol: string }) {
 }
 
 function LoadingRows() {
-  return (
-    <Stack spacing={0.5} sx={styles.state}>
-      {Array.from({ length: 5 }, (_, index) => (
-        <Skeleton height={24} key={index} />
-      ))}
-    </Stack>
-  );
+  return <SkeletonRows columns={3} minWidth={0} rows={5} rowHeight={22} />;
 }

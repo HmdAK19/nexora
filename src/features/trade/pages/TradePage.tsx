@@ -12,6 +12,7 @@ import {
   CardContent,
   Divider,
   IconButton,
+  Skeleton,
   Stack,
   Tab,
   Tabs,
@@ -176,8 +177,13 @@ export default function TradePage() {
                   timeframe={timeframe}
                 />
               ) : (
-                <Box sx={{ minHeight: 430, display: 'grid', placeItems: 'center' }}>
-                  {t('trade.loadingChart')}
+                <Box
+                  aria-busy="true"
+                  aria-label={t('trade.loadingChart')}
+                  role="status"
+                  sx={{ minHeight: 430 }}
+                >
+                  <Skeleton height={430} variant="rounded" />
                 </Box>
               )
             ) : (

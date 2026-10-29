@@ -1,22 +1,11 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X } from 'lucide-react';
-import {
-  Alert,
-  Box,
-  Button,
-  Card,
-  Chip,
-  IconButton,
-  Skeleton,
-  Stack,
-  Tab,
-  Tabs,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, Button, Card, Chip, IconButton, Stack, Tab, Tabs, Typography } from '@mui/material';
 
 import { useCancelOrder, useOrders } from '@features/orders';
 import { formatCurrency } from '@shared/lib';
+import { SkeletonRows } from '@shared/ui';
 
 import { styles } from './TradeOrdersPanel.styles';
 
@@ -37,8 +26,7 @@ export function TradeOrdersPanel({ symbol }: { symbol: string }) {
       </Tabs>
       {ordersQuery.isLoading && (
         <Stack spacing={1} sx={styles.loading}>
-          <Skeleton height={46} />
-          <Skeleton height={46} />
+          <SkeletonRows columns={8} rows={3} rowHeight={38} />
         </Stack>
       )}
       {ordersQuery.isError && (
