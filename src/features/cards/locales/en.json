@@ -1,6 +1,6 @@
 {
   "title": "Bank cards",
-  "description": "Manage your verified bank cards and accounts.",
+  "description": "Manage your registered bank cards and accounts.",
   "add": "Add card",
   "delete": "Delete card",
   "empty": "You have not added a bank card yet.",
@@ -9,5 +9,24 @@
   "cardNumber": "Card number",
   "iban": "IBAN",
   "cancel": "Cancel",
-  "save": "Save card"
+  "save": "Save card",
+  "saving": "Saving…",
+  "default": "Default card",
+  "setDefault": "Set as default",
+  "retry": "Try again",
+  "remove": {
+    "title": "Remove bank card?",
+    "description": "This card will no longer be available for deposits and withdrawals.",
+    "confirm": "Remove card"
+  },
+  "errors": {
+    "load": "Bank cards could not be loaded.",
+    "request": "The request could not be completed. Check the details and try again."
+  },
+  "validation": {
+    "cardRequired": "Enter the card number.",
+    "cardInvalid": "Enter a valid 16-digit Iranian card number.",
+    "ibanRequired": "Enter the IBAN.",
+    "ibanInvalid": "Enter a valid Iranian IBAN beginning with IR."
+  }
 }
