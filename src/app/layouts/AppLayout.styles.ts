@@ -157,9 +157,6 @@ export const styles = {
       width,
     },
   }),
-  logoutIcon: {
-    marginInlineEnd: 10,
-  },
   box18: {
     display: 'flex',
     minHeight: '100vh',
@@ -257,40 +254,6 @@ export const styles = {
     insetInlineEnd: 8,
     top: 8,
     width: 8,
-  },
-  box27: (activeTheme: Theme) => ({
-    alignItems: 'center',
-    bgcolor: 'transparent',
-    border: '1px solid transparent',
-    borderRadius: 2,
-    color: 'text.primary',
-    cursor: 'pointer',
-    display: 'flex',
-    gap: 1,
-    p: 0.5,
-    paddingInlineEnd: 1,
-    transition: activeTheme.transitions.create(['background-color', 'border-color'], {
-      duration: activeTheme.transitions.duration.shortest,
-    }),
-    '&:hover': {
-      bgcolor: alpha(activeTheme.palette.primary.main, activeTheme.palette.mode === 'dark' ? 0.1 : 0.055),
-      borderColor: alpha(activeTheme.palette.primary.main, activeTheme.palette.mode === 'dark' ? 0.14 : 0.09),
-    },
-    '&:focus-visible': {
-      outline: `2px solid ${alpha(activeTheme.palette.primary.main, 0.55)}`,
-      outlineOffset: 2,
-    },
-  }),
-  avatar28: {
-    bgcolor: 'primary.main',
-    height: 34,
-    width: 34,
-  },
-  typography29: {
-    display: {
-      xs: 'none',
-      sm: 'block',
-    },
   },
   box30: {
     p: {

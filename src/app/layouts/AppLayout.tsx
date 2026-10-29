@@ -6,13 +6,11 @@ import {
   BarChart3,
   BadgeDollarSign,
   BadgeCheck,
-  ChevronDown,
   ClipboardList,
   CreditCard,
   Gift,
   Headphones,
   LayoutDashboard,
-  LogOut,
   Menu,
   Moon,
   PanelsTopLeft,
@@ -27,7 +25,6 @@ import {
 } from 'lucide-react';
 import {
   AppBar,
-  Avatar,
   Box,
   Drawer,
   IconButton,
@@ -35,8 +32,6 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Menu as MuiMenu,
-  MenuItem,
   Toolbar,
   Tooltip,
   Typography,
@@ -45,7 +40,6 @@ import {
 } from '@mui/material';
 
 import { useAuth, useAuthorization } from '@features/auth';
-import { NAMESPACES } from '@app/i18n';
 import { useLanguage } from '@shared/hooks';
 import { ADMIN_ENTRY_PERMISSIONS, PERMISSIONS } from '@shared/lib';
 import type { Permission } from '@shared/model';
@@ -54,6 +48,7 @@ import { BrandLogo } from '@shared/ui';
 import { toggleColorMode, useAppDispatch, useAppSelector } from '../store';
 import { GlobalSearch } from './GlobalSearch';
 import { NotificationMenu } from './NotificationMenu';
+import { UserMenu } from './UserMenu';
 import { styles } from './AppLayout.styles';
 
 interface NavigationItemProps {
@@ -244,15 +239,13 @@ function Sidebar({ mobileOpen, onClose }: { mobileOpen: boolean; onClose: () => 
   );
 }
 export function AppLayout() {
-  const { t } = useTranslation(NAMESPACES.layout);
-  const { toggleLanguage } = useLanguage();
+  const { lang, toggleLanguage } = useLanguage();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
   const mode = useAppSelector((state) => state.preferences.colorMode);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
   const handleLogout = async () => {
     await logout();
     navigate('/login', {
@@ -276,27 +269,14 @@ export function AppLayout() {
               </IconButton>
             </Tooltip>
             <NotificationMenu />
-            <Box component="button" onClick={(event) => setAnchor(event.currentTarget)} sx={styles.box27}>
-              <Avatar sx={styles.avatar28}>{user?.name.slice(0, 1)}</Avatar>
-              <Typography fontWeight={700} sx={styles.typography29} variant="body2">
-                {user?.name}
-              </Typography>
-              <ChevronDown size={15} />
-            </Box>
-            <MuiMenu anchorEl={anchor} open={Boolean(anchor)} onClose={() => setAnchor(null)}>
-              <MenuItem
-                onClick={() => {
-                  void toggleLanguage();
-                  setAnchor(null);
-                }}
-              >
-                {t('languageSwitch')}
-              </MenuItem>
-              <MenuItem onClick={() => void handleLogout()}>
-                <LogOut size={17} style={styles.logoutIcon} />
-                {t('signOut')}
-              </MenuItem>
-            </MuiMenu>
+            {user && (
+              <UserMenu
+                language={lang}
+                onLanguageToggle={toggleLanguage}
+                onSignOut={handleLogout}
+                user={user}
+              />
+            )}
           </Toolbar>
         </AppBar>
         <Box

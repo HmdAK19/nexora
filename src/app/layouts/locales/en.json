@@ -16,6 +16,11 @@
   "tradingFee": "0.08% trading fee",
   "languageSwitch": "فارسی",
   "signOut": "Sign out",
+  "userMenu": {
+    "open": "Open account menu",
+    "languageDescription": "Switch interface language",
+    "signOutDescription": "End your current session"
+  },
   "notifications": {
     "title": "Notifications",
     "markAllRead": "Mark all read",

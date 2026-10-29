@@ -16,6 +16,11 @@
   "tradingFee": "کارمزد معامله ۰.۰۸٪",
   "languageSwitch": "English",
   "signOut": "خروج",
+  "userMenu": {
+    "open": "باز کردن منوی حساب کاربری",
+    "languageDescription": "تغییر زبان رابط کاربری",
+    "signOutDescription": "پایان دادن به نشست فعلی"
+  },
   "notifications": {
     "title": "اعلان‌ها",
     "markAllRead": "خواندن همه",
