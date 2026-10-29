@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { Alert, Box, Card, Divider, Typography } from '@mui/material';
+import { Alert, Box, Button, Card, Divider, Stack, Typography } from '@mui/material';
 
 import { useMarkets } from '@features/markets';
 import { formatCurrency, formatPercent } from '@shared/lib';
@@ -47,9 +47,12 @@ export function TradeMarketSidebar({ symbol }: { symbol: string }) {
         {marketsQuery.isLoading ? (
           <LoadingRows />
         ) : marketsQuery.isError ? (
-          <Alert severity="error" sx={styles.state}>
-            {t('trade.marketsLoadError')}
-          </Alert>
+          <SidebarErrorState
+            message={t('trade.marketsLoadError')}
+            pending={marketsQuery.isFetching}
+            retryLabel={t('trade.retry')}
+            onRetry={() => void marketsQuery.refetch()}
+          />
         ) : (
           <Box sx={styles.list}>
             {markets.map((market) => {
@@ -101,9 +104,12 @@ export function TradeMarketSidebar({ symbol }: { symbol: string }) {
         {tradesQuery.isLoading ? (
           <LoadingRows />
         ) : tradesQuery.isError ? (
-          <Alert severity="error" sx={styles.state}>
-            {t('trade.recentTradesLoadError')}
-          </Alert>
+          <SidebarErrorState
+            message={t('trade.recentTradesLoadError')}
+            pending={tradesQuery.isFetching}
+            retryLabel={t('trade.retry')}
+            onRetry={() => void tradesQuery.refetch()}
+          />
         ) : (
           <Box sx={styles.list}>
             {recentTrades.map((trade) => (
@@ -132,5 +138,25 @@ function LoadingRows() {
     <Box sx={[styles.list, styles.loadingList]}>
       <SkeletonRows columns={3} minWidth={0} rows={5} rowHeight={22} />
     </Box>
+  );
+}
+
+interface SidebarErrorStateProps {
+  message: string;
+  onRetry: () => void;
+  pending: boolean;
+  retryLabel: string;
+}
+
+function SidebarErrorState({ message, onRetry, pending, retryLabel }: SidebarErrorStateProps) {
+  return (
+    <Stack spacing={1.25} sx={styles.state}>
+      <Alert severity="error" sx={styles.errorAlert}>
+        {message}
+      </Alert>
+      <Button disabled={pending} fullWidth onClick={onRetry} size="small" variant="outlined">
+        {retryLabel}
+      </Button>
+    </Stack>
   );
 }

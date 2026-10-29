@@ -65,4 +65,13 @@ export const styles = {
     py: 0.62,
   },
   state: { px: 1.5, py: 2 },
+  errorAlert: {
+    alignItems: 'flex-start',
+    overflowWrap: 'anywhere',
+    '& .MuiAlert-icon': {
+      flex: '0 0 auto',
+      marginInlineEnd: 1,
+    },
+    '& .MuiAlert-message': { lineHeight: 1.7, minWidth: 0 },
+  },
 };

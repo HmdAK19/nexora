@@ -46,6 +46,7 @@ Spacing uses MUI’s 8px base. Global corner radius is 14px; buttons and outline
 Every data-driven interaction should define loading, empty, error, success, disabled and retry behavior. Financial forms additionally prevent rapid duplicate submission, show quote expiry and preserve safe retry identifiers.
 
 Error messages in narrow panels stack retry actions below the message instead of compressing icon, copy and action into one row.
+Market, recent-trade and order-book query failures all expose the same full-width retry pattern and disable duplicate retries while a refetch is active.
 
 Initial and incremental content loading uses shape-matched skeletons. Page skeletons are composed from shared heading, statistic, row, card-grid and form primitives so features keep their domain-specific layout without duplicating loading markup. Progress indicators remain appropriate for short mutations inside controls, where replacing the control with a skeleton would hide context or change layout.
 
