@@ -195,7 +195,6 @@ function Sidebar({ mobileOpen, onClose }: { mobileOpen: boolean; onClose: () => 
   const { t } = useTranslation();
   const theme = useTheme();
   const mobile = useMediaQuery(theme.breakpoints.down('md'));
-  const anchor = theme.direction === 'rtl' ? 'right' : 'left';
   const content = (
     <Box sx={styles.box10}>
       <Box sx={styles.box11}>
@@ -226,13 +225,13 @@ function Sidebar({ mobileOpen, onClose }: { mobileOpen: boolean; onClose: () => 
   );
   if (!mobile)
     return (
-      <Drawer anchor={anchor} variant="permanent" sx={styles.drawer17}>
+      <Drawer anchor="left" variant="permanent" sx={styles.drawer17}>
         {content}
       </Drawer>
     );
   return (
     <Drawer
-      anchor={anchor}
+      anchor="left"
       open={mobileOpen}
       onClose={onClose}
       ModalProps={{
