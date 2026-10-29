@@ -55,11 +55,11 @@ Before application modules are imported, `main.tsx` fetches and validates `runti
 1. i18next
 2. language/direction
 3. Redux and persistence gate
-4. direction-aware Material UI theme
+4. direction-specific Emotion cache and Material UI theme
 5. TanStack Query
 6. authentication
 
-This order lets theme creation consume direction and preferences, and lets authenticated features consume the shared query client.
+This order lets theme creation consume direction and preferences, and lets authenticated features consume the shared query client. The LTR cache applies standard prefixing; the RTL cache additionally mirrors physical rules emitted by MUI and third-party Emotion components. Application-owned layout styles use logical inline/block properties so their spacing remains direction-independent.
 
 ## State ownership
 
@@ -120,7 +120,7 @@ All product pages are loaded with `React.lazy`. `ProtectedRoute` waits for refre
 
 ## Error and loading model
 
-Pages use shared loaders and feedback blocks for route-level states. Forms keep recoverable input, disable duplicate submissions and expose explicit progress. Financial errors use allow-listed codes so arbitrary server messages are not rendered to users.
+Route and query loading states use shared, composable skeleton primitives matched to the expected dashboard, table, card-grid or form layout. Features can combine lower-level skeleton rows, headings and statistic cards for local incremental loading without duplicating markup. Short mutations retain progress indicators inside the initiating control so context and layout remain stable. Forms keep recoverable input, disable duplicate submissions and expose explicit progress. Financial errors use allow-listed codes so arbitrary server messages are not rendered to users.
 
 ## Backend requirements
 

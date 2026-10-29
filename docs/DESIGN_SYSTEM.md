@@ -22,6 +22,7 @@ Spacing uses MUI’s 8px base. Global corner radius is 14px; buttons and outline
 
 - Minimum supported viewport width is 320px.
 - Desktop uses a compact permanent sidebar; below `md` it becomes a direction-aware drawer.
+- The application toolbar and sidebar brand header share one responsive height token so their lower borders stay aligned.
 - Main page padding and grids step down at small breakpoints.
 - Trading panels use responsive grid templates so Full HD laptop screens keep the primary terminal together as long as usable width permits.
 - Desktop order books show the nearest eight asks and bids around the midpoint so both sides remain visible together; compact layouts show six levels per side.
@@ -33,7 +34,7 @@ Spacing uses MUI’s 8px base. Global corner radius is 14px; buttons and outline
 
 ## Component ownership
 
-- Shared primitives (`PageHeading`, `PageFeedback`, `PageLoader`, `StatCard`, `AssetAvatar`, `Sparkline`, `BrandLogo`) live in `shared/ui`.
+- Shared primitives (`PageHeading`, `PageFeedback`, `SkeletonState`, the composable skeleton layouts, `StatCard`, `AssetAvatar`, `Sparkline`, `BrandLogo`) live in `shared/ui`.
 - Domain-specific components stay in their feature.
 - Promote a component to `shared/ui` only after at least two unrelated features need the same stable API.
 - Component-specific styles live in a neighboring `*.styles.ts` or the feature style module, not inline in page orchestration.
@@ -42,12 +43,18 @@ Spacing uses MUI’s 8px base. Global corner radius is 14px; buttons and outline
 
 Every data-driven interaction should define loading, empty, error, success, disabled and retry behavior. Financial forms additionally prevent rapid duplicate submission, show quote expiry and preserve safe retry identifiers.
 
+Error messages in narrow panels stack retry actions below the message instead of compressing icon, copy and action into one row.
+
+Initial and incremental content loading uses shape-matched skeletons. Page skeletons are composed from shared heading, statistic, row, card-grid and form primitives so features keep their domain-specific layout without duplicating loading markup. Progress indicators remain appropriate for short mutations inside controls, where replacing the control with a skeleton would hide context or change layout.
+
 Green/red states always include text, sign, icon or side labels; color is not the only signal. Controls remain keyboard accessible through native elements and MUI focus behavior.
 
 ## Localization and direction
 
 - User-visible text belongs in feature locale JSON, not conditional `fa ? ... : ...` expressions.
 - English uses LTR and Persian uses RTL.
+- Direction-specific Emotion caches apply prefixing and RTL transformation to MUI internals; do not render the application outside `AppProviders`.
+- Project styles use logical properties such as `marginInlineStart`, `insetInlineEnd` and `borderInlineEnd` instead of physical left/right spacing.
 - Drawer anchor, document direction and theme direction follow the active language.
 - Layout must tolerate longer translated strings and localized numbers/dates.
 - New namespaces must be declared in `app/i18n/namespaces.ts` and registered for both languages in `app/i18n/config.ts`.

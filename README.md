@@ -23,8 +23,8 @@ This repository contains the web client and its automated tests. The backend is 
 - Short-lived in-memory access tokens with refresh-session restoration and concurrent refresh deduplication
 - Deny-by-default, permission-based route and navigation presentation; the API remains the authoritative security boundary
 - Responsive trading workspace with live-market transport abstractions, order book, recent trades, chart tools and order entry
-- English and Persian localization with synchronized LTR/RTL layout
-- Accessible loading, empty, error, retry, validation and confirmation states
+- English and Persian localization with synchronized LTR/RTL layout and direction-aware Emotion styling
+- Accessible, layout-matched skeleton loading plus explicit empty, error, retry, validation and confirmation states
 - Route-level code splitting, virtualized market lists and an installable PWA shell
 - Unit, component, API-boundary, accessibility and multi-viewport E2E test infrastructure
 
