@@ -1,12 +1,28 @@
 {
   "title": "Nexora administration",
-  "description": "Manage users, financial operations, and platform settings in one workspace.",
-  "tabs": {
-    "dashboard": "Dashboard",
+  "description": "Operate users, verification, support, and platform controls from permission-scoped workspaces.",
+  "navigation": {
+    "label": "Administration sections",
+    "overview": "Overview",
     "users": "Users",
-    "verification": "Verification",
-    "tickets": "Tickets",
-    "financial": "Financial settings"
+    "verifications": "Verification",
+    "support": "Support",
+    "settings": "Platform settings"
+  },
+  "actions": {
+    "approve": "Approve",
+    "cancel": "Cancel",
+    "reject": "Reject",
+    "reply": "Reply",
+    "retry": "Try again",
+    "save": "Save settings",
+    "send": "Send reply"
+  },
+  "states": {
+    "loadError": "Administration data could not be loaded",
+    "loadErrorDescription": "Check your connection and permissions, then try again.",
+    "mutationError": "The operation could not be completed. No local state was applied.",
+    "refreshError": "The latest data could not be loaded; the previous result is still shown."
   },
   "metrics": {
     "activeUsers": "Active users",
@@ -14,50 +30,78 @@
     "tradesToday": "Trades today",
     "openReviews": "Open reviews"
   },
-  "operationalStatus": "Operational status",
-  "needsAttention": "Needs attention",
-  "verificationRequests": "verification requests",
-  "unansweredTickets": "unanswered tickets",
-  "highRiskWithdrawals": "high-risk withdrawals",
-  "searchUsers": "Search name, email, or ID",
-  "table": { "user": "User", "level": "Level", "balance": "Balance", "status": "Status", "action": "Action" },
-  "view": "View",
-  "close": "Close",
-  "cancel": "Cancel",
-  "email": "Email",
-  "userDetails": "User details",
+  "overview": {
+    "operationalStatus": "Operational status",
+    "needsAttention": "Needs attention",
+    "verificationRequests": "verification requests",
+    "unansweredTickets": "unanswered tickets",
+    "highRiskWithdrawals": "high-risk withdrawals"
+  },
+  "services": {
+    "trading": "Trading engine",
+    "wallet": "Wallet service",
+    "verification": "Verification provider",
+    "notifications": "Email notifications"
+  },
+  "serviceStatuses": {
+    "operational": "Operational",
+    "degraded": "Degraded"
+  },
+  "users": {
+    "search": "Search by name, email, or ID",
+    "loading": "Loading users",
+    "rowsPerPage": "Users per page",
+    "empty": "No users found",
+    "emptyDescription": "Change the search phrase and try again.",
+    "tableLabel": "Administration users",
+    "columns": {
+      "user": "User",
+      "role": "Role",
+      "level": "Verification level",
+      "balance": "Balance",
+      "status": "Status"
+    }
+  },
+  "roles": {
+    "admin": "Administrator",
+    "compliance": "Compliance operator",
+    "customer": "Customer",
+    "operations": "Operations operator",
+    "support": "Support operator"
+  },
+  "levels": { "advanced": "Advanced", "basic": "Basic", "verified": "Verified" },
   "statuses": { "active": "Active", "blocked": "Blocked" },
-  "submittedToday": "Submitted today",
-  "documents": { "nationalId": "National ID", "passport": "Passport" },
-  "review": {
-    "approved": "Verification request approved.",
-    "rejected": "Verification request rejected.",
-    "empty": "There are no pending verification requests."
+  "verifications": {
+    "empty": "No verification cases are waiting",
+    "emptyDescription": "New submitted cases will appear here.",
+    "noDocument": "Document metadata unavailable"
   },
-  "approve": "Approve",
-  "reject": "Reject",
-  "reply": "Reply",
-  "tickets": {
-    "withdrawalPending": "Withdrawal pending",
-    "changePhone": "Change phone number",
-    "depositWithoutTag": "Deposit without tag",
-    "urgent": "Urgent",
-    "normal": "Normal",
-    "high": "High",
-    "empty": "All support tickets have been answered.",
-    "replyTitle": "Reply to ticket",
-    "replyMessage": "Message",
-    "sendReply": "Send reply"
+  "support": {
+    "empty": "No support tickets",
+    "emptyDescription": "New customer tickets will appear here.",
+    "replyTitle": "Reply to support ticket",
+    "replyMessage": "Reply message",
+    "replyMinimum": "Enter at least 10 characters."
   },
-  "financial": {
-    "networkAndWithdrawals": "Network and withdrawals",
-    "enableTrc20": "Enable TRC20 network",
-    "enableWithdrawals": "Enable user withdrawals",
+  "ticketStatuses": {
+    "closed": "Closed",
+    "open": "Open",
+    "waiting_for_support": "Waiting for support",
+    "waiting_for_user": "Waiting for user"
+  },
+  "settings": {
+    "operations": "Network and withdrawals",
+    "enableNetwork": "Enable TRC20 network",
+    "enableWithdrawals": "Enable customer withdrawals",
     "paymentProvider": "Payment provider",
-    "save": "Save settings",
-    "saved": "Settings saved.",
-    "commissions": "Commissions",
+    "providers": { "manual": "Manual settlement", "providerA": "Provider A" },
+    "financial": "Fees and limits",
     "tradingFee": "Trading fee (%)",
-    "minimumWithdrawal": "Minimum USDT withdrawal"
+    "minimumWithdrawal": "Minimum USDT withdrawal",
+    "saved": "Platform settings were saved and an audit event was recorded.",
+    "validation": {
+      "tradingFee": "Enter a trading fee from 0 to 10 percent.",
+      "minimumWithdrawal": "Enter a withdrawal minimum from 0 to 1,000,000."
+    }
   }
 }

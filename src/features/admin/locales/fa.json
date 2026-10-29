@@ -1,12 +1,28 @@
 {
   "title": "مرکز مدیریت نکسورا",
-  "description": "کنترل کاربران، عملیات مالی و تنظیمات سامانه در یک نمای یکپارچه.",
-  "tabs": {
-    "dashboard": "داشبورد",
+  "description": "مدیریت کاربران، احراز هویت، پشتیبانی و کنترل‌های سامانه در فضاهای کاری مبتنی بر مجوز.",
+  "navigation": {
+    "label": "بخش‌های مدیریت",
+    "overview": "نمای کلی",
     "users": "کاربران",
-    "verification": "احراز هویت",
-    "tickets": "تیکت‌ها",
-    "financial": "تنظیمات مالی"
+    "verifications": "احراز هویت",
+    "support": "پشتیبانی",
+    "settings": "تنظیمات سامانه"
+  },
+  "actions": {
+    "approve": "تأیید",
+    "cancel": "لغو",
+    "reject": "رد درخواست",
+    "reply": "پاسخ",
+    "retry": "تلاش دوباره",
+    "save": "ذخیره تنظیمات",
+    "send": "ارسال پاسخ"
+  },
+  "states": {
+    "loadError": "داده‌های مدیریت دریافت نشد",
+    "loadErrorDescription": "اتصال و مجوزهای حساب را بررسی و دوباره تلاش کنید.",
+    "mutationError": "عملیات انجام نشد و هیچ وضعیت محلی اعمال نگردید.",
+    "refreshError": "داده جدید دریافت نشد و نتیجه قبلی همچنان نمایش داده می‌شود."
   },
   "metrics": {
     "activeUsers": "کاربران فعال",
@@ -14,50 +30,78 @@
     "tradesToday": "معاملات امروز",
     "openReviews": "بررسی‌های باز"
   },
-  "operationalStatus": "وضعیت عملیاتی",
-  "needsAttention": "اقدامات ضروری",
-  "verificationRequests": "درخواست احراز هویت",
-  "unansweredTickets": "تیکت بدون پاسخ",
-  "highRiskWithdrawals": "برداشت پرریسک",
-  "searchUsers": "جستجو با نام، ایمیل یا شناسه",
-  "table": { "user": "کاربر", "level": "سطح", "balance": "دارایی", "status": "وضعیت", "action": "عملیات" },
-  "view": "مشاهده",
-  "close": "بستن",
-  "cancel": "لغو",
-  "email": "ایمیل",
-  "userDetails": "جزئیات کاربر",
+  "overview": {
+    "operationalStatus": "وضعیت عملیاتی",
+    "needsAttention": "نیازمند رسیدگی",
+    "verificationRequests": "درخواست احراز هویت",
+    "unansweredTickets": "تیکت بدون پاسخ",
+    "highRiskWithdrawals": "برداشت پرریسک"
+  },
+  "services": {
+    "trading": "موتور معاملات",
+    "wallet": "سرویس کیف پول",
+    "verification": "سرویس احراز هویت",
+    "notifications": "اعلان‌های ایمیلی"
+  },
+  "serviceStatuses": {
+    "operational": "فعال",
+    "degraded": "دچار اختلال"
+  },
+  "users": {
+    "search": "جستجو با نام، ایمیل یا شناسه",
+    "loading": "در حال دریافت کاربران",
+    "rowsPerPage": "تعداد کاربر در صفحه",
+    "empty": "کاربری پیدا نشد",
+    "emptyDescription": "عبارت جستجو را تغییر دهید و دوباره تلاش کنید.",
+    "tableLabel": "کاربران بخش مدیریت",
+    "columns": {
+      "user": "کاربر",
+      "role": "نقش",
+      "level": "سطح احراز هویت",
+      "balance": "دارایی",
+      "status": "وضعیت"
+    }
+  },
+  "roles": {
+    "admin": "مدیر",
+    "compliance": "کارشناس تطبیق",
+    "customer": "کاربر",
+    "operations": "کارشناس عملیات",
+    "support": "کارشناس پشتیبانی"
+  },
+  "levels": { "advanced": "پیشرفته", "basic": "پایه", "verified": "تأییدشده" },
   "statuses": { "active": "فعال", "blocked": "مسدود" },
-  "submittedToday": "ارسال امروز",
-  "documents": { "nationalId": "کارت ملی", "passport": "گذرنامه" },
-  "review": {
-    "approved": "درخواست احراز هویت تأیید شد.",
-    "rejected": "درخواست احراز هویت رد شد.",
-    "empty": "درخواست احراز هویت در انتظار بررسی وجود ندارد."
+  "verifications": {
+    "empty": "پرونده‌ای در انتظار بررسی نیست",
+    "emptyDescription": "پرونده‌های ارسال‌شده جدید در این بخش نمایش داده می‌شوند.",
+    "noDocument": "اطلاعات سند در دسترس نیست"
   },
-  "approve": "تأیید",
-  "reject": "رد درخواست",
-  "reply": "پاسخ",
-  "tickets": {
-    "withdrawalPending": "برداشت انجام نشده",
-    "changePhone": "تغییر شماره همراه",
-    "depositWithoutTag": "واریز بدون تگ",
-    "urgent": "فوری",
-    "normal": "عادی",
-    "high": "بالا",
-    "empty": "به همه تیکت‌های پشتیبانی پاسخ داده شده است.",
-    "replyTitle": "پاسخ به تیکت",
+  "support": {
+    "empty": "تیکت پشتیبانی وجود ندارد",
+    "emptyDescription": "تیکت‌های جدید کاربران در این بخش نمایش داده می‌شوند.",
+    "replyTitle": "پاسخ به تیکت پشتیبانی",
     "replyMessage": "متن پاسخ",
-    "sendReply": "ارسال پاسخ"
+    "replyMinimum": "حداقل ۱۰ نویسه وارد کنید."
   },
-  "financial": {
-    "networkAndWithdrawals": "شبکه و برداشت",
-    "enableTrc20": "فعال بودن شبکه TRC20",
+  "ticketStatuses": {
+    "closed": "بسته‌شده",
+    "open": "باز",
+    "waiting_for_support": "در انتظار پشتیبانی",
+    "waiting_for_user": "در انتظار کاربر"
+  },
+  "settings": {
+    "operations": "شبکه و برداشت",
+    "enableNetwork": "فعال بودن شبکه TRC20",
     "enableWithdrawals": "فعال بودن برداشت کاربران",
     "paymentProvider": "ارائه‌دهنده پرداخت",
-    "save": "ذخیره تنظیمات",
-    "saved": "تنظیمات ذخیره شد.",
-    "commissions": "کارمزدها",
-    "tradingFee": "کارمزد معامله (%)",
-    "minimumWithdrawal": "حداقل برداشت USDT"
+    "providers": { "manual": "تسویه دستی", "providerA": "ارائه‌دهنده A" },
+    "financial": "کارمزدها و محدودیت‌ها",
+    "tradingFee": "کارمزد معامله (درصد)",
+    "minimumWithdrawal": "حداقل برداشت USDT",
+    "saved": "تنظیمات سامانه ذخیره و رویداد حسابرسی ثبت شد.",
+    "validation": {
+      "tradingFee": "کارمزد معامله باید بین ۰ تا ۱۰ درصد باشد.",
+      "minimumWithdrawal": "حداقل برداشت باید بین ۰ تا ۱٬۰۰۰٬۰۰۰ باشد."
+    }
   }
 }
