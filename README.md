@@ -2,7 +2,7 @@
 
 Nexora is a bilingual digital-asset exchange frontend built with React and TypeScript. It demonstrates a production-oriented frontend architecture for portfolio monitoring, market discovery, trading, wallet workflows, identity verification, customer support and permission-scoped administration.
 
-The repository contains the web client and its automated tests. Financial execution, custody, identity review and durable account state belong to a separately deployed backend and are deliberately not represented as production-ready capabilities here.
+This repository contains the web client and its automated tests. The backend is maintained separately in [`HmdAK19/nexora-api`](https://github.com/HmdAK19/nexora-api). Financial execution, custody, identity review and durable account state are deliberately not represented as production-ready capabilities in the frontend repository.
 
 ## Product preview
 
@@ -74,7 +74,7 @@ See [Architecture](docs/ARCHITECTURE.md) for dependency rules, state ownership, 
 
 - Node.js 20 or newer
 - npm
-- A backend implementing the contract in [API contract](docs/API.md) for authenticated and frontend-integrated flows
+- The separate [Nexora API](https://github.com/HmdAK19/nexora-api), implementing the contract in [API contract](docs/API.md), for authenticated and frontend-integrated flows
 
 ### Install and run
 
@@ -128,6 +128,7 @@ These boundaries are intentional and documented so that UI completeness is not c
 
 ## Documentation
 
+- [Backend API repository](https://github.com/HmdAK19/nexora-api)
 - [Documentation index](docs/README.md)
 - [Feature catalogue and route status](docs/FEATURES.md)
 - [Architecture and module boundaries](docs/ARCHITECTURE.md)

@@ -1,6 +1,6 @@
 # API contract
 
-This document describes the contract expected from the separately maintained backend. All endpoints are rooted at `/api`. JSON errors use `{ code, message, details? }`.
+This document describes the contract expected from the separately maintained [`Nexora API`](https://github.com/HmdAK19/nexora-api). All endpoints are rooted at `/api`. JSON errors use `{ code, message, details? }`.
 
 ## Conventions
 

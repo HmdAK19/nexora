@@ -4,7 +4,7 @@
 
 - Do not commit changes unless the project owner explicitly requests a commit.
 - Do not open or execute the application in a browser unless explicitly requested.
-- Never track `server/`; it is reserved for a separate repository.
+- Never track `server/`; backend work belongs in [`HmdAK19/nexora-api`](https://github.com/HmdAK19/nexora-api).
 - Preserve unrelated working-tree changes.
 - Update documentation in the same change whenever behavior, architecture, API, configuration, security or feature status changes.
 

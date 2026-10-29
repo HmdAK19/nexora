@@ -27,7 +27,7 @@ If targets become configurable, expose only non-secret `VITE_*` values. Never pu
 
 ## Backend integration
 
-The backend is maintained and deployed independently from this repository. In local development the frontend expects it on port `4000`; production should expose it behind the same public origin as `/api` and `/ws`.
+The backend is maintained and deployed independently in [`HmdAK19/nexora-api`](https://github.com/HmdAK19/nexora-api). In local development the frontend expects it on port `4000`; production should expose it behind the same public origin as `/api` and `/ws`.
 
 The backend deployment must provide its own documented configuration for:
 
