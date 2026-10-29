@@ -7,7 +7,7 @@ import type { LoginInput } from '../api';
 export interface AuthContextValue {
   user: User | null;
   isRestoring: boolean;
-  login: (input: LoginInput) => Promise<void>;
+  login: (input: LoginInput) => Promise<User>;
   logout: () => Promise<void>;
 }
 export const AuthContext = createContext<AuthContextValue | null>(null);

@@ -4,7 +4,9 @@ export type {
   Market,
   Order,
   Paginated,
+  Permission,
   User,
+  UserRole,
   WalletAsset,
   WalletTransaction,
 } from './types';

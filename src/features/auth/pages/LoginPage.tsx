@@ -23,6 +23,7 @@ import {
 } from '@mui/material';
 
 import { getApiErrorMessage } from '@shared/api';
+import { getDefaultAuthorizedPath } from '@shared/lib';
 import { BrandLogo } from '@shared/ui';
 import { NAMESPACES } from '@app/i18n';
 
@@ -137,11 +138,11 @@ export default function LoginPage() {
   useEffect(() => {
     document.title = 'Nexora | Login';
   }, []);
-  if (!isRestoring && user) return <Navigate to="/" replace />;
+  if (!isRestoring && user) return <Navigate to={getDefaultAuthorizedPath(user)} replace />;
   const onSubmit = async ({ email, password }: LoginValues) => {
     setError(null);
     try {
-      await login({
+      const authenticatedUser = await login({
         email,
         password,
       });
@@ -150,7 +151,7 @@ export default function LoginPage() {
           location.state as {
             from?: string;
           } | null
-        )?.from ?? '/';
+        )?.from ?? getDefaultAuthorizedPath(authenticatedUser);
       navigate(destination, {
         replace: true,
       });

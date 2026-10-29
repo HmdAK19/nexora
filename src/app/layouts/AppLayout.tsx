@@ -44,9 +44,11 @@ import {
   useTheme,
 } from '@mui/material';
 
-import { useAuth } from '@features/auth/context';
+import { useAuth, useAuthorization } from '@features/auth';
 import { NAMESPACES } from '@app/i18n';
 import { useLanguage } from '@shared/hooks';
+import { ADMIN_ENTRY_PERMISSIONS, PERMISSIONS } from '@shared/lib';
+import type { Permission } from '@shared/model';
 import { BrandLogo } from '@shared/ui';
 
 import { toggleColorMode, useAppDispatch, useAppSelector } from '../store';
@@ -59,6 +61,10 @@ interface NavigationItemProps {
   label: string;
   onNavigate?: () => void;
   path: string;
+}
+
+interface NavigationEntry extends NavigationItemProps {
+  permissions?: readonly Permission[];
 }
 function NavigationItem({ icon: Icon, label, onNavigate, path }: NavigationItemProps) {
   return (
@@ -88,67 +94,80 @@ function NavigationItem({ icon: Icon, label, onNavigate, path }: NavigationItemP
 }
 function Navigation({ onNavigate }: { onNavigate?: () => void }) {
   const { t } = useTranslation();
-  const items = useMemo(
+  const { canSome } = useAuthorization();
+  const items = useMemo<NavigationEntry[]>(
     () => [
       {
         label: t('nav.dashboard'),
         path: '/',
         icon: LayoutDashboard,
+        permissions: [PERMISSIONS.dashboard],
       },
       {
         label: t('nav.markets'),
         path: '/markets',
         icon: BarChart3,
+        permissions: [PERMISSIONS.markets],
       },
       {
         label: t('nav.trade'),
         path: '/trade/BTC-USDT',
         icon: ShoppingBag,
+        permissions: [PERMISSIONS.orders],
       },
       {
         label: t('nav.wallet'),
         path: '/wallet',
         icon: WalletCards,
+        permissions: [PERMISSIONS.wallet],
       },
       {
         label: t('nav.orders'),
         path: '/orders',
         icon: ClipboardList,
+        permissions: [PERMISSIONS.orders],
       },
       {
         label: t('nav.buy'),
         path: '/buy-crypto',
         icon: BadgeDollarSign,
+        permissions: [PERMISSIONS.purchase],
       },
       {
         label: t('nav.convert'),
         path: '/convert',
         icon: Repeat2,
+        permissions: [PERMISSIONS.convert],
       },
       {
         label: t('nav.verification'),
         path: '/verification',
         icon: BadgeCheck,
+        permissions: [PERMISSIONS.verification],
       },
       {
         label: t('nav.cards'),
         path: '/cards',
         icon: CreditCard,
+        permissions: [PERMISSIONS.cards],
       },
       {
         label: t('nav.referrals'),
         path: '/referrals',
         icon: Gift,
+        permissions: [PERMISSIONS.referrals],
       },
       {
         label: t('nav.support'),
         path: '/support',
         icon: Headphones,
+        permissions: [PERMISSIONS.support],
       },
       {
         label: t('nav.admin'),
         path: '/admin',
         icon: PanelsTopLeft,
+        permissions: ADMIN_ENTRY_PERMISSIONS,
       },
     ],
     [t]
@@ -159,9 +178,11 @@ function Navigation({ onNavigate }: { onNavigate?: () => void }) {
         {t('nav.menu')}
       </Typography>
       <List disablePadding sx={styles.list7}>
-        {items.map((item) => (
-          <NavigationItem key={item.path} {...item} onNavigate={onNavigate} />
-        ))}
+        {items
+          .filter((item) => !item.permissions || canSome(item.permissions))
+          .map((item) => (
+            <NavigationItem key={item.path} {...item} onNavigate={onNavigate} />
+          ))}
       </List>
       <Box sx={styles.box8} />
       <Box sx={styles.box9}>

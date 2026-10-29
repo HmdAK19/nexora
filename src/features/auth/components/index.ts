@@ -1,1 +1,2 @@
-export * from './ForgotPasswordDialog';
+export { Authorized } from './Authorized';
+export { ForgotPasswordDialog } from './ForgotPasswordDialog';

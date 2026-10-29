@@ -26,6 +26,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const login = useCallback(async (input: LoginInput) => {
     const response = await authApi.login(input);
     setUser(response.user);
+    return response.user;
   }, []);
   const logout = useCallback(async () => {
     await authApi.logout();

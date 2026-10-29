@@ -3,5 +3,10 @@
   "loading": "Loading…",
   "retry": "Try again",
   "cancel": "Cancel",
-  "save": "Save changes"
+  "save": "Save changes",
+  "forbidden": {
+    "title": "Access denied",
+    "description": "Your account does not have permission to open this page.",
+    "backToDashboard": "Back to dashboard"
+  }
 }

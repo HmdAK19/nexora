@@ -1,9 +1,33 @@
 export type Trend = 'up' | 'down';
+export type UserRole = 'admin' | 'compliance' | 'customer' | 'operations' | 'support';
+export type Permission =
+  | 'admin:audit:read'
+  | 'admin:overview:read'
+  | 'admin:settings:manage'
+  | 'admin:settings:read'
+  | 'admin:support:read'
+  | 'admin:support:reply'
+  | 'admin:users:read'
+  | 'admin:verification:read'
+  | 'admin:verification:review'
+  | 'cards:access'
+  | 'convert:access'
+  | 'dashboard:access'
+  | 'markets:access'
+  | 'orders:access'
+  | 'purchase:access'
+  | 'referrals:access'
+  | 'support:access'
+  | 'verification:access'
+  | 'wallet:access';
+
 export interface User {
   id: string;
   name: string;
   email: string;
   level: 'basic' | 'verified' | 'advanced';
+  permissions: Permission[];
+  role: UserRole;
 }
 export interface AuthResponse {
   accessToken: string;

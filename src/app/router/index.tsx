@@ -2,9 +2,13 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { AppLayout } from '@app/layouts';
+import { ADMIN_ENTRY_PERMISSIONS, PERMISSIONS } from '@shared/lib';
+import type { Permission } from '@shared/model';
 import { PageLoader } from '@shared/ui';
 
 import { ProtectedRoute } from './ProtectedRoute';
+import { AuthorizedRoute } from './AuthorizedRoute';
+import { ForbiddenPage } from './ForbiddenPage';
 
 const LoginPage = lazy(() => import('@features/auth').then(({ LoginPage }) => ({ default: LoginPage })));
 const DashboardPage = lazy(() =>
@@ -35,8 +39,31 @@ const BuyCryptoPage = lazy(() =>
 const ReferralsPage = lazy(() =>
   import('@features/referrals').then(({ ReferralsPage }) => ({ default: ReferralsPage }))
 );
-const AdminPage = lazy(() => import('@features/admin').then(({ AdminPage }) => ({ default: AdminPage })));
+const AdminLayout = lazy(() =>
+  import('@features/admin').then(({ AdminLayout }) => ({ default: AdminLayout }))
+);
+const AdminIndexPage = lazy(() =>
+  import('@features/admin').then(({ AdminIndexPage }) => ({ default: AdminIndexPage }))
+);
+const AdminOverviewPage = lazy(() =>
+  import('@features/admin').then(({ AdminOverviewPage }) => ({ default: AdminOverviewPage }))
+);
+const AdminUsersPage = lazy(() =>
+  import('@features/admin').then(({ AdminUsersPage }) => ({ default: AdminUsersPage }))
+);
+const AdminVerificationsPage = lazy(() =>
+  import('@features/admin').then(({ AdminVerificationsPage }) => ({ default: AdminVerificationsPage }))
+);
+const AdminSupportPage = lazy(() =>
+  import('@features/admin').then(({ AdminSupportPage }) => ({ default: AdminSupportPage }))
+);
+const AdminSettingsPage = lazy(() =>
+  import('@features/admin').then(({ AdminSettingsPage }) => ({ default: AdminSettingsPage }))
+);
 const lazyPage = (page: React.ReactNode) => <Suspense fallback={<PageLoader />}>{page}</Suspense>;
+const authorizedPage = (permission: Permission, page: React.ReactNode) => (
+  <AuthorizedRoute permission={permission}>{lazyPage(page)}</AuthorizedRoute>
+);
 export const router = createBrowserRouter([
   {
     path: '/login',
@@ -50,23 +77,23 @@ export const router = createBrowserRouter([
         children: [
           {
             index: true,
-            element: lazyPage(<DashboardPage />),
+            element: authorizedPage(PERMISSIONS.dashboard, <DashboardPage />),
           },
           {
             path: 'markets',
-            element: lazyPage(<MarketsPage />),
+            element: authorizedPage(PERMISSIONS.markets, <MarketsPage />),
           },
           {
             path: 'trade/:symbol',
-            element: lazyPage(<TradePage />),
+            element: authorizedPage(PERMISSIONS.orders, <TradePage />),
           },
           {
             path: 'wallet',
-            element: lazyPage(<WalletPage />),
+            element: authorizedPage(PERMISSIONS.wallet, <WalletPage />),
           },
           {
             path: 'orders',
-            element: lazyPage(<OrdersPage />),
+            element: authorizedPage(PERMISSIONS.orders, <OrdersPage />),
           },
           {
             path: 'settings',
@@ -74,31 +101,83 @@ export const router = createBrowserRouter([
           },
           {
             path: 'verification',
-            element: lazyPage(<VerificationPage />),
+            element: authorizedPage(PERMISSIONS.verification, <VerificationPage />),
           },
           {
             path: 'cards',
-            element: lazyPage(<CardsPage />),
+            element: authorizedPage(PERMISSIONS.cards, <CardsPage />),
           },
           {
             path: 'support',
-            element: lazyPage(<SupportPage />),
+            element: authorizedPage(PERMISSIONS.support, <SupportPage />),
           },
           {
             path: 'convert',
-            element: lazyPage(<ConvertPage />),
+            element: authorizedPage(PERMISSIONS.convert, <ConvertPage />),
           },
           {
             path: 'buy-crypto',
-            element: lazyPage(<BuyCryptoPage />),
+            element: authorizedPage(PERMISSIONS.purchase, <BuyCryptoPage />),
           },
           {
             path: 'referrals',
-            element: lazyPage(<ReferralsPage />),
+            element: authorizedPage(PERMISSIONS.referrals, <ReferralsPage />),
           },
           {
             path: 'admin',
-            element: lazyPage(<AdminPage />),
+            element: (
+              <AuthorizedRoute anyOf={ADMIN_ENTRY_PERMISSIONS}>{lazyPage(<AdminLayout />)}</AuthorizedRoute>
+            ),
+            children: [
+              {
+                index: true,
+                element: lazyPage(<AdminIndexPage />),
+              },
+              {
+                path: 'overview',
+                element: (
+                  <AuthorizedRoute permission={PERMISSIONS.admin.overviewRead}>
+                    {lazyPage(<AdminOverviewPage />)}
+                  </AuthorizedRoute>
+                ),
+              },
+              {
+                path: 'users',
+                element: (
+                  <AuthorizedRoute permission={PERMISSIONS.admin.usersRead}>
+                    {lazyPage(<AdminUsersPage />)}
+                  </AuthorizedRoute>
+                ),
+              },
+              {
+                path: 'verifications',
+                element: (
+                  <AuthorizedRoute permission={PERMISSIONS.admin.verificationRead}>
+                    {lazyPage(<AdminVerificationsPage />)}
+                  </AuthorizedRoute>
+                ),
+              },
+              {
+                path: 'support',
+                element: (
+                  <AuthorizedRoute permission={PERMISSIONS.admin.supportRead}>
+                    {lazyPage(<AdminSupportPage />)}
+                  </AuthorizedRoute>
+                ),
+              },
+              {
+                path: 'settings',
+                element: (
+                  <AuthorizedRoute permission={PERMISSIONS.admin.settingsRead}>
+                    {lazyPage(<AdminSettingsPage />)}
+                  </AuthorizedRoute>
+                ),
+              },
+            ],
+          },
+          {
+            path: 'forbidden',
+            element: <ForbiddenPage />,
           },
         ],
       },
