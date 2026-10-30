@@ -30,6 +30,7 @@ This repository contains the web client and its automated tests. The backend is 
 - Runtime-validated account-security settings for password changes and active-session revocation
 - End-to-end TOTP authentication with guided setup, one-time recovery codes and an MFA login challenge
 - Server-backed profile, validated avatar upload and synchronized language, theme and notification preferences
+- End-to-end customer registration with localized field validation, durable account initialization and immediate session creation
 - Account-scoped notification feed with localized type-based content, unread counts and optimistic read actions
 - Accessible, layout-matched skeleton loading plus explicit empty, error, retry, validation and confirmation states
 - Route-level code splitting, virtualized market lists and an installable PWA shell

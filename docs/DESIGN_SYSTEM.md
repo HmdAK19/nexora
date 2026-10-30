@@ -51,6 +51,8 @@ Every data-driven interaction should define loading, empty, error, success, disa
 
 The account menu uses a compact identity summary, isolates the destructive sign-out action and preserves native menu keyboard navigation, focus restoration and Escape dismissal. Its trigger collapses to the avatar on narrow viewports while retaining an accessible name. Language switching is a separate, always-visible toolbar control; its text collapses to an icon and language badge on narrow viewports.
 
+Authentication forms share one responsive compact shell and remain approximately vertically centered in their content column. The footer leaves the desktop centering flow while remaining inline on narrow screens. Password requirements use balanced inner padding and a low-height adaptive grid, optional phone guidance is available from a keyboard-accessible field tooltip, and demo-account actions use direction-safe gaps rather than directional margins.
+
 Error messages in narrow panels stack retry actions below the message instead of compressing icon, copy and action into one row.
 Market, recent-trade and order-book query failures all expose the same full-width retry pattern and disable duplicate retries while a refetch is active.
 

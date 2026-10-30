@@ -6,7 +6,8 @@ This document is the product-level source of truth for implemented frontend beha
 
 | Route            | Feature        | Current status      | Main behavior                                                                    |
 | ---------------- | -------------- | ------------------- | -------------------------------------------------------------------------------- |
-| `/login`         | Authentication | Frontend-integrated | Login, session restoration and password-reset request                            |
+| `/login`         | Authentication | Frontend-integrated | Login, demo accounts, session restoration and password-reset request             |
+| `/register`      | Authentication | Frontend-integrated | Validated customer registration and immediate authenticated session              |
 | `/`              | Dashboard      | Frontend-integrated | Portfolio KPIs, charts, allocation, featured markets and activity                |
 | `/markets`       | Markets        | Frontend-integrated | Search, infinite pagination, virtualization, quote filters and local favorites   |
 | `/trade/:symbol` | Trade          | Frontend-integrated | Market snapshot, OHLCV/depth, validated ticker, order execution and cancellation |
@@ -21,7 +22,7 @@ This document is the product-level source of truth for implemented frontend beha
 | `/settings`      | Settings       | Frontend-integrated | Persisted profile, avatar, preferences, password, sessions and TOTP flows        |
 | `/admin/*`       | Administration | Frontend-integrated | Permission-scoped overview, users, verification, support and platform settings   |
 
-All product routes except `/login` are protected by session restoration. Unknown routes redirect to the dashboard.
+All product routes except `/login` and `/register` are protected by session restoration. Unknown routes redirect to the dashboard.
 
 ## Application shell
 
@@ -40,6 +41,8 @@ All product routes except `/login` are protected by session restoration. Unknown
 - Coalesces concurrent refresh attempts into one request and retries the original request once.
 - Clears authentication and raises `auth:expired` if refresh fails.
 - Password-reset UI returns a privacy-preserving result and must not disclose account existence.
+- Registration validates bilingual names, normalized email, optional E.164 phone, strong password confirmation and terms acceptance before creating a basic customer account. A successful response establishes the access/refresh session immediately; duplicate email and rate-limit errors remain explicit and localized.
+- Login and registration submit actions remain disabled until their current client-side requirements are valid; MFA login additionally requires a complete authenticator or recovery code.
 - Login, refresh and current-user responses include a role plus explicit permissions. Navigation and routes use permissions rather than hard-coded role-name checks.
 - Every `/admin/*` workspace has an action-specific read permission; unauthorized authenticated users are sent to the localized forbidden page. A compatible API must independently return `403` for denied access.
 - Limited `support`, `compliance` and `operations` operators enter their first permitted workspace; administration navigation and customer-product navigation are both derived from explicit permissions.

@@ -78,6 +78,8 @@ Administration writes must be rate-limited and server-validated. Verification de
 
 `POST /auth/forgot-password` accepts `{ "email": "user@example.com" }` and should return `204` for both existing and absent accounts. `POST /auth/logout` returns `204`. `GET /auth/me` returns only the `user` object.
 
+`POST /auth/register` accepts `{ name, email, phone?, password, language, termsAccepted: true }`. Names are trimmed Unicode letter sequences between 2 and 80 characters, email is normalized to lowercase, phone uses optional E.164 form, password is 10–128 characters with upper/lowercase English letters, a number, a special character and no whitespace, and language is `en` or `fa`. Success returns `201` with the standard authentication response and refresh cookie. Duplicate email returns `409 EMAIL_ALREADY_EXISTS`, malformed input returns `400 VALIDATION_ERROR`, and repeated attempts may return `429 RATE_LIMITED`. The server creates the customer, profile, preferences, basic verification state and zero wallet balances atomically and records the terms-acceptance timestamp.
+
 ### Account security
 
 | Method | Path                           | Purpose                                      |
