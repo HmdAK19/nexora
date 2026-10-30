@@ -1,6 +1,6 @@
 import { Controller } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Avatar, Box, Button, TextField, Typography } from '@mui/material';
+import { Alert, Avatar, Box, Button, TextField, Typography } from '@mui/material';
 
 import type { User } from '@shared/model';
 
@@ -15,7 +15,7 @@ interface ProfileSettingsProps {
 export function ProfileSettings({ controller, user }: ProfileSettingsProps) {
   const { t } = useTranslation();
   const {
-    photoUrl,
+    accountSettings,
     profileForm: {
       control,
       handleSubmit,
@@ -23,20 +23,21 @@ export function ProfileSettings({ controller, user }: ProfileSettingsProps) {
     },
     saveProfile,
     selectPhoto,
+    avatarValidationError,
   } = controller;
 
   return (
     <Box component="form" onSubmit={(event) => void handleSubmit(saveProfile)(event)}>
       <Box sx={styles.box5}>
-        <Avatar src={photoUrl || undefined} sx={styles.avatar6}>
-          {user?.name.slice(0, 1)}
+        <Avatar src={accountSettings.profile?.avatarUrl ?? undefined} sx={styles.avatar6}>
+          {(accountSettings.profile?.name ?? user?.name)?.slice(0, 1)}
         </Avatar>
         <Box>
-          <Typography variant="h3">{user?.name}</Typography>
+          <Typography variant="h3">{accountSettings.profile?.name ?? user?.name}</Typography>
           <Typography color="text.secondary" variant="body2">
             {t('settings.verificationLevel', { level: user?.level })}
           </Typography>
-          <Button component="label" size="small" sx={styles.button7}>
+          <Button component="label" disabled={accountSettings.avatarPending} size="small" sx={styles.button7}>
             {t('settings.changePhoto')}
             <input
               hidden
@@ -44,10 +45,15 @@ export function ProfileSettings({ controller, user }: ProfileSettingsProps) {
               type="file"
               onChange={(event) => {
                 const file = event.target.files?.[0];
-                if (file) selectPhoto(file);
+                if (file) void selectPhoto(file);
               }}
             />
           </Button>
+          {avatarValidationError && (
+            <Alert severity="error" sx={{ mt: 1 }}>
+              {t(`settings.avatarError.${avatarValidationError}`)}
+            </Alert>
+          )}
         </Box>
       </Box>
       <Box sx={styles.box8}>
@@ -72,6 +78,7 @@ export function ProfileSettings({ controller, user }: ProfileSettingsProps) {
               error={Boolean(errors.email)}
               helperText={errors.email?.message}
               label={t('settings.email')}
+              slotProps={{ input: { readOnly: true } }}
             />
           )}
         />

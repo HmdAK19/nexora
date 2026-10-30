@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { MonitorCog } from 'lucide-react';
+import { Laptop, Smartphone } from 'lucide-react';
 import {
   Alert,
   Button,
@@ -11,52 +11,54 @@ import {
   Divider,
   Stack,
   TextField,
-  Typography,
 } from '@mui/material';
 
 import type { SettingsController } from '../hooks';
 import { styles } from '../Settings.styles';
 import { SettingRow } from './SettingRow';
+import { MfaSetupDialog } from './MfaSetupDialog';
 
 export function SecurityDialogs({ controller }: { controller: SettingsController }) {
-  const { t } = useTranslation();
+  const { i18n, t } = useTranslation();
   const message = controller.securityMessage ? t(`settings.${controller.securityMessage}`) : '';
+  const { accountSecurity } = controller;
 
   return (
     <>
-      <Dialog
-        open={controller.securityDialog === 'twoFactor'}
+      <MfaSetupDialog
+        code={controller.mfaCode}
+        enabled={Boolean(accountSecurity.security?.twoFactorEnabled)}
+        errorMessage={accountSecurity.mfaError ? t('settings.mfa.error') : undefined}
+        labels={{
+          cancel: t('settings.cancel'),
+          code: t('settings.mfa.code'),
+          confirm: t('settings.confirm'),
+          copy: t('settings.mfa.copy'),
+          disable: t('settings.disable'),
+          disableHint: t('settings.mfa.disableHint'),
+          done: t('settings.done'),
+          password: t('settings.currentPassword'),
+          recoveryHint: t('settings.mfa.recoveryHint'),
+          recoveryTitle: t('settings.mfa.recoveryTitle'),
+          setup: t('settings.enable'),
+          setupHint: t('settings.mfa.setupHint'),
+          title: t('settings.twoFactorDialog'),
+        }}
+        onBegin={() => void controller.beginMfaSetup()}
         onClose={controller.closeSecurityDialog}
-        fullWidth
-        maxWidth="xs"
-      >
-        <DialogTitle>{t('settings.twoFactorDialog')}</DialogTitle>
-        <DialogContent>
-          <Stack spacing={2} sx={styles.dialogContent}>
-            <Typography color="text.secondary">{t('settings.twoFactorHint')}</Typography>
-            <TextField
-              autoFocus
-              label={t('settings.verificationCode')}
-              value={controller.verificationCode}
-              onChange={(event) =>
-                controller.setVerificationCode(event.target.value.replace(/\D/g, '').slice(0, 6))
-              }
-              inputProps={{ inputMode: 'numeric', maxLength: 6 }}
-            />
-            {message && <Alert severity="success">{message}</Alert>}
-          </Stack>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={controller.closeSecurityDialog}>{t('settings.cancel')}</Button>
-          <Button
-            variant="contained"
-            disabled={controller.verificationCode.length !== 6}
-            onClick={controller.confirmTwoFactor}
-          >
-            {t('settings.confirm')}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onCodeChange={controller.setMfaCode}
+        onConfirm={() => void controller.confirmMfaSetup()}
+        onCopy={(value) => {
+          if (navigator.clipboard) void navigator.clipboard.writeText(value).catch(() => undefined);
+        }}
+        onDisable={() => void controller.disableMfa()}
+        onPasswordChange={controller.setMfaPassword}
+        open={controller.securityDialog === 'mfa'}
+        password={controller.mfaPassword}
+        pending={accountSecurity.mfaPending}
+        recoveryCodes={accountSecurity.mfaRecoveryCodes}
+        setup={accountSecurity.mfaSetup}
+      />
       <Dialog
         open={controller.securityDialog === 'sessions'}
         onClose={controller.closeSecurityDialog}
@@ -66,25 +68,40 @@ export function SecurityDialogs({ controller }: { controller: SettingsController
         <DialogTitle>{t('settings.sessionsDialog')}</DialogTitle>
         <DialogContent>
           <Stack divider={<Divider flexItem />} spacing={2} sx={styles.dialogContent}>
-            <SettingRow
-              icon={<MonitorCog size={19} />}
-              title={t('settings.currentDevice')}
-              description="Tehran · 127.0.0.1"
-              control={<Chip color="success" label={t('settings.current')} size="small" />}
-            />
-            {controller.hasMobileSession ? (
-              <SettingRow
-                icon={<MonitorCog size={19} />}
-                title={t('settings.mobileDevice')}
-                description="Tehran · 2 hours ago"
-                control={
-                  <Button color="error" onClick={() => controller.setHasMobileSession(false)}>
-                    {t('settings.revoke')}
-                  </Button>
-                }
-              />
-            ) : (
+            {accountSecurity.security?.sessions.map((session) => {
+              const Icon = /mobile|android|ios|iphone/i.test(session.device) ? Smartphone : Laptop;
+              const lastActive = new Intl.DateTimeFormat(i18n.language, {
+                dateStyle: 'medium',
+                timeStyle: 'short',
+              }).format(new Date(session.lastActiveAt));
+
+              return (
+                <SettingRow
+                  key={session.id}
+                  icon={<Icon size={19} />}
+                  title={`${session.browser} · ${session.device}`}
+                  description={`${session.location} · ${session.ipAddress} · ${lastActive}`}
+                  control={
+                    session.current ? (
+                      <Chip color="success" label={t('settings.current')} size="small" />
+                    ) : (
+                      <Button
+                        color="error"
+                        disabled={accountSecurity.revokePendingId === session.id}
+                        onClick={() => accountSecurity.revokeSession(session.id)}
+                      >
+                        {t('settings.revoke')}
+                      </Button>
+                    )
+                  }
+                />
+              );
+            })}
+            {accountSecurity.security?.sessions.length === 1 && (
               <Alert severity="info">{t('settings.noOtherSessions')}</Alert>
+            )}
+            {accountSecurity.revokeError && (
+              <Alert severity="error">{t('settings.sessionRevokeError')}</Alert>
             )}
           </Stack>
         </DialogContent>
@@ -130,6 +147,9 @@ export function SecurityDialogs({ controller }: { controller: SettingsController
                 {message}
               </Alert>
             )}
+            {accountSecurity.changePasswordError && (
+              <Alert severity="error">{t('settings.passwordUpdateError')}</Alert>
+            )}
           </Stack>
         </DialogContent>
         <DialogActions>
@@ -141,7 +161,8 @@ export function SecurityDialogs({ controller }: { controller: SettingsController
               controller.passwords.next.length < 8 ||
               controller.passwords.confirm.length < 8
             }
-            onClick={controller.updatePassword}
+            onClick={() => void controller.updatePassword()}
+            loading={accountSecurity.changePasswordPending}
           >
             {t('settings.changePassword')}
           </Button>

@@ -1,26 +1,25 @@
 import { useTranslation } from 'react-i18next';
 import { FormControlLabel, MenuItem, Stack, Switch, TextField } from '@mui/material';
 
-import { setColorMode, useAppDispatch, useAppSelector } from '@app/store';
-import { useLanguage } from '@shared/hooks';
-import type { Language } from '@shared/model';
-
 import type { SettingsController } from '../hooks';
 import { styles } from '../Settings.styles';
 
 export function PreferencesSettings({ controller }: { controller: SettingsController }) {
   const { t } = useTranslation();
-  const { changeLanguage, lang } = useLanguage();
-  const dispatch = useAppDispatch();
-  const colorMode = useAppSelector((state) => state.preferences.colorMode);
+  const preferences = controller.accountSettings.preferences;
+
+  if (!preferences) return null;
 
   return (
     <Stack spacing={3}>
       <TextField
         label={t('settings.language')}
         select
-        value={lang}
-        onChange={(event) => changeLanguage(event.target.value as Language)}
+        disabled={controller.accountSettings.savingPreferences}
+        value={preferences.language}
+        onChange={(event) =>
+          void controller.updatePreferences({ language: event.target.value as 'en' | 'fa' })
+        }
         sx={styles.textField10}
       >
         <MenuItem value="fa">{t('settings.languages.fa')}</MenuItem>
@@ -29,8 +28,11 @@ export function PreferencesSettings({ controller }: { controller: SettingsContro
       <TextField
         label={t('settings.theme')}
         select
-        value={colorMode}
-        onChange={(event) => dispatch(setColorMode(event.target.value as 'dark' | 'light'))}
+        disabled={controller.accountSettings.savingPreferences}
+        value={preferences.colorMode}
+        onChange={(event) =>
+          void controller.updatePreferences({ colorMode: event.target.value as 'dark' | 'light' })
+        }
         sx={styles.textField11}
       >
         <MenuItem value="dark">{t('settings.themes.dark')}</MenuItem>
@@ -39,8 +41,11 @@ export function PreferencesSettings({ controller }: { controller: SettingsContro
       <FormControlLabel
         control={
           <Switch
-            checked={controller.tradingNotifications}
-            onChange={(event) => controller.setTradingNotifications(event.target.checked)}
+            checked={preferences.tradingNotifications}
+            disabled={controller.accountSettings.savingPreferences}
+            onChange={(event) =>
+              void controller.updatePreferences({ tradingNotifications: event.target.checked })
+            }
           />
         }
         label={t('settings.notifications')}
@@ -48,8 +53,9 @@ export function PreferencesSettings({ controller }: { controller: SettingsContro
       <FormControlLabel
         control={
           <Switch
-            checked={controller.priceAlerts}
-            onChange={(event) => controller.setPriceAlerts(event.target.checked)}
+            checked={preferences.priceAlerts}
+            disabled={controller.accountSettings.savingPreferences}
+            onChange={(event) => void controller.updatePreferences({ priceAlerts: event.target.checked })}
           />
         }
         label={t('settings.priceAlerts')}

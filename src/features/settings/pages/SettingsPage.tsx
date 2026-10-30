@@ -1,6 +1,17 @@
 import { useTranslation } from 'react-i18next';
 import { LockKeyhole, MonitorCog, UserRound } from 'lucide-react';
-import { Alert, Box, Card, CardContent, Stack, Tab, Tabs, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Stack,
+  Tab,
+  Tabs,
+  Typography,
+} from '@mui/material';
 
 import { useAuth } from '@features/auth/context';
 
@@ -41,9 +52,31 @@ export default function SettingsPage() {
               {t('settings.saved')}
             </Alert>
           )}
-          {controller.tab === 0 && <ProfileSettings controller={controller} user={user} />}
-          {controller.tab === 1 && <SecuritySettings controller={controller} />}
-          {controller.tab === 2 && <PreferencesSettings controller={controller} />}
+          {controller.accountSettings.saveError && (
+            <Alert severity="error" sx={styles.alert4}>
+              {t('settings.saveError')}
+            </Alert>
+          )}
+          {controller.accountSettings.loading ? (
+            <Stack alignItems="center" py={5}>
+              <CircularProgress aria-label={t('settings.loading')} size={30} />
+            </Stack>
+          ) : controller.accountSettings.error ? (
+            <Alert
+              action={
+                <Button onClick={() => void controller.accountSettings.retry()}>{t('common.retry')}</Button>
+              }
+              severity="error"
+            >
+              {t('settings.loadError')}
+            </Alert>
+          ) : (
+            <>
+              {controller.tab === 0 && <ProfileSettings controller={controller} user={user} />}
+              {controller.tab === 1 && <SecuritySettings controller={controller} />}
+              {controller.tab === 2 && <PreferencesSettings controller={controller} />}
+            </>
+          )}
         </CardContent>
       </Card>
       <SecurityDialogs controller={controller} />

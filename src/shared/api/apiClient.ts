@@ -61,3 +61,11 @@ export const getApiErrorMessage = (error: unknown): string => {
   }
   return 'An unexpected error occurred';
 };
+
+export const getApiErrorCode = (error: unknown): string | undefined => {
+  if (axios.isAxiosError<{ code?: unknown }>(error)) {
+    const code = error.response?.data?.code;
+    return typeof code === 'string' ? code : undefined;
+  }
+  return undefined;
+};
