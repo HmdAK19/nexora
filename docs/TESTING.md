@@ -23,6 +23,10 @@ Nexora uses Vitest and Testing Library. Tests should verify observable behavior 
 - Iranian card and IBAN checksum validation, including repeated-digit and invalid-checksum rejection.
 - Schema normalization and boundary validation for bank-card registration, support-ticket creation and verification profiles.
 - MSW-backed API contract tests reject malformed card responses before they enter application state.
+- Account-security contract tests validate session responses, encoded revocation identifiers and minimal password-change payloads.
+- Account-settings tests validate profile/preference response boundaries, immutable email omission, binary avatar transport and client-side avatar format/size rules.
+- Notification tests cover localized relative time, stateless menu interaction, safe internal action paths, unread-count consistency and encoded identifiers. The backend integration suite independently verifies ownership and persisted read state.
+- MFA tests cover RFC 6238 compatibility, setup confirmation, enforced login challenge and one-time recovery-code consumption.
 - The bank-card dialog has behavior and automated axe accessibility coverage for invalid and valid submissions.
 - Playwright smoke coverage validates login, authenticated navigation and horizontal overflow at 360, 1366 and 1920 pixel widths.
 - Backend integration tests are outside this repository. A compatible backend should independently cover authentication, permission denial, ownership, validation, idempotency, ledger atomicity, quote consumption, order reservation release, document/card privacy and audit-event persistence.

@@ -58,6 +58,8 @@ Development still uses the root-relative defaults. Vite proxies `/api` to `http:
 
 The backend is maintained and deployed independently in [`HmdAK19/nexora-api`](https://github.com/HmdAK19/nexora-api). In local development the frontend expects it on port `4000`; production should expose it behind the same public origin as `/api` and `/ws`.
 
+The current Vercel deployment uses the separate `https://nexora-api-hmd12.vercel.app` backend and a Neon PostgreSQL resource connected through Vercel Marketplace. Runtime database traffic uses the pooled connection while Prisma migrations use the unpooled connection. The market WebSocket gateway falls back to five-second provider REST polling when the upstream Binance stream is unavailable from serverless infrastructure.
+
 The backend deployment must provide its own documented configuration for:
 
 - HTTP/WebSocket listeners and trusted client origins;

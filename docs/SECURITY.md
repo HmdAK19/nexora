@@ -26,11 +26,11 @@
 - Role names are not checked throughout UI components. The server owns role-to-permission mapping, while the frontend consumes the returned permission list through shared predicates and reusable route/component boundaries.
 - Navigation filtering and guarded React routes are usability controls only and must never replace API enforcement.
 - Policies deny access unless a permission is explicitly granted. New privileged actions require a named permission, negative tests and an audit-event design.
-- The reference in-memory repository cannot provide durable role administration, revocation across instances, separation-of-duties approval or immutable audit history. Production must store grants durably, constrain role changes and invalidate or re-evaluate active sessions.
+- The backend stores users, sessions, roles and audit events durably in PostgreSQL. Production still requires constrained role-change workflows, separation-of-duties approval and an external append-only audit sink.
 - Administration permissions are separated by resource and action (`read`, `review`, `reply`, `manage`, and `audit:read`). The administration router authenticates once, while each endpoint acts as its own policy enforcement point.
 - `support`, `compliance` and `operations` roles receive only the workspace permissions needed for their duties; `admin` receives the complete administration set. Customer-product navigation and routes also check their product permissions so staff-only accounts are not presented with inaccessible customer workflows.
 - Privileged responses expose display-safe summaries only and are runtime-validated again by the frontend. Administration writes are rate-limited and append actor/action/target audit records.
-- Production settings changes and high-risk verification decisions should require step-up authentication, optional four-eyes approval and an append-only external audit sink; the in-memory reference implementation does not satisfy those controls.
+- Production settings changes and high-risk verification decisions should require step-up authentication, optional four-eyes approval and an append-only external audit sink; database persistence alone does not satisfy those controls.
 
 ## Financial operations
 
@@ -45,9 +45,9 @@
 
 The frontend contract requires quote ownership, expiration, one-time consumption, safe retry and rate limiting. These guarantees must be implemented and verified by the backend; the browser cannot provide ledger atomicity or prevent multi-instance races.
 
-The conversion workflow applies the same trust model: the server owns the rate and fee, verifies the source balance, consumes the quote once and returns the original order for an idempotent retry. Production settlement must replace the synchronous in-memory balance operation with a fixed-precision database/ledger transaction.
+The conversion workflow applies the same trust model: the server owns the rate and fee, verifies the source balance, consumes the quote once and returns the original order for an idempotent retry. Quote consumption, debit, credit and order creation run in one retryable Serializable PostgreSQL transaction using fixed-precision decimals. A double-entry ledger and external-provider reconciliation remain required before financial production use.
 
-Trading orders use server-side market lookup, balance checks, fee calculation, reservation and settlement. Creation is idempotent and mismatched key reuse is rejected. Cancellation is owner-scoped and releases only the reservation recorded on that order. The reference implementation remains synchronous and in-memory; production execution requires transactional row locking, fixed-precision accounting, a double-entry ledger and reconciliation with the matching/liquidity venue.
+Trading orders use server-side market lookup, balance checks, fee calculation, reservation and settlement. Creation is idempotent and mismatched key reuse is rejected. Creation/settlement and cancellation/reservation release each run atomically in retryable Serializable Prisma transactions. Production execution still requires a double-entry ledger, database-backed concurrency tests and reconciliation with the matching/liquidity venue.
 
 ## Input and output controls
 
@@ -63,7 +63,9 @@ Trading orders use server-side market lookup, balance checks, fee calculation, r
 - Durable database with constraints, isolation and tested recovery.
 - Audited custody/signing service isolated from the public API.
 - KYC/AML, sanctions screening, transaction monitoring and jurisdiction controls.
-- MFA/WebAuthn for withdrawals, API keys and security/profile changes.
+- Persist encrypted MFA secrets outside process memory and add WebAuthn/step-up enforcement for withdrawals, API keys and security/profile changes.
+- Keep email changes behind a separately verified flow. Production avatar handling must decode and re-encode allow-listed images, scan content, strip metadata and store bytes in private object storage rather than process memory or data URLs.
+- Notification reads are user-scoped and foreign identifiers are indistinguishable from absent records. Notification action paths are treated as untrusted input and restricted to internal paths before navigation; metadata must remain display-safe and must never contain secrets.
 - Withdrawal allowlists, cooling periods, velocity limits and manual risk review.
 - Rate limits for login, refresh, password reset, quote, order, support and administration endpoints.
 - Server-side RBAC/ABAC for administration; never authorize from hidden UI alone.
@@ -74,9 +76,9 @@ Trading orders use server-side market lookup, balance checks, fee calculation, r
 
 ## Data privacy
 
-Profile, identity documents, bank details and support data must be encrypted in transit and at rest, access logged, retention-limited and deleted according to legal policy. The reference verification flow sends document bytes for validation but discards them immediately; the card flow sends card/IBAN values over the authenticated API but retains only masked values and a user-scoped SHA-256 duplicate fingerprint in memory.
+Profile, identity-document bytes, masked bank-card data and support data are persisted in PostgreSQL. They must be encrypted in transit and at rest, access logged, retention-limited and deleted according to legal policy. Raw card and IBAN values are not stored; only masked values and a user-scoped SHA-256 duplicate fingerprint are retained.
 
-Support ticket routes require authentication, scope every read/write by the authenticated owner, validate category and text limits, and rate-limit writes. User-authored text is rendered only through React's escaped text nodes. The reference repository remains in-memory; production support data needs durable encrypted storage, agent RBAC, attachment malware scanning, immutable audit events and retention/deletion enforcement.
+Support ticket routes require authentication, scope every read/write by the authenticated owner, validate category and text limits, rate-limit writes and persist tickets/messages in PostgreSQL. User-authored text is rendered only through React's escaped text nodes. Production still needs encryption-at-rest policy, agent RBAC, attachment malware scanning, immutable external audit events and retention/deletion enforcement.
 
 Verification endpoints are owner-scoped and rate-limited. They enforce strict identifier, country, MIME type and 5 MB size boundaries; raw national identifiers are never returned to the browser. Cases become immutable while under review. The reference implementation deliberately discards document bytes and retains metadata only. Production must use direct-to-object-storage uploads with short-lived signed URLs, content sniffing, malware scanning, encryption with separate keys, reviewer RBAC, access audit logs and jurisdiction-specific retention/deletion controls.
 

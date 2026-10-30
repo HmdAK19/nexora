@@ -4,7 +4,7 @@ This document describes the contract expected from the separately maintained [`N
 
 ## Conventions
 
-- Requests and responses use `application/json` except future document uploads.
+- Requests and responses use `application/json` except binary avatar and verification-document uploads.
 - Protected endpoints require `Authorization: Bearer <access-token>`.
 - Timestamps use ISO 8601 UTC strings.
 - Monetary and asset quantities are JSON numbers in the current contract. Production persistence and calculations must use fixed-precision decimals or integer minor units.
@@ -77,6 +77,42 @@ Product route families require their corresponding `*:access` permission (`walle
 Administration writes must be rate-limited and server-validated. Verification decisions, support replies and settings updates must append an audit event containing actor, action, target and timestamp. Production requires transactional durable storage and an append-only audit sink.
 
 `POST /auth/forgot-password` accepts `{ "email": "user@example.com" }` and should return `204` for both existing and absent accounts. `POST /auth/logout` returns `204`. `GET /auth/me` returns only the `user` object.
+
+### Account security
+
+| Method | Path                           | Purpose                                      |
+| ------ | ------------------------------ | -------------------------------------------- |
+| GET    | `/account/security`            | Read MFA, password and active-session status |
+| PUT    | `/account/password`            | Change the authenticated user's password     |
+| DELETE | `/account/sessions/:sessionId` | Revoke an owned non-current session          |
+| POST   | `/account/mfa/setup`           | Begin password-confirmed TOTP setup          |
+| POST   | `/account/mfa/confirm`         | Confirm TOTP and issue recovery codes        |
+| DELETE | `/account/mfa`                 | Disable TOTP after password and code check   |
+
+`GET /account/security` returns `{ twoFactorEnabled, passwordChangedAt, sessions }`. Every session contains `{ id, browser, device, location, ipAddress, lastActiveAt, current }`. Session resources are owner-scoped; unknown and non-owned identifiers return the same `SESSION_NOT_FOUND` response. The current session cannot be revoked through this endpoint.
+
+`PUT /account/password` accepts `{ currentPassword, newPassword }`, verifies the current credential server-side, applies the password policy and returns `204`. Success revokes every other refresh session. Implementations must rate-limit attempts, return allow-listed public error codes and never log either password.
+
+MFA setup returns `{ setupToken, secret, otpauthUri, expiresAt }`. Confirmation accepts `{ setupToken, code }` and returns recovery codes once. When MFA is enabled, login requires either `mfaCode` or `recoveryCode`; recovery codes are single-use. Disabling MFA requires both the current password and a current TOTP code.
+
+### Account profile and preferences
+
+| Method | Path                                          | Purpose                                               |
+| ------ | --------------------------------------------- | ----------------------------------------------------- |
+| GET    | `/account/profile`                            | Read the authenticated user's display profile         |
+| PATCH  | `/account/profile`                            | Update display name and phone                         |
+| PUT    | `/account/avatar`                             | Replace the profile image with validated binary bytes |
+| GET    | `/account/preferences`                        | Read language, theme and notification preferences     |
+| PUT    | `/account/preferences`                        | Replace the complete preference record                |
+| GET    | `/account/notifications`                      | Read the current user's notification feed             |
+| PATCH  | `/account/notifications/:notificationId/read` | Mark one owned notification read                      |
+| POST   | `/account/notifications/read-all`             | Mark every owned notification read                    |
+
+Profile responses contain `{ name, email, phone, avatarUrl }`. Profile updates accept only `{ name, phone }`; email is intentionally immutable until a separately verified email-change flow exists. Avatar upload accepts a raw PNG, JPEG or WebP body up to 1 MB. The reference API returns a data URL, but production should store images outside application memory and return a scoped CDN/object URL after image decoding, malware scanning and re-encoding.
+
+Preferences use `{ language, colorMode, tradingNotifications, priceAlerts }`, where `language` is `en` or `fa` and `colorMode` is `light` or `dark`. The frontend treats this authenticated record as authoritative and updates its localization direction and theme after synchronization.
+
+The notification feed returns `{ items, unreadCount }`. Each item contains `{ id, kind, metadata, actionPath, createdAt, readAt }`; `readAt` is nullable. `kind` is `verification_reminder`, `order_placed` or `security_recommendation`. The API sends stable kinds and display-safe string metadata rather than localized prose, allowing the client to keep Persian and English synchronized. Action paths are internal application paths and are validated again by the client. Read mutations are idempotent and owner-scoped; an absent or foreign identifier returns the same `NOTIFICATION_NOT_FOUND` response.
 
 ## Product endpoints
 

@@ -27,6 +27,10 @@ This repository contains the web client and its automated tests. The backend is 
 - Responsive trading workspace with live-market transport abstractions, order book, recent trades, chart tools and order entry
 - English and Persian localization with synchronized LTR/RTL layout and direction-aware Emotion styling
 - Responsive, keyboard-accessible account menu with localized identity and session actions
+- Runtime-validated account-security settings for password changes and active-session revocation
+- End-to-end TOTP authentication with guided setup, one-time recovery codes and an MFA login challenge
+- Server-backed profile, validated avatar upload and synchronized language, theme and notification preferences
+- Account-scoped notification feed with localized type-based content, unread counts and optimistic read actions
 - Accessible, layout-matched skeleton loading plus explicit empty, error, retry, validation and confirmation states
 - Route-level code splitting, virtualized market lists and an installable PWA shell
 - Unit, component, API-boundary, accessibility and multi-viewport E2E test infrastructure
@@ -39,6 +43,7 @@ This repository contains the web client and its automated tests. The backend is 
 | Markets and trading    | Market directory, streaming transport, charts, depth, order entry and order history | Licensed market data, matching/liquidity integration and durable order processing |
 | Wallet and conversion  | Balance views, transfer forms, quote confirmation and idempotent request handling   | Double-entry ledger, custody, risk engine and settlement                          |
 | Verification and cards | Validated forms, document/card workflows and masked display contracts               | KYC provider, encrypted object storage and payment-provider tokenization          |
+| Account settings       | Profile, avatar, preferences, password, session and TOTP workflows                  | Durable private storage, verified email change, scanning and step-up controls     |
 | Administration         | Permission-scoped workspaces for users, verification, support and settings          | Server-side policy enforcement, durable audit trail and step-up authentication    |
 
 The detailed implementation status for every route is maintained in [Feature catalogue](docs/FEATURES.md).
@@ -51,7 +56,8 @@ flowchart LR
   Hooks --> Query[TanStack Query]
   Query --> API[Typed API adapters]
   API --> Gateway[/api and /ws]
-  Store[Redux persisted preferences] --> UI
+  Store[Redux startup preference cache] --> UI
+  Query -->|hydrates authenticated preferences| Store
   I18n[i18next and direction] --> UI
   Gateway --> Backend[Separately deployed backend]
 ```

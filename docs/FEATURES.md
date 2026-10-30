@@ -18,7 +18,7 @@ This document is the product-level source of truth for implemented frontend beha
 | `/cards`         | Bank cards     | Frontend-integrated | Validated registration, masked listing, default selection and removal            |
 | `/referrals`     | Referrals      | Frontend-integrated | Code, share fallback, aggregate metrics, eligibility states and reward activity  |
 | `/support`       | Support        | Frontend-integrated | Create, list, inspect, reply to and close authenticated support tickets          |
-| `/settings`      | Settings       | Mixed               | Local profile preferences; security controls require backend integration         |
+| `/settings`      | Settings       | Frontend-integrated | Persisted profile, avatar, preferences, password, sessions and TOTP flows        |
 | `/admin/*`       | Administration | Frontend-integrated | Permission-scoped overview, users, verification, support and platform settings   |
 
 All product routes except `/login` are protected by session restoration. Unknown routes redirect to the dashboard.
@@ -27,7 +27,8 @@ All product routes except `/login` are protected by session restoration. Unknown
 
 - Permanent desktop sidebar and direction-aware mobile drawer.
 - Navigation to every product module.
-- Global search presentation, notifications menu, theme switcher, language switcher and account menu.
+- Global search presentation, server-backed notification menu, theme switcher, language switcher and account menu.
+- Notifications expose loading, empty, error/retry and unread states; individual and bulk read actions use optimistic cache updates with rollback.
 - Sticky top bar and subtle route transition.
 - Sidebar anchor changes automatically between left and right for English/Persian.
 
@@ -104,18 +105,18 @@ All product routes except `/login` are protected by session restoration. Unknown
 - Cards: uses normalized schema validation plus Iranian card and IBAN checksums on both client and server, keeps only masked values plus a user-scoped duplicate fingerprint, supports default-card selection and requires confirmation before removal. External ownership verification remains a production integration.
 - Referrals: loads an authenticated summary, supports native sharing with clipboard fallback, and presents responsive aggregate metrics plus joined/qualified/rewarded activity. The reference data is deterministic; signup attribution and monetary settlement remain production integrations.
 - Support: lists authenticated tickets, shows full conversations, provides localized schema errors for ticket fields and reply boundaries, and supports creation, replies and idempotent closure through the API. Five localized categories and four lifecycle states are represented consistently in Persian and English.
-- Settings: profile form uses Yup and local storage; selected photos use temporary object URLs. MFA, password and session controls require backend integration before they are functional security controls.
+- Settings: profile and preference state is authenticated and server-backed. The profile form uses Yup, keeps email read-only pending a verified change flow, validates PNG/JPEG/WebP avatars at 1 MB on both sides of the boundary and refreshes shell identity after name changes. Language, theme and notification preferences share one runtime-validated record. Password changes, active-session inspection/revocation and TOTP setup/confirmation/disable expose explicit loading/error states. Recovery codes are shown once and can satisfy the MFA login challenge once each.
 - Administration: nested URL-addressable workspaces consume overview metrics, searchable user summaries, pending verification cases, support tickets and platform settings. Review, reply and settings mutations use separate permissions and focused cache invalidation. Production requires server validation, rate limiting, durable transactional repositories, immutable centralized audit storage and step-up authentication for high-risk controls.
 
 ## Cross-cutting behavior
 
 - Persian and English resources are split by feature namespace.
-- Language updates `<html lang>` and `<html dir>` and persists to `localStorage`.
-- Theme and number preferences are persisted through Redux Persist.
+- The authenticated preference record synchronizes language, theme and notification choices; language still updates `<html lang>` and `<html dir>` and local persistence provides startup continuity.
+- Redux Persist provides startup continuity for theme state until the authenticated preference query becomes authoritative.
 - PWA caches market GET requests network-first; authentication and financial writes are never runtime-cached.
 - API and WebSocket endpoints load from an uncached, validated runtime file, allowing backend changes without rebuilding the frontend artifact.
 - Pages are lazy-loaded and heavy libraries have explicit Vite chunks.
 
 ## Production gaps
 
-The following are intentionally not claimed as production-complete: durable database state, double-entry ledger, external payment processing, custody, an external matching/liquidity engine, durable encrypted KYC object storage and reviewer integration, MFA/WebAuthn, durable administration workflows and audit storage, staffed support delivery/notifications, card verification, referral attribution/fraud controls and referral settlement.
+The backend now provides Prisma/PostgreSQL persistence for profiles, avatars, notifications, sessions, MFA, wallets, orders, KYC documents, support, cards, referrals, settings and audit events. Purchase, conversion, trade/reservation, cancellation/release and reference-wallet transfers use retryable Serializable transactions. The following are intentionally not claimed as production-complete: verified email change, notification delivery workers and realtime push, a double-entry ledger, external payment processing, custody, an external matching/liquidity engine, KYC reviewer/provider integration, envelope encryption for MFA/KYC secrets, WebAuthn, four-eyes administration workflows, an external append-only audit sink, staffed support delivery, card ownership verification/tokenization and referral attribution/fraud controls.
