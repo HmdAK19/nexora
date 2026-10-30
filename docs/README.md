@@ -22,6 +22,7 @@ The companion backend has its own lifecycle and repository: [`HmdAK19/nexora-api
 - Security controls that require server enforcement are described as backend requirements, never as guarantees provided by hidden UI.
 - Example payloads are illustrative and must not contain real credentials, personal data or secrets.
 - Screenshots use deterministic synthetic data and contain no customer information.
+- Regenerate product screenshots from a local production preview with `npm run docs:screenshots`.
 
 ## Keeping documentation current
 

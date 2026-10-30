@@ -8,10 +8,16 @@ This repository contains the web client and its automated tests. The backend is 
 
 ## Product preview
 
-![Nexora portfolio dashboard](docs/assets/dashboard.png)
+| Portfolio dashboard                                      | Trading workspace                                    |
+| -------------------------------------------------------- | ---------------------------------------------------- |
+| ![Nexora portfolio dashboard](docs/assets/dashboard.png) | ![Nexora trading workspace](docs/assets/trading.png) |
+
+| Administration overview                                           | Account registration                                    |
+| ----------------------------------------------------------------- | ------------------------------------------------------- |
+| ![Nexora administration overview](docs/assets/admin-overview.png) | ![Nexora registration screen](docs/assets/register.png) |
 
 <details>
-<summary>Authentication screen</summary>
+<summary>View the sign-in experience</summary>
 
 ![Nexora authentication screen](docs/assets/login.png)
 
@@ -56,7 +62,7 @@ flowchart LR
   UI[React UI and routing] --> Hooks[Feature hooks]
   Hooks --> Query[TanStack Query]
   Query --> API[Typed API adapters]
-  API --> Gateway[/api and /ws]
+  API --> Gateway["HTTP and WebSocket gateway: /api · /ws"]
   Store[Redux startup preference cache] --> UI
   Query -->|hydrates authenticated preferences| Store
   I18n[i18next and direction] --> UI
