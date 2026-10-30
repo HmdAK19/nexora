@@ -107,6 +107,8 @@ The production artifact reads [`public/runtime-config.json`](public/runtime-conf
 
 After `npm run build`, edit or mount `dist/runtime-config.json` to point the same frontend bundle at another backend. No rebuild is required. Both root-relative paths and absolute `http(s)`/`ws(s)` URLs are supported; never place secrets in this public file. See [Operations](docs/OPERATIONS.md#runtime-configuration) for deployment and cache requirements.
 
+The public demo deployment exposes two intentionally non-production accounts on the login page: administrator `demo@nexora.dev` / `Admin123!` and customer `customer@nexora.dev` / `Nexora123!`. These shared credentials are for portfolio demonstration only and must be replaced or disabled in any real environment.
+
 ## Quality gates
 
 ```bash

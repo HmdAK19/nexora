@@ -14,6 +14,12 @@
   "cancel": "Cancel",
   "login": "Sign in to Nexora",
   "demo": "Demo account",
+  "demoAccounts": {
+    "title": "Try Nexora with a demo account",
+    "admin": "Administrator demo",
+    "customer": "Customer demo",
+    "select": "Use demo account"
+  },
   "invalid": "Email or password is incorrect",
   "validation": {
     "emailInvalid": "Enter a valid email address",

@@ -27,7 +27,7 @@ import { getDefaultAuthorizedPath } from '@shared/lib';
 import { BrandLogo } from '@shared/ui';
 import { NAMESPACES } from '@app/i18n';
 
-import { ForgotPasswordDialog, MfaChallenge } from '../components';
+import { DemoAccountSelector, ForgotPasswordDialog, MfaChallenge, type DemoAccount } from '../components';
 import { useAuth } from '../context';
 import { usePasswordReset } from '../hooks';
 
@@ -38,6 +38,12 @@ interface LoginValues {
   password: string;
   remember: boolean;
 }
+
+const DEMO_ACCOUNTS = [
+  { email: 'demo@nexora.dev', password: 'Admin123!', role: 'admin' },
+  { email: 'customer@nexora.dev', password: 'Nexora123!', role: 'customer' },
+] as const;
+
 const createSchema = (t: (key: string) => string) =>
   yup.object({
     email: yup.string().email(t('validation.emailInvalid')).required(t('validation.emailRequired')),
@@ -175,13 +181,14 @@ export default function LoginPage() {
       }
     }
   };
-  const fillDemo = () => {
+  const fillDemo = (account: DemoAccount) => {
     setMfaRequired(false);
     setMfaCode('');
-    setValue('email', 'customer@nexora.dev', {
+    setError(null);
+    setValue('email', account.email, {
       shouldValidate: true,
     });
-    setValue('password', 'Nexora123!', {
+    setValue('password', account.password, {
       shouldValidate: true,
     });
   };
@@ -331,9 +338,17 @@ export default function LoginPage() {
               >
                 {isSubmitting ? <CircularProgress color="inherit" size={22} /> : t('login')}
               </Button>
-              <Button onClick={fillDemo} type="button" variant="outlined">
-                {t('demo')} · customer@nexora.dev
-              </Button>
+              <DemoAccountSelector
+                accounts={DEMO_ACCOUNTS.map((account) => ({
+                  ...account,
+                  roleLabel: t(`demoAccounts.${account.role}`),
+                }))}
+                emailLabel={t('email')}
+                onSelect={fillDemo}
+                passwordLabel={t('password')}
+                selectLabel={t('demoAccounts.select')}
+                title={t('demoAccounts.title')}
+              />
             </Stack>
           </Box>
           <Typography color="text.secondary" sx={styles.typography14} variant="caption">

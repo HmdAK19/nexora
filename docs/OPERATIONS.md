@@ -60,6 +60,8 @@ The backend is maintained and deployed independently in [`HmdAK19/nexora-api`](h
 
 The current Vercel deployment uses the separate `https://nexora-api-hmd12.vercel.app` backend and a Neon PostgreSQL resource connected through Vercel Marketplace. Runtime database traffic uses the pooled connection while Prisma migrations use the unpooled connection. The market WebSocket gateway falls back to five-second provider REST polling when the upstream Binance stream is unavailable from serverless infrastructure.
 
+The public portfolio deployment intentionally advertises shared administrator and customer demo credentials on the login page. Treat both accounts and their data as disposable. Before promoting the application beyond a demonstration environment, remove the credentials from the UI, rotate both passwords, disable or replace the seeded users and review every administrator capability exposed by the API.
+
 The backend deployment must provide its own documented configuration for:
 
 - HTTP/WebSocket listeners and trusted client origins;
