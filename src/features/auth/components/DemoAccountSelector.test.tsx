@@ -35,10 +35,12 @@ describe('DemoAccountSelector', () => {
       />
     );
 
-    expect(screen.getByText(/demo@nexora\.dev.*Admin123!/)).toBeVisible();
-    expect(screen.getByText(/customer@nexora\.dev.*Nexora123!/)).toBeVisible();
+    expect(screen.getByText('demo@nexora.dev')).toBeVisible();
+    expect(screen.getByText('Admin123!')).toBeVisible();
+    expect(screen.getByText('customer@nexora.dev')).toBeVisible();
+    expect(screen.getByText('Nexora123!')).toBeVisible();
 
-    await interaction.click(screen.getByRole('button', { name: 'Use demo account: Administrator demo' }));
+    await interaction.click(screen.getByRole('button', { name: /Use demo account: Administrator demo/ }));
 
     expect(onSelect).toHaveBeenCalledWith(accounts[0]);
   });

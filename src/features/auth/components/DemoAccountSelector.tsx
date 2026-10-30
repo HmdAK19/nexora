@@ -1,5 +1,5 @@
 import { ShieldCheck, UserRound } from 'lucide-react';
-import { Box, Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 export interface DemoAccount {
   email: string;
@@ -26,57 +26,71 @@ export function DemoAccountSelector({
   title,
 }: DemoAccountSelectorProps) {
   return (
-    <Stack aria-label={title} component="section" spacing={1.25}>
-      <Typography color="text.secondary" fontWeight={600} variant="caption">
+    <Box aria-label={title} component="section">
+      <Typography color="text.secondary" fontSize={10.5} fontWeight={700} mb={0.5} px={0.25}>
         {title}
       </Typography>
-      {accounts.map((account) => {
-        const RoleIcon = account.role === 'admin' ? ShieldCheck : UserRound;
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 0.75,
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, minmax(0, 1fr))' },
+        }}
+      >
+        {accounts.map((account) => {
+          const RoleIcon = account.role === 'admin' ? ShieldCheck : UserRound;
 
-        return (
-          <Button
-            aria-label={`${selectLabel}: ${account.roleLabel}`}
-            key={account.role}
-            onClick={() => onSelect(account)}
-            type="button"
-            variant="outlined"
-            sx={{
-              alignItems: 'stretch',
-              borderColor: 'divider',
-              borderRadius: 2.5,
-              justifyContent: 'flex-start',
-              px: 2,
-              py: 1.4,
-              textAlign: 'start',
-              textTransform: 'none',
-            }}
-          >
-            <Box
+          return (
+            <Button
+              aria-label={`${selectLabel}: ${account.roleLabel}; ${emailLabel}: ${account.email}; ${passwordLabel}: ${account.password}`}
+              key={account.role}
+              onClick={() => onSelect(account)}
+              type="button"
+              variant="outlined"
               sx={{
                 alignItems: 'center',
-                bgcolor: account.role === 'admin' ? 'primary.main' : 'action.selected',
+                borderColor: 'divider',
                 borderRadius: 2,
-                color: account.role === 'admin' ? 'primary.contrastText' : 'text.secondary',
-                display: 'flex',
-                height: 38,
-                justifyContent: 'center',
-                me: 1.5,
-                minWidth: 38,
+                gap: 0.75,
+                justifyContent: 'flex-start',
+                minHeight: 52,
+                minWidth: 0,
+                px: 0.9,
+                py: 0.6,
+                textAlign: 'start',
+                textTransform: 'none',
               }}
             >
-              <RoleIcon aria-hidden="true" size={19} />
-            </Box>
-            <Box sx={{ minWidth: 0 }}>
-              <Typography color="text.primary" fontWeight={700} variant="body2">
-                {account.roleLabel}
-              </Typography>
-              <Typography color="text.secondary" sx={{ overflowWrap: 'anywhere' }} variant="caption">
-                {emailLabel}: {account.email} · {passwordLabel}: {account.password}
-              </Typography>
-            </Box>
-          </Button>
-        );
-      })}
-    </Stack>
+              <Box
+                sx={{
+                  alignItems: 'center',
+                  bgcolor: account.role === 'admin' ? 'primary.main' : 'action.selected',
+                  borderRadius: 1.25,
+                  color: account.role === 'admin' ? 'primary.contrastText' : 'text.secondary',
+                  display: 'flex',
+                  flexShrink: 0,
+                  height: 28,
+                  justifyContent: 'center',
+                  width: 28,
+                }}
+              >
+                <RoleIcon aria-hidden="true" size={15} />
+              </Box>
+              <Box sx={{ minWidth: 0 }}>
+                <Typography color="text.primary" fontSize={11.5} fontWeight={750} lineHeight={1.2}>
+                  {account.roleLabel}
+                </Typography>
+                <Typography color="text.secondary" dir="ltr" fontSize={9.5} lineHeight={1.25} noWrap>
+                  {account.email}
+                </Typography>
+                <Typography color="text.secondary" dir="ltr" fontSize={9.5} lineHeight={1.25} noWrap>
+                  {account.password}
+                </Typography>
+              </Box>
+            </Button>
+          );
+        })}
+      </Box>
+    </Box>
   );
 }
