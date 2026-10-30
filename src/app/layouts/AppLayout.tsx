@@ -40,6 +40,7 @@ import {
 } from '@mui/material';
 
 import { useAuth, useAuthorization } from '@features/auth';
+import { NotificationMenu } from '@features/notifications';
 import { useLanguage } from '@shared/hooks';
 import { ADMIN_ENTRY_PERMISSIONS, PERMISSIONS } from '@shared/lib';
 import type { Permission } from '@shared/model';
@@ -47,7 +48,6 @@ import { BrandLogo } from '@shared/ui';
 
 import { toggleColorMode, useAppDispatch, useAppSelector } from '../store';
 import { GlobalSearch } from './GlobalSearch';
-import { NotificationMenu } from './NotificationMenu';
 import { UserMenu } from './UserMenu';
 import { styles } from './AppLayout.styles';
 

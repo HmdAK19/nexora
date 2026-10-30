@@ -24,9 +24,12 @@
   "notifications": {
     "title": "Notifications",
     "markAllRead": "Mark all read",
+    "empty": "You have no notifications.",
+    "error": "Notifications could not be loaded.",
+    "retry": "Try again",
     "kycTitle": "Complete identity verification",
     "kycBody": "Submit your documents to increase withdrawal limits.",
-    "orderTitle": "BTC order placed",
+    "orderTitle": "{{symbol}} order placed",
     "orderBody": "Your limit order is now on the order book.",
     "securityTitle": "Security settings",
     "securityBody": "Enable two-factor authentication for more security."
