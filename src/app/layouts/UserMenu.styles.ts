@@ -80,7 +80,11 @@ export const userMenuStyles = {
       transform: 'rotate(45deg)',
       width: 10,
     },
-    '& .MuiMenu-list': { p: 0 },
+    '& .MuiMenu-list': {
+      borderRadius: 'inherit',
+      overflow: 'hidden',
+      p: 0,
+    },
   }),
   identity: (theme: Theme) => ({
     background: `linear-gradient(135deg, ${alpha(theme.palette.primary.main, theme.palette.mode === 'dark' ? 0.16 : 0.09)}, ${alpha(theme.palette.secondary.main, theme.palette.mode === 'dark' ? 0.08 : 0.045)})`,
