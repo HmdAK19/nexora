@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState, type PropsWithChildren } fro
 
 import type { User } from '@shared/model';
 
-import { authApi, type LoginInput } from '../api';
+import { authApi, type LoginInput, type RegisterInput } from '../api';
 
 import { AuthContext } from './authContext';
 
@@ -32,6 +32,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
     await authApi.logout();
     setUser(null);
   }, []);
+  const register = useCallback(async (input: RegisterInput) => {
+    const response = await authApi.register(input);
+    setUser(response.user);
+    return response.user;
+  }, []);
   const refreshUser = useCallback(async () => {
     const refreshedUser = await authApi.me();
     setUser(refreshedUser);
@@ -43,9 +48,10 @@ export function AuthProvider({ children }: PropsWithChildren) {
       isRestoring,
       login,
       logout,
+      register,
       refreshUser,
     }),
-    [isRestoring, login, logout, refreshUser, user]
+    [isRestoring, login, logout, refreshUser, register, user]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

@@ -27,8 +27,9 @@ apiClient.interceptors.response.use(
           _retry?: boolean;
         })
       | undefined;
-    const isAuthenticationRequest =
-      request?.url?.includes('/auth/login') || request?.url?.includes('/auth/refresh');
+    const isAuthenticationRequest = ['/auth/login', '/auth/refresh', '/auth/register'].some((path) =>
+      request?.url?.includes(path)
+    );
     if (error.response?.status !== 401 || !request || request._retry || isAuthenticationRequest) {
       return Promise.reject(error);
     }

@@ -1,2 +1,2 @@
 export { authApi } from './authApi';
-export type { LoginInput } from './authApi';
+export type { LoginInput, RegisterInput } from './authApi';

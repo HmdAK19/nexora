@@ -64,7 +64,10 @@ describe('authApi.restore', () => {
     let refreshCount = 0;
     mockServer.use(
       http.post('/api/auth/login', () =>
-        HttpResponse.json({ code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' }, { status: 401 })
+        HttpResponse.json(
+          { code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' },
+          { status: 401 }
+        )
       ),
       http.post('/api/auth/refresh', () => {
         refreshCount += 1;
@@ -78,5 +81,26 @@ describe('authApi.restore', () => {
 
     expect(getApiErrorCode(error)).toBe('INVALID_CREDENTIALS');
     expect(refreshCount).toBe(0);
+  });
+
+  it('registers an account and stores the issued access token', async () => {
+    mockServer.use(
+      http.post('/api/auth/register', async ({ request }) => {
+        const input = (await request.json()) as Record<string, unknown>;
+        expect(input).toMatchObject({ email: 'new@example.com', language: 'en', name: 'New User' });
+        return HttpResponse.json(restoredSession, { status: 201 });
+      })
+    );
+
+    await expect(
+      authApi.register({
+        email: 'new@example.com',
+        language: 'en',
+        name: 'New User',
+        password: 'StrongPass1!',
+        termsAccepted: true,
+      })
+    ).resolves.toEqual(restoredSession);
+    expect(tokenStore.get()).toBe(restoredSession.accessToken);
   });
 });

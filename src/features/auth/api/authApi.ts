@@ -8,6 +8,15 @@ export interface LoginInput {
   recoveryCode?: string;
 }
 
+export interface RegisterInput {
+  email: string;
+  language: 'en' | 'fa';
+  name: string;
+  password: string;
+  phone?: string;
+  termsAccepted: true;
+}
+
 export interface PasswordResetInput {
   email: string;
 }
@@ -32,6 +41,11 @@ const restoreSession = (): Promise<AuthResponse> => {
 export const authApi = {
   login: async (input: LoginInput): Promise<AuthResponse> => {
     const { data } = await apiClient.post<AuthResponse>('/auth/login', input);
+    tokenStore.set(data.accessToken);
+    return data;
+  },
+  register: async (input: RegisterInput): Promise<AuthResponse> => {
+    const { data } = await apiClient.post<AuthResponse>('/auth/register', input);
     tokenStore.set(data.accessToken);
     return data;
   },
