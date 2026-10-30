@@ -18,15 +18,10 @@ const user: User = {
   role: 'customer',
 };
 
-function renderMenu(props?: { onLanguageToggle?: () => void; onSignOut?: () => void }) {
+function renderMenu(props?: { onSignOut?: () => void }) {
   return render(
     <ThemeProvider theme={createAppTheme('dark', 'rtl')}>
-      <UserMenu
-        language="fa"
-        onLanguageToggle={props?.onLanguageToggle ?? vi.fn()}
-        onSignOut={props?.onSignOut ?? vi.fn()}
-        user={user}
-      />
+      <UserMenu onSignOut={props?.onSignOut ?? vi.fn()} user={user} />
     </ThemeProvider>
   );
 }
@@ -47,20 +42,19 @@ describe('UserMenu', () => {
 
     expect(trigger).toHaveAttribute('aria-expanded', 'true');
     expect(screen.getByText(user.email)).toBeVisible();
-    expect(screen.getByRole('menuitem', { name: /English/ })).toBeVisible();
     expect(screen.getByRole('menuitem', { name: /خروج/ })).toBeVisible();
   });
 
   it('runs the selected action once and closes the menu', async () => {
     const interaction = userEvent.setup();
-    const onLanguageToggle = vi.fn();
-    renderMenu({ onLanguageToggle });
+    const onSignOut = vi.fn();
+    renderMenu({ onSignOut });
 
     const trigger = screen.getByRole('button', { name: 'باز کردن منوی حساب کاربری' });
     await interaction.click(trigger);
-    await interaction.click(screen.getByRole('menuitem', { name: /English/ }));
+    await interaction.click(screen.getByRole('menuitem', { name: /خروج/ }));
 
-    expect(onLanguageToggle).toHaveBeenCalledOnce();
+    expect(onSignOut).toHaveBeenCalledOnce();
     expect(trigger).toHaveAttribute('aria-expanded', 'false');
   });
 });

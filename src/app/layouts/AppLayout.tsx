@@ -48,6 +48,7 @@ import { BrandLogo } from '@shared/ui';
 
 import { toggleColorMode, useAppDispatch, useAppSelector } from '../store';
 import { GlobalSearch } from './GlobalSearch';
+import { LanguageSwitcher } from './LanguageSwitcher';
 import { UserMenu } from './UserMenu';
 import { styles } from './AppLayout.styles';
 
@@ -263,20 +264,14 @@ export function AppLayout() {
             </IconButton>
             <GlobalSearch />
             <Box sx={styles.box24} />
+            <LanguageSwitcher language={lang} onToggle={toggleLanguage} />
             <Tooltip title={mode === 'dark' ? 'Light mode' : 'Dark mode'}>
               <IconButton aria-label="Toggle color mode" onClick={() => dispatch(toggleColorMode())}>
                 {mode === 'dark' ? <Sun size={19} /> : <Moon size={19} />}
               </IconButton>
             </Tooltip>
             <NotificationMenu />
-            {user && (
-              <UserMenu
-                language={lang}
-                onLanguageToggle={toggleLanguage}
-                onSignOut={handleLogout}
-                user={user}
-              />
-            )}
+            {user && <UserMenu onSignOut={handleLogout} user={user} />}
           </Toolbar>
         </AppBar>
         <Box

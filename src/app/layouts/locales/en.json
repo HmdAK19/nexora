@@ -15,10 +15,10 @@
   "settings": "Settings",
   "tradingFee": "0.08% trading fee",
   "languageSwitch": "فارسی",
+  "languageDescription": "Switch interface language",
   "signOut": "Sign out",
   "userMenu": {
     "open": "Open account menu",
-    "languageDescription": "Switch interface language",
     "signOutDescription": "End your current session"
   },
   "notifications": {

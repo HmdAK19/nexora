@@ -27,7 +27,7 @@ All product routes except `/login` are protected by session restoration. Unknown
 
 - Permanent desktop sidebar and direction-aware mobile drawer.
 - Navigation to every product module.
-- Global search presentation, server-backed notification menu, theme switcher, language switcher and account menu.
+- Global search presentation, server-backed notification menu, theme switcher, an always-visible top-bar language switcher and account menu.
 - Notifications expose loading, empty, error/retry and unread states; individual and bulk read actions use optimistic cache updates with rollback.
 - Sticky top bar and subtle route transition.
 - Sidebar anchor changes automatically between left and right for English/Persian.

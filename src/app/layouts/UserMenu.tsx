@@ -1,21 +1,19 @@
 import { useId, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, Languages, LogOut } from 'lucide-react';
+import { ChevronDown, LogOut } from 'lucide-react';
 import { Avatar, Box, Divider, Menu, MenuItem, Typography, useTheme } from '@mui/material';
 
 import { NAMESPACES } from '@app/i18n';
-import type { Language, User } from '@shared/model';
+import type { User } from '@shared/model';
 
 import { userMenuStyles as styles } from './UserMenu.styles';
 
 interface UserMenuProps {
-  language: Language;
-  onLanguageToggle: () => void | Promise<void>;
   onSignOut: () => void | Promise<void>;
   user: User;
 }
 
-export function UserMenu({ language, onLanguageToggle, onSignOut, user }: UserMenuProps) {
+export function UserMenu({ onSignOut, user }: UserMenuProps) {
   const { t } = useTranslation(NAMESPACES.layout);
   const theme = useTheme();
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
@@ -72,25 +70,6 @@ export function UserMenu({ language, onLanguageToggle, onSignOut, user }: UserMe
               {user.email}
             </Typography>
           </Box>
-        </Box>
-
-        <Box sx={styles.section}>
-          <MenuItem onClick={() => runAndClose(onLanguageToggle)} sx={styles.item}>
-            <Box aria-hidden="true" sx={styles.icon}>
-              <Languages size={17} />
-            </Box>
-            <Box sx={styles.itemCopy}>
-              <Typography fontSize={13} fontWeight={700}>
-                {t('languageSwitch')}
-              </Typography>
-              <Typography color="text.secondary" fontSize={11} sx={styles.itemDescription}>
-                {t('userMenu.languageDescription')}
-              </Typography>
-            </Box>
-            <Box component="span" sx={styles.languageBadge}>
-              {language.toUpperCase()}
-            </Box>
-          </MenuItem>
         </Box>
 
         <Divider sx={styles.divider} />

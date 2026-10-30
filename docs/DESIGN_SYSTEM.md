@@ -49,7 +49,7 @@ The Nexora mark is a continuous `N` monogram representing connected markets and 
 
 Every data-driven interaction should define loading, empty, error, success, disabled and retry behavior. Financial forms additionally prevent rapid duplicate submission, show quote expiry and preserve safe retry identifiers.
 
-The account menu uses a compact identity summary, separates preference actions from the destructive sign-out action and preserves native menu keyboard navigation, focus restoration and Escape dismissal. Its trigger collapses to the avatar on narrow viewports while retaining an accessible name.
+The account menu uses a compact identity summary, isolates the destructive sign-out action and preserves native menu keyboard navigation, focus restoration and Escape dismissal. Its trigger collapses to the avatar on narrow viewports while retaining an accessible name. Language switching is a separate, always-visible toolbar control; its text collapses to an icon and language badge on narrow viewports.
 
 Error messages in narrow panels stack retry actions below the message instead of compressing icon, copy and action into one row.
 Market, recent-trade and order-book query failures all expose the same full-width retry pattern and disable duplicate retries while a refetch is active.

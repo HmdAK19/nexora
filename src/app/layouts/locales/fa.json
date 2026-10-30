@@ -15,10 +15,10 @@
   "settings": "تنظیمات",
   "tradingFee": "کارمزد معامله ۰.۰۸٪",
   "languageSwitch": "English",
+  "languageDescription": "تغییر زبان رابط کاربری",
   "signOut": "خروج",
   "userMenu": {
     "open": "باز کردن منوی حساب کاربری",
-    "languageDescription": "تغییر زبان رابط کاربری",
     "signOutDescription": "پایان دادن به نشست فعلی"
   },
   "notifications": {
