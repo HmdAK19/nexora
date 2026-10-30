@@ -168,6 +168,8 @@ export default function LoginPage() {
         setError(null);
       } else if (code === 'INVALID_MFA_CODE') {
         setError(t('mfa.invalid'));
+      } else if (code === 'INVALID_CREDENTIALS') {
+        setError(t('invalid'));
       } else {
         setError(getApiErrorMessage(loginError));
       }
@@ -176,7 +178,7 @@ export default function LoginPage() {
   const fillDemo = () => {
     setMfaRequired(false);
     setMfaCode('');
-    setValue('email', 'demo@nexora.dev', {
+    setValue('email', 'customer@nexora.dev', {
       shouldValidate: true,
     });
     setValue('password', 'Nexora123!', {
@@ -330,7 +332,7 @@ export default function LoginPage() {
                 {isSubmitting ? <CircularProgress color="inherit" size={22} /> : t('login')}
               </Button>
               <Button onClick={fillDemo} type="button" variant="outlined">
-                {t('demo')} · demo@nexora.dev
+                {t('demo')} · customer@nexora.dev
               </Button>
             </Stack>
           </Box>

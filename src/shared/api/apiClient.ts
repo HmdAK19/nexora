@@ -27,8 +27,9 @@ apiClient.interceptors.response.use(
           _retry?: boolean;
         })
       | undefined;
-    const isRefreshRequest = request?.url?.includes('/auth/refresh');
-    if (error.response?.status !== 401 || !request || request._retry || isRefreshRequest) {
+    const isAuthenticationRequest =
+      request?.url?.includes('/auth/login') || request?.url?.includes('/auth/refresh');
+    if (error.response?.status !== 401 || !request || request._retry || isAuthenticationRequest) {
       return Promise.reject(error);
     }
     request._retry = true;

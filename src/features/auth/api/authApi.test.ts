@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { tokenStore } from '@shared/api';
+import { getApiErrorCode, tokenStore } from '@shared/api';
 import { mockServer } from '@/test/mockServer';
 
 import { authApi } from './authApi';
@@ -58,5 +58,25 @@ describe('authApi.restore', () => {
     await authApi.restore();
 
     expect(requestCount).toBe(2);
+  });
+
+  it('preserves invalid login credentials instead of converting them to session expiry', async () => {
+    let refreshCount = 0;
+    mockServer.use(
+      http.post('/api/auth/login', () =>
+        HttpResponse.json({ code: 'INVALID_CREDENTIALS', message: 'Invalid email or password' }, { status: 401 })
+      ),
+      http.post('/api/auth/refresh', () => {
+        refreshCount += 1;
+        return HttpResponse.json({}, { status: 401 });
+      })
+    );
+
+    const error = await authApi
+      .login({ email: 'customer@nexora.dev', password: 'incorrect-password' })
+      .catch((loginError: unknown) => loginError);
+
+    expect(getApiErrorCode(error)).toBe('INVALID_CREDENTIALS');
+    expect(refreshCount).toBe(0);
   });
 });
