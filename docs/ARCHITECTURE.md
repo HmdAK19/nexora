@@ -67,7 +67,7 @@ This order lets theme creation consume direction and preferences, and lets authe
 | ---------------------- | ---------------------------------- | --------------------------------------------------- |
 | Remote server state    | TanStack Query                     | markets, wallet, orders, purchases, support tickets |
 | Durable UI preference  | Redux Persist                      | light/dark mode, compact-number preference          |
-| Language               | Language provider + local storage  | `fa`/`en`, document direction                       |
+| Language               | Language provider + local storage  | English default, `en`/`fa`, document direction      |
 | Short-lived form state | React Hook Form or component state | login, order, profile, dialogs                      |
 | Access token           | module-memory token store          | bearer token; never local/session storage           |
 | Refresh session        | backend HttpOnly cookie            | session restoration and rotation                    |

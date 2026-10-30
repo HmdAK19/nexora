@@ -23,18 +23,18 @@ describe('LanguageProvider', () => {
     document.documentElement.dir = '';
   });
 
-  it('uses Persian as the default and keeps the document direction in sync', async () => {
+  it('uses English as the default and keeps the document direction in sync', async () => {
     render(
       <LanguageProvider>
         <LanguageProbe />
       </LanguageProvider>
     );
 
-    expect(screen.getByRole('button')).toHaveTextContent('fa:rtl');
+    expect(screen.getByRole('button')).toHaveTextContent('en:ltr');
 
     await waitFor(() => {
-      expect(document.documentElement).toHaveAttribute('lang', 'fa');
-      expect(document.documentElement).toHaveAttribute('dir', 'rtl');
+      expect(document.documentElement).toHaveAttribute('lang', 'en');
+      expect(document.documentElement).toHaveAttribute('dir', 'ltr');
     });
   });
 
@@ -47,12 +47,12 @@ describe('LanguageProvider', () => {
 
     fireEvent.click(screen.getByRole('button'));
 
-    expect(screen.getByRole('button')).toHaveTextContent('en:ltr');
-    expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('en');
+    expect(screen.getByRole('button')).toHaveTextContent('fa:rtl');
+    expect(localStorage.getItem(LANGUAGE_STORAGE_KEY)).toBe('fa');
 
     await waitFor(() => {
-      expect(document.documentElement).toHaveAttribute('lang', 'en');
-      expect(document.documentElement).toHaveAttribute('dir', 'ltr');
+      expect(document.documentElement).toHaveAttribute('lang', 'fa');
+      expect(document.documentElement).toHaveAttribute('dir', 'rtl');
     });
   });
 });

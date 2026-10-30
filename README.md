@@ -31,7 +31,7 @@ This repository contains the web client and its automated tests. The backend is 
 - Short-lived in-memory access tokens with refresh-session restoration and concurrent refresh deduplication
 - Deny-by-default, permission-based route and navigation presentation; the API remains the authoritative security boundary
 - Responsive trading workspace with live-market transport abstractions, order book, recent trades, chart tools and order entry
-- English and Persian localization with synchronized LTR/RTL layout and direction-aware Emotion styling
+- English-default localization with synchronized Persian/English LTR/RTL layout and direction-aware Emotion styling
 - Responsive, keyboard-accessible account menu with localized identity and session actions
 - Runtime-validated account-security settings for password changes and active-session revocation
 - End-to-end TOTP authentication with guided setup, one-time recovery codes and an MFA login challenge

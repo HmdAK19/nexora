@@ -64,6 +64,7 @@ Green/red states always include text, sign, icon or side labels; color is not th
 
 - User-visible text belongs in feature locale JSON, not conditional `fa ? ... : ...` expressions.
 - English uses LTR and Persian uses RTL.
+- New browser sessions start in English; an explicitly selected language is persisted locally and authenticated preferences remain authoritative after synchronization.
 - Direction-specific Emotion caches apply prefixing and RTL transformation to MUI internals; do not render the application outside `AppProviders`.
 - Project styles use logical properties such as `marginInlineStart`, `insetInlineEnd` and `borderInlineEnd` instead of physical left/right spacing.
 - Drawer anchor, document direction and theme direction follow the active language.

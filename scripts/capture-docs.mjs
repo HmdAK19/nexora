@@ -196,6 +196,7 @@ const context = await browser.newContext({
 });
 const page = await context.newPage();
 const state = { authenticated: false };
+await page.addInitScript(() => localStorage.setItem('nexora-language', 'en'));
 await installApiMock(page, state);
 
 try {
