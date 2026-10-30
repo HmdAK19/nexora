@@ -11,6 +11,9 @@ import { AuthorizedRoute } from './AuthorizedRoute';
 import { ForbiddenPage } from './ForbiddenPage';
 
 const LoginPage = lazy(() => import('@features/auth').then(({ LoginPage }) => ({ default: LoginPage })));
+const RegisterPage = lazy(() =>
+  import('@features/auth').then(({ RegisterPage }) => ({ default: RegisterPage }))
+);
 const DashboardPage = lazy(() =>
   import('@features/dashboard').then(({ DashboardPage }) => ({ default: DashboardPage }))
 );
@@ -68,6 +71,10 @@ export const router = createBrowserRouter([
   {
     path: '/login',
     element: lazyPage(<LoginPage />),
+  },
+  {
+    path: '/register',
+    element: lazyPage(<RegisterPage />),
   },
   {
     element: <ProtectedRoute />,

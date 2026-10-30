@@ -2,9 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Eye, EyeOff, Globe2, LockKeyhole, Mail } from 'lucide-react';
+import { Link as RouterLink, Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, LockKeyhole, Mail } from 'lucide-react';
 import * as yup from 'yup';
 import {
   Alert,
@@ -16,7 +15,6 @@ import {
   IconButton,
   InputAdornment,
   Link,
-  Paper,
   Stack,
   TextField,
   Typography,
@@ -24,10 +22,15 @@ import {
 
 import { getApiErrorCode, getApiErrorMessage } from '@shared/api';
 import { getDefaultAuthorizedPath } from '@shared/lib';
-import { BrandLogo } from '@shared/ui';
 import { NAMESPACES } from '@app/i18n';
 
-import { DemoAccountSelector, ForgotPasswordDialog, MfaChallenge, type DemoAccount } from '../components';
+import {
+  AuthPageShell,
+  DemoAccountSelector,
+  ForgotPasswordDialog,
+  MfaChallenge,
+  type DemoAccount,
+} from '../components';
 import { useAuth } from '../context';
 import { usePasswordReset } from '../hooks';
 
@@ -47,78 +50,13 @@ const DEMO_ACCOUNTS = [
 const createSchema = (t: (key: string) => string) =>
   yup.object({
     email: yup.string().email(t('validation.emailInvalid')).required(t('validation.emailRequired')),
-    password: yup.string().min(8, t('validation.passwordMin')).required(t('validation.passwordRequired')),
+    password: yup
+      .string()
+      .min(8, t('validation.passwordMin'))
+      .max(128, t('validation.passwordMax'))
+      .required(t('validation.passwordRequired')),
     remember: yup.boolean().required(),
   });
-function ExchangeGlobe() {
-  return (
-    <Box sx={styles.box1}>
-      <Box
-        component={motion.div}
-        animate={{
-          rotate: 360,
-        }}
-        transition={{
-          duration: 36,
-          ease: 'linear',
-          repeat: Infinity,
-        }}
-        sx={styles.box2}
-      />
-      <Box sx={styles.box3}>
-        <Globe2 color="#1769ff" size={145} strokeWidth={0.8} />
-      </Box>
-      {[
-        {
-          label: '350+',
-          sub: 'Trading pairs',
-          x: '74%',
-          y: '37%',
-        },
-        {
-          label: '20M+',
-          sub: 'Traders',
-          x: '18%',
-          y: '68%',
-        },
-        {
-          label: '99.99%',
-          sub: 'Uptime',
-          x: '20%',
-          y: '20%',
-        },
-      ].map((item, index) => (
-        <Paper
-          key={item.label}
-          component={motion.div}
-          initial={{
-            opacity: 0,
-            scale: 0.9,
-          }}
-          animate={{
-            opacity: 1,
-            scale: 1,
-            y: [0, -8, 0],
-          }}
-          transition={{
-            delay: index * 0.14,
-            duration: 3 + index,
-            repeat: Infinity,
-            repeatDelay: 1,
-          }}
-          sx={styles.paper4(item)}
-        >
-          <Typography color="secondary.main" fontSize={25} fontWeight={800}>
-            {item.label}
-          </Typography>
-          <Typography color="text.secondary" variant="body2">
-            {item.sub}
-          </Typography>
-        </Paper>
-      ))}
-    </Box>
-  );
-}
 export default function LoginPage() {
   const { t } = useTranslation(NAMESPACES.auth);
   const { user, isRestoring, login } = useAuth();
@@ -135,13 +73,14 @@ export default function LoginPage() {
     control,
     handleSubmit,
     setValue,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, isValid },
   } = useForm<LoginValues>({
     defaultValues: {
       email: '',
       password: '',
       remember: true,
     },
+    mode: 'onChange',
     resolver: yupResolver(schema),
   });
   useEffect(() => {
@@ -194,172 +133,152 @@ export default function LoginPage() {
   };
 
   return (
-    <Box sx={styles.box5}>
-      <Box sx={styles.box6} />
-      <Box sx={styles.box7}>
+    <>
+      <AuthPageShell compact subtitle={t('subtitle')} title={t('welcome')}>
         <Box
-          component={motion.div}
-          initial={{
-            opacity: 0,
-            x: -20,
-          }}
-          animate={{
-            opacity: 1,
-            x: 0,
-          }}
-          sx={styles.box8}
+          component="form"
+          noValidate
+          onSubmit={(event) => void handleSubmit(onSubmit)(event)}
+          sx={styles.form}
         >
-          <BrandLogo />
-          <Typography component="h1" sx={styles.typography9}>
-            {t('welcome')}
-          </Typography>
-          <Typography color="text.secondary" sx={styles.typography10}>
-            {t('subtitle')}
-          </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={(event) => void handleSubmit(onSubmit)(event)}
-            sx={styles.box11}
-          >
-            <Stack spacing={2.2}>
-              {error && (
-                <Alert severity="error" onClose={() => setError(null)}>
-                  {error}
-                </Alert>
-              )}
-              <Controller
-                name="email"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    autoComplete="email"
-                    autoFocus
-                    error={Boolean(errors.email)}
-                    helperText={errors.email?.message}
-                    label={t('email')}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <Mail size={18} />
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
-                  />
-                )}
-              />
-              {mfaRequired && (
-                <MfaChallenge
-                  code={mfaCode}
-                  label={t(recoveryMode ? 'mfa.recoveryCode' : 'mfa.code')}
-                  onChange={setMfaCode}
-                  onToggleRecovery={() => {
-                    setRecoveryMode((value) => !value);
-                    setMfaCode('');
-                    setError(null);
+          <Stack spacing={1.25}>
+            {error && (
+              <Alert severity="error" onClose={() => setError(null)}>
+                {error}
+              </Alert>
+            )}
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  autoComplete="email"
+                  autoFocus
+                  error={Boolean(errors.email)}
+                  helperText={errors.email?.message}
+                  label={t('email')}
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <Mail size={18} />
+                        </InputAdornment>
+                      ),
+                    },
                   }}
-                  recoveryLabel={t(recoveryMode ? 'mfa.useAuthenticator' : 'mfa.useRecovery')}
-                  recoveryMode={recoveryMode}
-                  title={t('mfa.title')}
                 />
               )}
+            />
+            {mfaRequired && (
+              <MfaChallenge
+                code={mfaCode}
+                label={t(recoveryMode ? 'mfa.recoveryCode' : 'mfa.code')}
+                onChange={setMfaCode}
+                onToggleRecovery={() => {
+                  setRecoveryMode((value) => !value);
+                  setMfaCode('');
+                  setError(null);
+                }}
+                recoveryLabel={t(recoveryMode ? 'mfa.useAuthenticator' : 'mfa.useRecovery')}
+                recoveryMode={recoveryMode}
+                title={t('mfa.title')}
+              />
+            )}
+            <Controller
+              name="password"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  autoComplete="current-password"
+                  error={Boolean(errors.password)}
+                  helperText={errors.password?.message}
+                  label={t('password')}
+                  type={showPassword ? 'text' : 'password'}
+                  slotProps={{
+                    input: {
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <LockKeyhole size={18} />
+                        </InputAdornment>
+                      ),
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          <IconButton
+                            aria-label={t('togglePassword')}
+                            edge="end"
+                            onClick={() => setShowPassword((value) => !value)}
+                          >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                          </IconButton>
+                        </InputAdornment>
+                      ),
+                    },
+                  }}
+                />
+              )}
+            />
+            <Box sx={styles.options}>
               <Controller
-                name="password"
+                name="remember"
                 control={control}
                 render={({ field }) => (
-                  <TextField
-                    {...field}
-                    autoComplete="current-password"
-                    error={Boolean(errors.password)}
-                    helperText={errors.password?.message}
-                    label={t('password')}
-                    type={showPassword ? 'text' : 'password'}
-                    slotProps={{
-                      input: {
-                        startAdornment: (
-                          <InputAdornment position="start">
-                            <LockKeyhole size={18} />
-                          </InputAdornment>
-                        ),
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label={t('togglePassword')}
-                              edge="end"
-                              onClick={() => setShowPassword((value) => !value)}
-                            >
-                              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-                      },
-                    }}
+                  <FormControlLabel
+                    control={<Checkbox checked={field.value} onChange={field.onChange} />}
+                    label={
+                      <Typography color="text.secondary" variant="body2">
+                        {t('remember')}
+                      </Typography>
+                    }
                   />
                 )}
               />
-              <Box sx={styles.box12}>
-                <Controller
-                  name="remember"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControlLabel
-                      control={<Checkbox checked={field.value} onChange={field.onChange} />}
-                      label={
-                        <Typography color="text.secondary" variant="body2">
-                          {t('remember')}
-                        </Typography>
-                      }
-                    />
-                  )}
-                />
-                <Link
-                  component="button"
-                  type="button"
-                  underline="hover"
-                  variant="body2"
-                  onClick={() => passwordReset.setOpen(true)}
-                >
-                  {t('forgot')}
-                </Link>
-              </Box>
-              <Button
-                disabled={
-                  isSubmitting ||
-                  (mfaRequired &&
-                    (recoveryMode ? !/^[A-F0-9]{5}-[A-F0-9]{5}$/.test(mfaCode) : mfaCode.length !== 6))
-                }
-                size="large"
-                type="submit"
-                variant="contained"
-                sx={styles.button13}
+              <Link
+                component="button"
+                type="button"
+                underline="hover"
+                variant="body2"
+                onClick={() => passwordReset.setOpen(true)}
               >
-                {isSubmitting ? <CircularProgress color="inherit" size={22} /> : t('login')}
-              </Button>
-              <DemoAccountSelector
-                accounts={DEMO_ACCOUNTS.map((account) => ({
-                  ...account,
-                  roleLabel: t(`demoAccounts.${account.role}`),
-                }))}
-                emailLabel={t('email')}
-                onSelect={fillDemo}
-                passwordLabel={t('password')}
-                selectLabel={t('demoAccounts.select')}
-                title={t('demoAccounts.title')}
-              />
-            </Stack>
-          </Box>
-          <Typography color="text.secondary" sx={styles.typography14} variant="caption">
-            © 2026 Nexora Exchange · Protected by industry-standard encryption
-          </Typography>
+                {t('forgot')}
+              </Link>
+            </Box>
+            <Button
+              disabled={
+                isSubmitting ||
+                !isValid ||
+                (mfaRequired &&
+                  (recoveryMode ? !/^[A-F0-9]{5}-[A-F0-9]{5}$/.test(mfaCode) : mfaCode.length !== 6))
+              }
+              size="large"
+              type="submit"
+              variant="contained"
+              sx={styles.submit}
+            >
+              {isSubmitting ? <CircularProgress color="inherit" size={22} /> : t('login')}
+            </Button>
+            <DemoAccountSelector
+              accounts={DEMO_ACCOUNTS.map((account) => ({
+                ...account,
+                roleLabel: t(`demoAccounts.${account.role}`),
+              }))}
+              emailLabel={t('email')}
+              onSelect={fillDemo}
+              passwordLabel={t('password')}
+              selectLabel={t('demoAccounts.select')}
+              title={t('demoAccounts.title')}
+            />
+            <Typography color="text.secondary" textAlign="center" variant="body2">
+              {t('register.noAccount')}{' '}
+              <Link component={RouterLink} to="/register" underline="hover">
+                {t('register.createAccount')}
+              </Link>
+            </Typography>
+          </Stack>
         </Box>
-        <Box sx={styles.box15}>
-          <ExchangeGlobe />
-        </Box>
-      </Box>
+      </AuthPageShell>
       <ForgotPasswordDialog controller={passwordReset} />
-    </Box>
+    </>
   );
 }

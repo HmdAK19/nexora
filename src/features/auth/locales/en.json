@@ -21,10 +21,58 @@
     "select": "Use demo account"
   },
   "invalid": "Email or password is incorrect",
+  "register": {
+    "title": "Create your account",
+    "subtitle": "Start with a secure Nexora account in a few steps",
+    "name": "Full name",
+    "phone": "Mobile number (optional)",
+    "phoneHint": "Use international format, for example +989121234567",
+    "confirmPassword": "Confirm password",
+    "toggleConfirmPassword": "Toggle confirmation password visibility",
+    "acceptTerms": "I accept the terms of service and privacy policy",
+    "submit": "Create account",
+    "hasAccount": "Already have an account?",
+    "signIn": "Sign in",
+    "noAccount": "New to Nexora?",
+    "createAccount": "Create an account",
+    "passwordRequirements": {
+      "title": "Your password must include",
+      "length": "10–128 characters",
+      "uppercase": "One uppercase letter",
+      "lowercase": "One lowercase letter",
+      "number": "One number",
+      "special": "One special character",
+      "whitespace": "No spaces"
+    },
+    "validation": {
+      "nameRequired": "Full name is required",
+      "nameMin": "Full name must contain at least 2 characters",
+      "nameMax": "Full name cannot exceed 80 characters",
+      "nameInvalid": "Use letters, spaces, apostrophes or hyphens only",
+      "emailRequired": "Email is required",
+      "emailInvalid": "Enter a valid email address",
+      "phoneInvalid": "Enter a valid international number starting with +",
+      "passwordRequired": "Password is required",
+      "passwordMin": "Password must contain at least 10 characters",
+      "passwordMax": "Password cannot exceed 128 characters",
+      "passwordUppercase": "Add at least one uppercase letter",
+      "passwordLowercase": "Add at least one lowercase letter",
+      "passwordNumber": "Add at least one number",
+      "passwordSpecial": "Add at least one special character",
+      "passwordNoWhitespace": "Password cannot contain spaces",
+      "passwordsMismatch": "Passwords do not match",
+      "termsRequired": "Accept the terms to create your account"
+    },
+    "errors": {
+      "emailExists": "An account with this email already exists",
+      "rateLimited": "Too many registration attempts. Please try again later."
+    }
+  },
   "validation": {
     "emailInvalid": "Enter a valid email address",
     "emailRequired": "Email is required",
     "passwordMin": "Password must be at least 8 characters",
+    "passwordMax": "Password cannot exceed 128 characters",
     "passwordRequired": "Password is required"
   },
   "togglePassword": "Toggle password visibility",
