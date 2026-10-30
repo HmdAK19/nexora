@@ -3,7 +3,9 @@ import type { AuthResponse, User } from '@shared/model';
 
 export interface LoginInput {
   email: string;
+  mfaCode?: string;
   password: string;
+  recoveryCode?: string;
 }
 
 export interface PasswordResetInput {

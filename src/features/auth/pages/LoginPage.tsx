@@ -22,12 +22,12 @@ import {
   Typography,
 } from '@mui/material';
 
-import { getApiErrorMessage } from '@shared/api';
+import { getApiErrorCode, getApiErrorMessage } from '@shared/api';
 import { getDefaultAuthorizedPath } from '@shared/lib';
 import { BrandLogo } from '@shared/ui';
 import { NAMESPACES } from '@app/i18n';
 
-import { ForgotPasswordDialog } from '../components';
+import { ForgotPasswordDialog, MfaChallenge } from '../components';
 import { useAuth } from '../context';
 import { usePasswordReset } from '../hooks';
 
@@ -120,6 +120,9 @@ export default function LoginPage() {
   const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaCode, setMfaCode] = useState('');
+  const [recoveryMode, setRecoveryMode] = useState(false);
   const passwordReset = usePasswordReset();
   const schema = useMemo(() => createSchema(t), [t]);
   const {
@@ -144,6 +147,8 @@ export default function LoginPage() {
     try {
       const authenticatedUser = await login({
         email,
+        ...(mfaRequired && recoveryMode ? { recoveryCode: mfaCode } : {}),
+        ...(mfaRequired && !recoveryMode ? { mfaCode } : {}),
         password,
       });
       const destination =
@@ -156,10 +161,21 @@ export default function LoginPage() {
         replace: true,
       });
     } catch (loginError) {
-      setError(getApiErrorMessage(loginError));
+      const code = getApiErrorCode(loginError);
+      if (code === 'MFA_REQUIRED') {
+        setMfaRequired(true);
+        setMfaCode('');
+        setError(null);
+      } else if (code === 'INVALID_MFA_CODE') {
+        setError(t('mfa.invalid'));
+      } else {
+        setError(getApiErrorMessage(loginError));
+      }
     }
   };
   const fillDemo = () => {
+    setMfaRequired(false);
+    setMfaCode('');
     setValue('email', 'demo@nexora.dev', {
       shouldValidate: true,
     });
@@ -226,6 +242,21 @@ export default function LoginPage() {
                   />
                 )}
               />
+              {mfaRequired && (
+                <MfaChallenge
+                  code={mfaCode}
+                  label={t(recoveryMode ? 'mfa.recoveryCode' : 'mfa.code')}
+                  onChange={setMfaCode}
+                  onToggleRecovery={() => {
+                    setRecoveryMode((value) => !value);
+                    setMfaCode('');
+                    setError(null);
+                  }}
+                  recoveryLabel={t(recoveryMode ? 'mfa.useAuthenticator' : 'mfa.useRecovery')}
+                  recoveryMode={recoveryMode}
+                  title={t('mfa.title')}
+                />
+              )}
               <Controller
                 name="password"
                 control={control}
@@ -286,7 +317,11 @@ export default function LoginPage() {
                 </Link>
               </Box>
               <Button
-                disabled={isSubmitting}
+                disabled={
+                  isSubmitting ||
+                  (mfaRequired &&
+                    (recoveryMode ? !/^[A-F0-9]{5}-[A-F0-9]{5}$/.test(mfaCode) : mfaCode.length !== 6))
+                }
                 size="large"
                 type="submit"
                 variant="contained"

@@ -32,14 +32,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
     await authApi.logout();
     setUser(null);
   }, []);
+  const refreshUser = useCallback(async () => {
+    const refreshedUser = await authApi.me();
+    setUser(refreshedUser);
+    return refreshedUser;
+  }, []);
   const value = useMemo(
     () => ({
       user,
       isRestoring,
       login,
       logout,
+      refreshUser,
     }),
-    [isRestoring, login, logout, user]
+    [isRestoring, login, logout, refreshUser, user]
   );
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

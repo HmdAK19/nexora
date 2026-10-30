@@ -9,6 +9,7 @@ export interface AuthContextValue {
   isRestoring: boolean;
   login: (input: LoginInput) => Promise<User>;
   logout: () => Promise<void>;
+  refreshUser: () => Promise<User>;
 }
 export const AuthContext = createContext<AuthContextValue | null>(null);
 export const useAuth = () => {

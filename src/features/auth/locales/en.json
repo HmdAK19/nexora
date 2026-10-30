@@ -21,5 +21,13 @@
     "passwordMin": "Password must be at least 8 characters",
     "passwordRequired": "Password is required"
   },
-  "togglePassword": "Toggle password visibility"
+  "togglePassword": "Toggle password visibility",
+  "mfa": {
+    "title": "Verify it’s you",
+    "code": "Six-digit authenticator code",
+    "recoveryCode": "Recovery code",
+    "useRecovery": "Use a recovery code",
+    "useAuthenticator": "Use the authenticator app",
+    "invalid": "The verification code is invalid or has expired."
+  }
 }
