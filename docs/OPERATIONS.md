@@ -92,6 +92,10 @@ Treat the JavaScript/CSS assets as immutable and long-cacheable, but deploy `run
 
 The repository includes `vercel.json` for Vite framework detection, SPA navigation fallback and the required no-cache header on `runtime-config.json`. The fallback excludes `/api` and `/ws`, which remain reserved for a separately deployed backend or gateway. Without that integration, a Vercel deployment is a frontend preview only: public routes render, while authentication and live-data requests reach no production service.
 
+### Social preview metadata
+
+`index.html` contains canonical Open Graph and Twitter Card metadata for the public demo. These tags are deliberately present in the initial HTML so crawlers such as LinkedIn can build a preview without executing the React application. The preview uses the committed dashboard screenshot from the public GitHub repository; keep its absolute URL, the canonical deployment URL, title and description current when the public demo location or product positioning changes.
+
 Deploy from the repository root with the Vercel CLI or import the Git repository in Vercel. The current `public/runtime-config.json` uses the separately deployed Nexora API's absolute HTTPS and WSS endpoints. When either Vercel domain changes, update both runtime URLs and the backend `CLIENT_ORIGIN`, then verify CORS, cookies, CSRF controls and WebSocket upgrades end to end.
 
 Production source maps help error diagnosis but may expose source. Upload them privately to the monitoring service or restrict public delivery according to deployment policy.

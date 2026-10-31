@@ -145,6 +145,8 @@ npm run test:e2e
 
 The frontend can be deployed to Vercel as a static Vite SPA. [`vercel.json`](vercel.json) provides client-route fallback while reserving `/api` and `/ws` for backend integration, and prevents caching of the public runtime configuration. The committed `public/runtime-config.json` points the deployed frontend at the separately deployed Nexora API for HTTP and WebSocket traffic. Deployment, CSP, cookies, WebSocket proxying and observability requirements are documented in [Operations](docs/OPERATIONS.md).
 
+The initial HTML also exposes canonical Open Graph and Twitter Card metadata for the public demo, allowing LinkedIn and other social crawlers to render a stable project title, description and dashboard preview without executing the React application.
+
 ## Scope and limitations
 
 Nexora is a frontend engineering project, not a licensed exchange or a custody system. The repository does not include:
