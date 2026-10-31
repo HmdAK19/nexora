@@ -20,7 +20,7 @@
     "customer": "Customer demo",
     "select": "Use demo account"
   },
-  "invalid": "Email or password is incorrect",
+  "invalid": "No account matched this email and password. Check the details and try again.",
   "register": {
     "title": "Create your account",
     "subtitle": "Start with a secure Nexora account in a few steps",

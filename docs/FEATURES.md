@@ -43,6 +43,7 @@ All product routes except `/login` and `/register` are protected by session rest
 - Password-reset UI returns a privacy-preserving result and must not disclose account existence.
 - Registration validates bilingual names, normalized email, optional E.164 phone, strong password confirmation and terms acceptance before creating a basic customer account. A successful response establishes the access/refresh session immediately; duplicate email and rate-limit errors remain explicit and localized.
 - Login and registration submit actions remain disabled until their current client-side requirements are valid; MFA login additionally requires a complete authenticator or recovery code.
+- Invalid login credentials show a clear localized account-match message while deliberately avoiding confirmation that a specific email is registered.
 - Login, refresh and current-user responses include a role plus explicit permissions. Navigation and routes use permissions rather than hard-coded role-name checks.
 - Every `/admin/*` workspace has an action-specific read permission; unauthorized authenticated users are sent to the localized forbidden page. A compatible API must independently return `403` for denied access.
 - Limited `support`, `compliance` and `operations` operators enter their first permitted workspace; administration navigation and customer-product navigation are both derived from explicit permissions.

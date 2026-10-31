@@ -35,6 +35,7 @@ This repository contains the web client and its automated tests. The backend is 
 - Responsive, keyboard-accessible account menu with localized identity and session actions
 - Runtime-validated account-security settings for password changes and active-session revocation
 - End-to-end TOTP authentication with guided setup, one-time recovery codes and an MFA login challenge
+- Clear bilingual login feedback that does not disclose whether an individual email is registered
 - Server-backed profile, validated avatar upload and synchronized language, theme and notification preferences
 - End-to-end customer registration with localized field validation, durable account initialization and immediate session creation
 - Account-scoped notification feed with localized type-based content, unread counts and optimistic read actions
