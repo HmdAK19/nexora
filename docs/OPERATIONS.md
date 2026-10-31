@@ -94,7 +94,7 @@ The repository includes `vercel.json` for Vite framework detection, SPA navigati
 
 ### Social preview metadata
 
-`index.html` contains canonical Open Graph and Twitter Card metadata for the public demo. These tags are deliberately present in the initial HTML so crawlers such as LinkedIn can build a preview without executing the React application. The preview uses the committed dashboard screenshot from the public GitHub repository; keep its absolute URL, the canonical deployment URL, title and description current when the public demo location or product positioning changes.
+`index.html` contains canonical Open Graph and Twitter Card metadata for the public demo. These tags are deliberately present in the initial HTML so crawlers such as LinkedIn can build a preview without executing the React application. The preview uses the same-origin `public/social-preview.png` dashboard image; keep its absolute URL, dimensions, the canonical deployment URL, title and description current when the public demo location or product positioning changes.
 
 Deploy from the repository root with the Vercel CLI or import the Git repository in Vercel. The current `public/runtime-config.json` uses the separately deployed Nexora API's absolute HTTPS and WSS endpoints. When either Vercel domain changes, update both runtime URLs and the backend `CLIENT_ORIGIN`, then verify CORS, cookies, CSRF controls and WebSocket upgrades end to end.
 
