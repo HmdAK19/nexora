@@ -1,5 +1,7 @@
 # Nexora
 
+[English](README.md) | [فارسی](README.fa.md)
+
 Nexora is a bilingual digital-asset exchange frontend built with React and TypeScript. It demonstrates a production-oriented frontend architecture for portfolio monitoring, market discovery, trading, wallet workflows, identity verification, customer support and permission-scoped administration.
 
 Its visual identity uses a connected `N` monogram and network node to represent exchange, movement and the user's place in a digital-asset ecosystem.

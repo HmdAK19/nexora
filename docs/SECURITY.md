@@ -1,5 +1,7 @@
 # Security model and production checklist
 
+[English](SECURITY.md) | [فارسی](SECURITY.fa.md)
+
 ## Current trust boundaries
 
 - The browser is untrusted. Prices, fees, limits, ownership and balance checks must be repeated by the backend.

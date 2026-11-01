@@ -1,5 +1,7 @@
 # Testing strategy
 
+[English](TESTING.md) | [فارسی](TESTING.fa.md)
+
 Nexora uses Vitest and Testing Library. Tests should verify observable behavior and security invariants rather than component internals.
 
 ## Current automated coverage

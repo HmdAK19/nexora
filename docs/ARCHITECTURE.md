@@ -1,5 +1,7 @@
 # Architecture
 
+[English](ARCHITECTURE.md) | [فارسی](ARCHITECTURE.fa.md)
+
 ## System boundary
 
 The tracked application is a React single-page frontend. It communicates with the separately maintained [`Nexora API`](https://github.com/HmdAK19/nexora-api) through `/api` and `/ws`. The backend is not part of this repository; its required contract and security responsibilities are documented here so frontend behavior can be reviewed independently.

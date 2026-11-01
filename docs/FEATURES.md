@@ -1,5 +1,7 @@
 # Feature catalogue
 
+[English](FEATURES.md) | [فارسی](FEATURES.fa.md)
+
 This document is the product-level source of truth for implemented frontend behavior. “Frontend-integrated” means the UI implements and consumes the contract in [API.md](API.md); it does not assert that a production backend is included in this repository. “Local-only” means state remains in browser memory or local storage.
 
 ## Route map

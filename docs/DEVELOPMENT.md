@@ -1,5 +1,7 @@
 # Development guide
 
+[English](DEVELOPMENT.md) | [فارسی](DEVELOPMENT.fa.md)
+
 ## Working agreement
 
 - Do not commit changes unless the project owner explicitly requests a commit.

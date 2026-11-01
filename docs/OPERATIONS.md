@@ -1,5 +1,7 @@
 # Configuration, deployment and operations
 
+[English](OPERATIONS.md) | [فارسی](OPERATIONS.fa.md)
+
 ## Runtime topology
 
 The frontend is a static SPA. In development, Vite serves it on port `5173` and proxies API/WebSocket traffic to `http://localhost:4000`. In production, a reverse proxy or gateway should serve the static build and route `/api` and `/ws` to backend services on the same public origin.

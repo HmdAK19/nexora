@@ -1,5 +1,7 @@
 # API contract
 
+[English](API.md) | [فارسی](API.fa.md)
+
 This document describes the contract expected from the separately maintained [`Nexora API`](https://github.com/HmdAK19/nexora-api). All endpoints are rooted at `/api`. JSON errors use `{ code, message, details? }`.
 
 ## Conventions

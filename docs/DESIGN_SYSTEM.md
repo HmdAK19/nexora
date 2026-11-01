@@ -1,5 +1,7 @@
 # Design system
 
+[English](DESIGN_SYSTEM.md) | [فارسی](DESIGN_SYSTEM.fa.md)
+
 Nexora uses a reusable Material UI token system and feature-owned components to keep visual decisions consistent across the product. Avoid page-local brand colors and duplicated primitives.
 
 ## Foundations

@@ -1,5 +1,7 @@
 # Nexora documentation
 
+[English](README.md) | [فارسی](README.fa.md)
+
 This directory is the maintained engineering reference for the Nexora frontend. Each document has a distinct purpose so implementation details, product status and production requirements are not mixed together.
 
 The companion backend has its own lifecycle and repository: [`HmdAK19/nexora-api`](https://github.com/HmdAK19/nexora-api). Backend implementation and deployment status must be documented there; this directory defines the contract and frontend expectations only.
